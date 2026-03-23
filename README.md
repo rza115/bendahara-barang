@@ -1,0 +1,2 @@
+# bendahara-barang
+pencatatan bbbabrang
