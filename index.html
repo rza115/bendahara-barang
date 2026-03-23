@@ -30,6 +30,8 @@
         <a href="tambah.html">
           <span>➕</span> <span>Tambah</span>
         </a>
+        <span class="nav-user">👤 <span id="admin-user"></span></span>
+        <button onclick="logoutAdmin()" class="btn-logout" title="Keluar">🚪 Keluar</button>
       </nav>
     </div>
   </header>
@@ -131,6 +133,8 @@
 
   </main>
 
+  <!-- Auth guard — harus sebelum app.js -->
+  <script src="auth.js"></script>
   <!-- Supabase CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="app.js"></script>
