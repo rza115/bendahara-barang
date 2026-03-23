@@ -1,41 +1,36 @@
 // ============================================
-// auth.js — Session Guard
+// auth.js — Session Guard (Supabase Auth)
 // Sertakan di index.html, tambah.html, edit.html
 // SEBELUM app.js: <script src="auth.js"></script>
 // ============================================
 
-(function () {
-  const SESSION_KEY = 'inventaris_auth';
+(async function () {
+  const SUPABASE_URL = 'https://ibektroxjjibniwidmpk.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_b-oL0WNdkqDjUFhepAkADw_uy9coRD6';
 
-  function getSession() {
-    try {
-      const raw = sessionStorage.getItem(SESSION_KEY);
-      if (!raw) return null;
-      const s = JSON.parse(raw);
-      if (s.exp && Date.now() < s.exp) return s;
-      sessionStorage.removeItem(SESSION_KEY);
-      return null;
-    } catch {
-      sessionStorage.removeItem(SESSION_KEY);
-      return null;
-    }
-  }
+  const { createClient } = supabase;
+  window._authClient = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  // Redirect ke login kalau belum login
-  const session = getSession();
+  // Cek session aktif dari Supabase
+  const { data: { session } } = await window._authClient.auth.getSession();
+
   if (!session) {
     window.location.replace('login.html');
+    return;
   }
 
-  // Fungsi logout — bisa dipanggil dari tombol logout
-  window.logoutAdmin = function () {
-    sessionStorage.removeItem(SESSION_KEY);
+  // Fungsi logout — dipanggil dari tombol logout
+  window.logoutAdmin = async function () {
+    await window._authClient.auth.signOut();
     window.location.replace('login.html');
   };
 
   // Tampilkan nama user di header jika ada elemen #admin-user
   document.addEventListener('DOMContentLoaded', () => {
     const el = document.getElementById('admin-user');
-    if (el && session) el.textContent = session.user;
+    if (el && session.user) {
+      // Tampilkan bagian sebelum @ dari email
+      el.textContent = session.user.email.split('@')[0];
+    }
   });
 })();
