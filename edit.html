@@ -385,7 +385,9 @@
 
   </main>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="app.js"></script>
+<!-- Supabase CDN — harus paling pertama -->
+  <script src="supabase.js"></script>
+  <script src="auth.js"></script>
+  <script src="app.js" defer></script>
 </body>
 </html>

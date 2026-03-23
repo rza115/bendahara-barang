@@ -6,8 +6,8 @@
 const SUPABASE_URL = 'https://ibektroxjjibniwidmpk.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_b-oL0WNdkqDjUFhepAkADw_uy9coRD6'; // anon public key
 
-const { createClient } = supabase;
-const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+// Gunakan client bersama dari auth guard
+const db = window._authClient || supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ============================================
 // UTILITY
@@ -74,7 +74,8 @@ let activeFilter = {};
 // ============================================
 
 async function loadAset(filter = {}) {
-  activeFilter = filter; // simpan filter aktif
+  activeFilter = filter;
+  console.log('[loadAset] called, db:', !!db, 'filter:', filter);
   showLoading(true);
   try {
     let query = db.from('aset').select('*').order('kib').order('nama_barang');
@@ -83,7 +84,9 @@ async function loadAset(filter = {}) {
     if (filter.kondisi) query = query.eq('kondisi', filter.kondisi);
     if (filter.search) query = query.ilike('nama_barang', `%${filter.search}%`);
 
+    console.log('[loadAset] running query...');
     const { data, error } = await query;
+    console.log('[loadAset] result:', { data, error });
     if (error) throw error;
     renderTable(data);
     updateSummary(data);
@@ -337,12 +340,19 @@ function initHargaFormat() {
 // INIT PER HALAMAN
 // ============================================
 
-document.addEventListener('DOMContentLoaded', async () => {
+// Tunggu auth guard selesai, baru init halaman
+(async () => {
+  const ready = await window._appReady;
+  if (!ready) return; // redirect ke login sudah terjadi
+  console.log('[app.js] Script loaded, db ready:', !!db);
   const page = document.body.dataset.page;
+  console.log('[app.js] Page:', page);
 
   if (page === 'index') {
+    console.log('[app.js] Calling initFilter + loadAset...');
     initFilter();
-    loadAset();
+    await loadAset();
+    console.log('[app.js] loadAset() done');
   }
 
   if (page === 'tambah') {
@@ -370,4 +380,4 @@ document.addEventListener('DOMContentLoaded', async () => {
       showLoading(false);
     }
   }
-});
+})();
