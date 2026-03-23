@@ -185,7 +185,12 @@ function fillForm(data) {
     'luas_tanah', 'letak_alamat', 'status_tanah', 'no_sertifikat',
     'no_pabrik', 'no_rangka', 'no_mesin', 'no_polisi', 'no_bpkb',
     'tgl_buku', 'no_bast', 'tgl_bast', 'id_penerimaan',
-    'lokasi', 'penggunaan', 'keterangan'
+    'lokasi', 'penggunaan', 'keterangan',
+    // KIB C
+    'kondisi_bangunan', 'luas_lantai', 'jumlah_lantai',
+    'dokumen_gedung', 'no_imb', 'tgl_imb', 'letak_bangunan',
+    // KIB E
+    'spesifikasi', 'penerbit', 'judul_koleksi', 'satuan',
   ];
   fields.forEach(f => {
     const el = document.getElementById(f);
@@ -200,7 +205,11 @@ function getFormData() {
     'merk_type', 'ukuran_cc', 'bahan', 'cara_perolehan', 'sumber_dana',
     'kondisi', 'status_barang', 'letak_alamat', 'status_tanah', 'no_sertifikat',
     'no_pabrik', 'no_rangka', 'no_mesin', 'no_polisi', 'no_bpkb',
-    'no_bast', 'id_penerimaan', 'lokasi', 'penggunaan', 'keterangan'
+    'no_bast', 'id_penerimaan', 'lokasi', 'penggunaan', 'keterangan',
+    // KIB C
+    'kondisi_bangunan', 'dokumen_gedung', 'no_imb', 'letak_bangunan',
+    // KIB E
+    'spesifikasi', 'penerbit', 'judul_koleksi', 'satuan',
   ];
   const result = {};
   fields.forEach(f => {
@@ -213,13 +222,17 @@ function getFormData() {
   const jumlahEl = document.getElementById('jumlah');
   const tahunEl = document.getElementById('tahun_perolehan');
   const luasEl = document.getElementById('luas_tanah');
+  const luasLantaiEl = document.getElementById('luas_lantai');
+  const jumlahLantaiEl = document.getElementById('jumlah_lantai');
   if (hargaEl) result.harga = parseInt(hargaEl.value.replace(/\D/g, '')) || 0;
   if (jumlahEl) result.jumlah = parseInt(jumlahEl.value) || 1;
   if (tahunEl) result.tahun_perolehan = parseInt(tahunEl.value) || null;
   if (luasEl) result.luas_tanah = parseFloat(luasEl.value) || null;
+  if (luasLantaiEl) result.luas_lantai = parseFloat(luasLantaiEl.value) || null;
+  if (jumlahLantaiEl) result.jumlah_lantai = parseInt(jumlahLantaiEl.value) || null;
 
   // Tanggal
-  ['tgl_buku', 'tgl_bast'].forEach(f => {
+  ['tgl_buku', 'tgl_bast', 'tgl_imb'].forEach(f => {
     const el = document.getElementById(f);
     result[f] = el?.value || null;
   });
@@ -259,10 +272,16 @@ async function simpanAset(isEdit = false, id = null) {
 
 function toggleKIBFields() {
   const kib = document.getElementById('kib')?.value;
-  const tanahFields = document.getElementById('section-tanah');
-  const kendaraanFields = document.getElementById('section-kendaraan');
-  if (tanahFields) tanahFields.style.display = kib === 'KIB A' ? 'block' : 'none';
-  if (kendaraanFields) kendaraanFields.style.display = kib === 'KIB B' ? 'block' : 'none';
+  const sections = {
+    'section-tanah':     kib === 'KIB A',
+    'section-kendaraan': kib === 'KIB B',
+    'section-gedung':    kib === 'KIB C',
+    'section-lainnya':   kib === 'KIB E',
+  };
+  Object.entries(sections).forEach(([id, show]) => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = show ? 'block' : 'none';
+  });
 }
 
 // Format harga otomatis saat input
