@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cetak Barcode — Inventaris Kecamatan Tenjo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0f1117;
+      --surface: #181c27;
+      --border: #2e3447;
+      --accent: #4f7eff;
+      --text: #e8eaf0;
+      --text-muted: #7b82a0;
+      --text-dim: #4a5068;
+      --error: #ff5f5f;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ===== HEADER ===== */
+    .site-header {
+      background: rgba(24,28,39,0.95);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+    }
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .header-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text);
+    }
+    .header-logo-icon { font-size: 22px; }
+    .header-logo-text .title { font-size: 15px; font-weight: 600; display: block; }
+    .header-logo-text .subtitle { font-size: 11px; color: var(--text-muted); display: block; }
+    .btn-back {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-family: inherit;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-back:hover { background: rgba(255,255,255,0.1); }
+
+    /* ===== MAIN ===== */
+    .main-content {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 28px 24px;
+    }
+
+    .page-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .page-header h1 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+    .page-header p { font-size: 13px; color: var(--text-muted); }
+
+    .btn { padding: 10px 18px; border-radius: 9px; font-size: 13px; font-weight: 600; font-family: inherit; cursor: pointer; border: none; display: inline-flex; align-items: center; gap: 6px; }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: #6b93ff; }
+    .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+    .btn-outline:hover { background: rgba(255,255,255,0.06); }
+
+    /* ===== FILTER ===== */
+    .filter-bar {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .filter-bar label { font-size: 12px; color: var(--text-muted); font-weight: 600; }
+    .filter-bar select, .filter-bar input[type="text"] {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-family: inherit;
+      outline: none;
+    }
+    .filter-bar select:focus, .filter-bar input:focus { border-color: var(--accent); }
+    .search-wrap { position: relative; flex: 1; min-width: 200px; }
+    .search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); opacity: 0.4; }
+    .search-wrap input { width: 100%; padding-left: 32px; }
+
+    /* ===== ASET LIST (checkbox) ===== */
+    .aset-list {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+    .aset-list table { width: 100%; border-collapse: collapse; }
+    .aset-list th {
+      background: rgba(255,255,255,0.03);
+      padding: 12px 16px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+    }
+    .aset-list td {
+      padding: 12px 16px;
+      font-size: 13px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      vertical-align: middle;
+    }
+    .aset-list tr:last-child td { border-bottom: none; }
+    .aset-list tr:hover td { background: rgba(255,255,255,0.02); }
+    .aset-list tr.selected td { background: rgba(79,126,255,0.06); }
+
+    .check-all-wrap { display: flex; align-items: center; gap: 8px; padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 13px; color: var(--text-muted); }
+    input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer; }
+
+    .kib-badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 20px; }
+    .kib-kib-a { background: rgba(76,222,154,0.1); color: #4cde9a; }
+    .kib-kib-b { background: rgba(79,126,255,0.1); color: #4f7eff; }
+    .kib-kib-c { background: rgba(255,188,79,0.1); color: #ffbc4f; }
+    .kib-kib-e { background: rgba(160,130,255,0.1); color: #a082ff; }
+
+    .nama-barang { font-weight: 500; }
+    .sub-info { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+    .kode-info { font-size: 11px; color: var(--text-dim); font-family: monospace; }
+
+    .selected-count {
+      font-size: 13px;
+      color: var(--text-muted);
+      padding: 8px 0;
+    }
+    .selected-count span { color: var(--accent); font-weight: 700; }
+
+    /* ===== MODAL PREVIEW BARCODE ===== */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+    }
+    .modal-overlay.show { display: flex; }
+
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+      width: 90%;
+      max-width: 520px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .modal-title { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+    .modal-desc { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
+    .modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+
+    /* ===== PRINT AREA ===== */
+    #print-area {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: flex-start;
+    }
+
+    .barcode-card {
+      background: #fff;
+      color: #000;
+      border-radius: 8px;
+      padding: 10px 12px;
+      width: 200px;
+      text-align: center;
+      break-inside: avoid;
+    }
+    .barcode-card .bc-instansi {
+      font-size: 8px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #555;
+      margin-bottom: 4px;
+    }
+    .barcode-card .bc-nama {
+      font-size: 10px;
+      font-weight: 700;
+      color: #000;
+      margin-bottom: 2px;
+      line-height: 1.3;
+    }
+    .barcode-card .bc-kode {
+      font-size: 8px;
+      color: #666;
+      margin-bottom: 6px;
+      font-family: monospace;
+    }
+    .barcode-card svg { max-width: 100%; height: auto; }
+    .barcode-card .bc-tahun {
+      font-size: 8px;
+      color: #888;
+      margin-top: 4px;
+    }
+
+    /* ===== PRINT STYLES ===== */
+    @media print {
+      body * { visibility: hidden; }
+      #print-section, #print-section * { visibility: visible; }
+      #print-section {
+        position: fixed;
+        inset: 0;
+        background: #fff;
+        padding: 20px;
+      }
+      #print-header { margin-bottom: 16px; }
+      #print-area {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .barcode-card {
+        border: 1px solid #ccc;
+        page-break-inside: avoid;
+      }
+    }
+
+    /* Loading & empty */
+    .loading-row td, .empty-row td {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+    .alert { display: none; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 13px; }
+    .alert-error { display: block; background: rgba(255,95,95,0.1); border: 1px solid rgba(255,95,95,0.2); color: var(--error); }
+  </style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="site-header">
+  <div class="header-inner">
+    <a href="index.html" class="header-logo">
+      <div class="header-logo-icon">🏛️</div>
+      <div class="header-logo-text">
+        <span class="title">Inventaris Barang</span>
+        <span class="subtitle">Kecamatan Tenjo — Kab. Bogor</span>
+      </div>
+    </a>
+    <a href="index.html" class="btn-back">← Kembali</a>
+  </div>
+</header>
+
+<!-- Main -->
+<main class="main-content">
+
+  <div class="page-header">
+    <div>
+      <h1>🏷️ Cetak Barcode Barang</h1>
+      <p>Pilih barang lalu cetak label barcode berdasarkan Kode Barang</p>
+    </div>
+  </div>
+
+  <div class="alert" id="alert-box"></div>
+
+  <!-- Filter -->
+  <div class="filter-bar">
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="search-input" placeholder="Cari nama barang...">
+    </div>
+    <div>
+      <label>KIB &nbsp;</label>
+      <select id="filter-kib">
+        <option value="">Semua KIB</option>
+        <option value="KIB A">KIB A — Tanah</option>
+        <option value="KIB B">KIB B — Peralatan & Mesin</option>
+        <option value="KIB C">KIB C — Gedung & Bangunan</option>
+        <option value="KIB E">KIB E — Aset Tetap Lainnya</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Tabel pilih barang -->
+  <div class="aset-list">
+    <div class="check-all-wrap">
+      <input type="checkbox" id="check-all">
+      <label for="check-all">Pilih semua yang tampil</label>
+      <span style="margin-left:auto" class="selected-count">Dipilih: <span id="count-selected">0</span> barang</span>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:40px"></th>
+          <th>Nama Barang</th>
+          <th>KIB</th>
+          <th>Kode Barang</th>
+          <th>Tahun</th>
+        </tr>
+      </thead>
+      <tbody id="aset-tbody">
+        <tr class="loading-row"><td colspan="5">⏳ Memuat data...</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Tombol cetak -->
+  <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+    <button class="btn btn-primary" id="btn-preview" onclick="bukaPreview()">
+      🏷️ Preview & Cetak Barcode
+    </button>
+    <span style="font-size:12px; color:var(--text-dim)">Pilih minimal 1 barang</span>
+  </div>
+
+</main>
+
+<!-- Modal Preview -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-title">🏷️ Preview Label Barcode</div>
+    <div class="modal-desc" id="modal-desc">—</div>
+
+    <!-- Print area -->
+    <div id="print-section">
+      <div id="print-header" style="display:none">
+        <div style="font-size:11px;color:#555;margin-bottom:8px">
+          INVENTARIS BARANG — KECAMATAN TENJO, KAB. BOGOR
+        </div>
+      </div>
+      <div id="print-area"></div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="tutupModal()">Tutup</button>
+      <button class="btn btn-primary" onclick="cetakBarcode()">🖨️ Cetak</button>
+    </div>
+  </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+<script src="auth.js"></script>
+<script src="app.js"></script>
+<script>
+  let semuaAset = [];
+
+  // Load data aset dari Supabase
+  async function loadBarcode(filter = {}) {
+    const tbody = document.getElementById('aset-tbody');
+    tbody.innerHTML = '<tr class="loading-row"><td colspan="5">⏳ Memuat data...</td></tr>';
+
+    try {
+      let query = db.from('aset').select('id,nama_barang,merk_type,kib,kode_barang,tahun_perolehan')
+        .order('kib').order('nama_barang');
+      if (filter.kib)    query = query.eq('kib', filter.kib);
+      if (filter.search) query = query.ilike('nama_barang', `%${filter.search}%`);
+
+      const { data, error } = await query;
+      if (error) throw error;
+
+      semuaAset = data || [];
+      renderAsetList(semuaAset);
+    } catch (err) {
+      tbody.innerHTML = `<tr class="empty-row"><td colspan="5">❌ Gagal memuat: ${err.message}</td></tr>`;
+    }
+  }
+
+  function renderAsetList(data) {
+    const tbody = document.getElementById('aset-tbody');
+    if (!data || data.length === 0) {
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="5">📭 Tidak ada data ditemukan.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = data.map(row => {
+      const kibClass = 'kib-' + (row.kib || '').replace(' ', '-').toLowerCase();
+      return `
+        <tr data-id="${row.id}">
+          <td><input type="checkbox" class="cb-aset" data-id="${row.id}"></td>
+          <td>
+            <div class="nama-barang">${escH(row.nama_barang)}</div>
+            ${row.merk_type ? `<div class="sub-info">${escH(row.merk_type)}</div>` : ''}
+          </td>
+          <td><span class="kib-badge ${kibClass}">${escH(row.kib)}</span></td>
+          <td class="kode-info">${escH(row.kode_barang) || '-'}</td>
+          <td>${row.tahun_perolehan || '-'}</td>
+        </tr>
+      `;
+    }).join('');
+
+    // Update count saat checkbox berubah
+    document.querySelectorAll('.cb-aset').forEach(cb => {
+      cb.addEventListener('change', updateCount);
+    });
+
+    // Klik baris = toggle checkbox
+    document.querySelectorAll('#aset-tbody tr').forEach(tr => {
+      tr.addEventListener('click', e => {
+        if (e.target.type === 'checkbox') return;
+        const cb = tr.querySelector('.cb-aset');
+        if (cb) { cb.checked = !cb.checked; updateCount(); }
+      });
+    });
+  }
+
+  function escH(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function updateCount() {
+    const n = document.querySelectorAll('.cb-aset:checked').length;
+    document.getElementById('count-selected').textContent = n;
+    // highlight baris yang dipilih
+    document.querySelectorAll('#aset-tbody tr').forEach(tr => {
+      const cb = tr.querySelector('.cb-aset');
+      tr.classList.toggle('selected', cb && cb.checked);
+    });
+  }
+
+  // Check all
+  document.getElementById('check-all').addEventListener('change', function () {
+    document.querySelectorAll('.cb-aset').forEach(cb => { cb.checked = this.checked; });
+    updateCount();
+  });
+
+  // Filter
+  let filterTimeout;
+  document.getElementById('search-input').addEventListener('input', function () {
+    clearTimeout(filterTimeout);
+    filterTimeout = setTimeout(() => applyFilter(), 400);
+  });
+  document.getElementById('filter-kib').addEventListener('change', applyFilter);
+
+  function applyFilter() {
+    loadBarcode({
+      search: document.getElementById('search-input').value.trim(),
+      kib: document.getElementById('filter-kib').value,
+    });
+  }
+
+  // Ambil barang yang dipilih
+  function getSelectedIds() {
+    return [...document.querySelectorAll('.cb-aset:checked')].map(cb => cb.dataset.id);
+  }
+
+  function bukaPreview() {
+    const ids = getSelectedIds();
+    if (ids.length === 0) {
+      alert('Pilih minimal 1 barang terlebih dahulu.');
+      return;
+    }
+
+    const dipilih = semuaAset.filter(a => ids.includes(a.id));
+    const printArea = document.getElementById('print-area');
+    printArea.innerHTML = '';
+
+    document.getElementById('modal-desc').textContent =
+      `${dipilih.length} label siap dicetak`;
+
+    dipilih.forEach(item => {
+      // Nilai barcode: gunakan kode_barang, fallback ke id
+      const barcodeValue = (item.kode_barang || item.id || '')
+        .replace(/[^A-Za-z0-9\-\.\$\/\+% ]/g, '') // hanya karakter valid Code128
+        .substring(0, 40);
+
+      const card = document.createElement('div');
+      card.className = 'barcode-card';
+      card.innerHTML = `
+        <div class="bc-instansi">Kec. Tenjo — Kab. Bogor</div>
+        <div class="bc-nama">${escH(item.nama_barang)}</div>
+        ${item.merk_type ? `<div class="bc-kode">${escH(item.merk_type)}</div>` : ''}
+        <svg class="barcode-svg"></svg>
+        <div class="bc-kode">${escH(barcodeValue || '-')}</div>
+        <div class="bc-tahun">Tahun: ${item.tahun_perolehan || '-'} | ${escH(item.kib)}</div>
+      `;
+      printArea.appendChild(card);
+
+      // Generate barcode ke SVG
+      if (barcodeValue) {
+        try {
+          JsBarcode(card.querySelector('.barcode-svg'), barcodeValue, {
+            format: 'CODE128',
+            width: 1.5,
+            height: 40,
+            displayValue: false,
+            margin: 4,
+            background: '#ffffff',
+            lineColor: '#000000',
+          });
+        } catch (e) {
+          card.querySelector('.barcode-svg').outerHTML =
+            '<div style="font-size:9px;color:#c00;padding:8px">Barcode error: kode tidak valid</div>';
+        }
+      }
+    });
+
+    document.getElementById('modal-overlay').classList.add('show');
+  }
+
+  function tutupModal() {
+    document.getElementById('modal-overlay').classList.remove('show');
+  }
+
+  function cetakBarcode() {
+    document.getElementById('print-header').style.display = 'block';
+    window.print();
+    document.getElementById('print-header').style.display = 'none';
+  }
+
+  // Tutup modal klik overlay
+  document.getElementById('modal-overlay').addEventListener('click', function(e) {
+    if (e.target === this) tutupModal();
+  });
+
+  // Init
+  document.addEventListener('DOMContentLoaded', () => loadBarcode());
+</script>
+
+</body>
+</html>
