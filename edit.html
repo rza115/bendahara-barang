@@ -385,9 +385,8 @@
 
   </main>
 
-  <!-- Supabase CDN — harus paling pertama -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <!-- Auth guard — setelah Supabase, sebelum app.js -->
+<!-- Supabase CDN — harus paling pertama -->
+<script src="supabase.js"></script>
 <!-- Auth guard inline — menggantikan auth.js agar tidak ada race condition -->
   <script>
     (async function () {
