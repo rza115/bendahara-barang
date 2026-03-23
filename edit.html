@@ -181,6 +181,81 @@
         </div>
       </div>
 
+      <div class="form-section" id="section-gedung" style="display:none">
+        <div class="form-section-title">🏢 Data Gedung & Bangunan (KIB C)</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Kondisi Bangunan</label>
+            <select id="kondisi_bangunan">
+              <option value="">— Pilih —</option>
+              <option>Permanen</option>
+              <option>Semi Permanen</option>
+              <option>Darurat</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Luas Lantai (m²)</label>
+            <input type="number" id="luas_lantai" placeholder="200">
+          </div>
+          <div class="form-group">
+            <label>Jumlah Lantai</label>
+            <input type="number" id="jumlah_lantai" placeholder="1" min="1">
+          </div>
+          <div class="form-group">
+            <label>Dokumen Gedung</label>
+            <select id="dokumen_gedung">
+              <option value="">— Pilih —</option>
+              <option>IMB/PBG Ada</option>
+              <option>IMB/PBG Tidak Ada</option>
+              <option>Dalam Proses</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>No. IMB / PBG</label>
+            <input type="text" id="no_imb">
+          </div>
+          <div class="form-group">
+            <label>Tanggal IMB / PBG</label>
+            <input type="date" id="tgl_imb">
+          </div>
+          <div class="form-group form-col-full">
+            <label>Letak / Alamat Bangunan</label>
+            <input type="text" id="letak_bangunan">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section" id="section-lainnya" style="display:none">
+        <div class="form-section-title">📦 Data Aset Tetap Lainnya (KIB E)</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Spesifikasi / Uraian</label>
+            <input type="text" id="spesifikasi">
+          </div>
+          <div class="form-group">
+            <label>Penerbit / Asal</label>
+            <input type="text" id="penerbit">
+          </div>
+          <div class="form-group">
+            <label>Judul / Nama Koleksi</label>
+            <input type="text" id="judul_koleksi">
+          </div>
+          <div class="form-group">
+            <label>Satuan</label>
+            <select id="satuan">
+              <option value="">— Pilih —</option>
+              <option>Buah</option>
+              <option>Unit</option>
+              <option>Set</option>
+              <option>Buku</option>
+              <option>Eksemplar</option>
+              <option>Ekor</option>
+              <option>Lainnya</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
       <div class="form-section">
         <div class="form-section-title">📄 Dokumen</div>
         <div class="form-grid">
