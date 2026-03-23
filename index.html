@@ -30,6 +30,9 @@
         <a href="tambah.html">
           <span>➕</span> <span>Tambah</span>
         </a>
+        <a href="barcode.html">
+          <span>🏷️</span> <span>Barcode</span>
+        </a>
         <span class="nav-user">👤 <span id="admin-user"></span></span>
         <button onclick="logoutAdmin()" class="btn-logout" title="Keluar">🚪 Keluar</button>
       </nav>
@@ -133,10 +136,10 @@
 
   </main>
 
-  <!-- Supabase CDN — harus paling pertama -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <!-- Auth guard — setelah Supabase, sebelum app.js -->
+  <!-- Auth guard — harus sebelum app.js -->
   <script src="auth.js"></script>
+  <!-- Supabase CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="app.js"></script>
 
 </body>
