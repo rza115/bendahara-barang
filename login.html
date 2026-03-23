@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Admin — Inventaris Kecamatan Tenjo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0f1117;
+      --surface: #181c27;
+      --border: #252a38;
+      --border-light: #2e3447;
+      --accent: #4f7eff;
+      --accent-hover: #6b93ff;
+      --accent-glow: rgba(79,126,255,0.25);
+      --text: #e8eaf0;
+      --text-muted: #7b82a0;
+      --text-dim: #4a5068;
+      --error: #ff5f5f;
+      --error-bg: rgba(255,95,95,0.08);
+      --success: #4cde9a;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Ambient background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 10%, rgba(79,126,255,0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 80% 90%, rgba(79,200,255,0.05) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    /* Grid texture */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 40px 40px;
+      opacity: 0.3;
+      pointer-events: none;
+    }
+
+    .wrapper {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 420px;
+      padding: 24px;
+      animation: fadeUp 0.5s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Brand */
+    .brand {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+
+    .brand-icon {
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, #1e2840, #252d4a);
+      border: 1px solid var(--border-light);
+      border-radius: 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      margin-bottom: 16px;
+      box-shadow: 0 0 0 4px rgba(79,126,255,0.08), 0 8px 24px rgba(0,0,0,0.4);
+    }
+
+    .brand-title {
+      font-family: 'Instrument Serif', serif;
+      font-size: 22px;
+      font-weight: 400;
+      color: var(--text);
+      letter-spacing: -0.3px;
+      line-height: 1.2;
+    }
+
+    .brand-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    /* Card */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border-light);
+      border-radius: 20px;
+      padding: 32px;
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.03) inset,
+        0 24px 48px rgba(0,0,0,0.5);
+    }
+
+    .card-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .card-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 28px;
+    }
+
+    /* Form */
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-bottom: 8px;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 15px;
+      pointer-events: none;
+      opacity: 0.5;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border-light);
+      border-radius: 10px;
+      padding: 12px 14px 12px 42px;
+      font-family: inherit;
+      font-size: 14px;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    }
+
+    input:focus {
+      border-color: var(--accent);
+      background: rgba(79,126,255,0.05);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    input::placeholder { color: var(--text-dim); }
+
+    /* Toggle password */
+    .toggle-pw {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 15px;
+      opacity: 0.4;
+      transition: opacity 0.2s;
+      padding: 4px;
+    }
+    .toggle-pw:hover { opacity: 0.8; }
+
+    /* Error */
+    .error-msg {
+      display: none;
+      background: var(--error-bg);
+      border: 1px solid rgba(255,95,95,0.2);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: var(--error);
+      margin-bottom: 18px;
+      align-items: center;
+      gap: 8px;
+    }
+    .error-msg.show { display: flex; }
+
+    /* Button */
+    .btn-login {
+      width: 100%;
+      padding: 13px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+      box-shadow: 0 4px 16px rgba(79,126,255,0.3);
+      position: relative;
+      overflow: hidden;
+      margin-top: 4px;
+    }
+
+    .btn-login:hover {
+      background: var(--accent-hover);
+      box-shadow: 0 6px 20px rgba(79,126,255,0.4);
+    }
+
+    .btn-login:active { transform: scale(0.98); }
+
+    .btn-login:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-login .spinner {
+      display: none;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      margin: 0 auto;
+    }
+
+    .btn-login.loading .btn-text { display: none; }
+    .btn-login.loading .spinner { display: block; }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Footer */
+    .footer-note {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+
+    /* Shake animation on wrong password */
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-6px); }
+      40% { transform: translateX(6px); }
+      60% { transform: translateX(-4px); }
+      80% { transform: translateX(4px); }
+    }
+
+    .shake { animation: shake 0.4s ease; }
+  </style>
+</head>
+<body>
+
+<div class="wrapper">
+
+  <div class="brand">
+    <div class="brand-icon">🏛️</div>
+    <div class="brand-title">Inventaris Barang</div>
+    <div class="brand-subtitle">Kecamatan Tenjo — Kab. Bogor</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Masuk sebagai Admin</div>
+    <div class="card-desc">Akses terbatas untuk petugas yang berwenang.</div>
+
+    <div class="error-msg" id="error-msg">
+      <span>⚠️</span>
+      <span id="error-text">Username atau password salah.</span>
+    </div>
+
+    <div class="form-group">
+      <label>Username</label>
+      <div class="input-wrap">
+        <span class="input-icon">👤</span>
+        <input type="text" id="username" placeholder="Masukkan username" autocomplete="username">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Password</label>
+      <div class="input-wrap">
+        <span class="input-icon">🔒</span>
+        <input type="password" id="password" placeholder="Masukkan password" autocomplete="current-password">
+        <button class="toggle-pw" id="toggle-pw" type="button" title="Tampilkan password">👁️</button>
+      </div>
+    </div>
+
+    <button class="btn-login" id="btn-login">
+      <span class="btn-text">Masuk</span>
+      <div class="spinner"></div>
+    </button>
+
+    <div class="footer-note">
+      Lupa password? Hubungi administrator sistem.
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // ============================================
+  // KONFIGURASI AKUN ADMIN
+  // Ganti username & password di sini
+  // ============================================
+  const ADMIN_ACCOUNTS = [
+    { username: 'admin',   password: 'tenjo2025' },
+    { username: 'bendahara', password: 'kectenjo#1' },
+  ];
+
+  const SESSION_KEY = 'inventaris_auth';
+  const SESSION_DURATION_MS = 8 * 60 * 60 * 1000; // 8 jam
+
+  // Kalau sudah login, langsung ke index
+  function checkSession() {
+    const raw = sessionStorage.getItem(SESSION_KEY);
+    if (!raw) return;
+    try {
+      const s = JSON.parse(raw);
+      if (s.exp && Date.now() < s.exp) {
+        window.location.replace('index.html');
+      } else {
+        sessionStorage.removeItem(SESSION_KEY);
+      }
+    } catch { sessionStorage.removeItem(SESSION_KEY); }
+  }
+  checkSession();
+
+  // Toggle show/hide password
+  const pwInput = document.getElementById('password');
+  document.getElementById('toggle-pw').addEventListener('click', () => {
+    pwInput.type = pwInput.type === 'password' ? 'text' : 'password';
+  });
+
+  // Login
+  document.getElementById('btn-login').addEventListener('click', doLogin);
+  document.getElementById('password').addEventListener('keydown', e => {
+    if (e.key === 'Enter') doLogin();
+  });
+  document.getElementById('username').addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('password').focus();
+  });
+
+  function doLogin() {
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value;
+    const btn = document.getElementById('btn-login');
+    const errorEl = document.getElementById('error-msg');
+    const errorText = document.getElementById('error-text');
+
+    if (!username || !password) {
+      showError('Username dan password wajib diisi.');
+      return;
+    }
+
+    // Loading state
+    btn.disabled = true;
+    btn.classList.add('loading');
+    errorEl.classList.remove('show');
+
+    // Simulasi delay (bisa dihapus)
+    setTimeout(() => {
+      const match = ADMIN_ACCOUNTS.find(
+        a => a.username === username && a.password === password
+      );
+
+      if (match) {
+        // Simpan sesi
+        const session = {
+          user: username,
+          exp: Date.now() + SESSION_DURATION_MS
+        };
+        sessionStorage.setItem(SESSION_KEY, JSON.stringify(session));
+        window.location.replace('index.html');
+      } else {
+        btn.disabled = false;
+        btn.classList.remove('loading');
+        showError('Username atau password salah.');
+        document.querySelector('.card').classList.add('shake');
+        setTimeout(() => document.querySelector('.card').classList.remove('shake'), 400);
+      }
+    }, 600);
+  }
+
+  function showError(msg) {
+    const errorEl = document.getElementById('error-msg');
+    document.getElementById('error-text').textContent = msg;
+    errorEl.classList.add('show');
+  }
+</script>
+
+</body>
+</html>
