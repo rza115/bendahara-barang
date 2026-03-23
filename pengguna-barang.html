@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pengguna Barang — Inventaris Kecamatan Tenjo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .status-badge { display:inline-block; padding:3px 10px; border-radius:20px; font-size:11px; font-weight:600; }
+    .status-aktif { background:rgba(76,222,154,0.12); color:#4cde9a; }
+    .status-tidak-aktif { background:rgba(255,188,79,0.12); color:#ffbc4f; }
+    .status-pensiun { background:rgba(160,130,255,0.12); color:#a082ff; }
+
+    .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:200; align-items:center; justify-content:center; backdrop-filter:blur(4px); overflow-y:auto; }
+    .modal-overlay.show { display:flex; }
+    .modal { background:#181c27; border:1px solid #2e3447; border-radius:16px; padding:28px; width:90%; max-width:600px; max-height:90vh; overflow-y:auto; margin:auto; }
+    .modal-title { font-size:16px; font-weight:700; margin-bottom:4px; }
+    .modal-desc { font-size:13px; color:#7b82a0; margin-bottom:20px; }
+    .modal-footer { display:flex; gap:10px; justify-content:flex-end; margin-top:24px; }
+
+    .form-group { margin-bottom:16px; }
+    .form-group label { display:block; font-size:12px; font-weight:600; color:#7b82a0; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; }
+    .form-group input, .form-group select, .form-group textarea {
+      width:100%; background:rgba(255,255,255,0.04); border:1px solid #2e3447;
+      border-radius:9px; padding:10px 14px; font-family:inherit; font-size:13px;
+      color:#e8eaf0; outline:none; transition:border-color 0.2s;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color:#4f7eff; }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+
+    .file-upload-area {
+      background:rgba(79,126,255,0.06); border:2px dashed #4f7eff; border-radius:9px;
+      padding:20px; text-align:center; cursor:pointer; transition:all 0.2s;
+    }
+    .file-upload-area:hover { background:rgba(79,126,255,0.1); border-color:#6b93ff; }
+    .file-upload-area.dragover { background:rgba(79,126,255,0.15); border-color:#6b93ff; }
+    .file-upload-area input[type="file"] { display:none; }
+    .file-upload-icon { font-size:24px; margin-bottom:8px; }
+    .file-upload-text { font-size:13px; color:#4f7eff; font-weight:600; }
+    .file-upload-hint { font-size:11px; color:#7b82a0; margin-top:6px; }
+
+    .dokumen-list { background:rgba(255,255,255,0.02); border:1px solid #2e3447; border-radius:9px; padding:12px; margin-top:12px; }
+    .dokumen-item { display:flex; align-items:center; justify-content:space-between; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.05); font-size:13px; }
+    .dokumen-item:last-child { border-bottom:none; }
+    .dokumen-nama { font-weight:500; color:#e8eaf0; }
+    .dokumen-info { font-size:11px; color:#7b82a0; }
+    .btn-dokumen { display:inline-flex; gap:6px; }
+    .btn-download { background:rgba(79,126,255,0.1); color:#4f7eff; border:none; padding:4px 12px; border-radius:6px; cursor:pointer; font-size:11px; font-family:inherit; font-weight:600; }
+    .btn-download:hover { background:rgba(79,126,255,0.2); }
+    .btn-hapus-dokumen { background:rgba(255,95,95,0.1); color:#ff5f5f; border:none; padding:4px 8px; border-radius:6px; cursor:pointer; font-size:11px; font-family:inherit; }
+    .btn-hapus-dokumen:hover { background:rgba(255,95,95,0.2); }
+
+    .btn { padding:9px 18px; border-radius:9px; font-size:13px; font-weight:600; font-family:inherit; cursor:pointer; border:none; display:inline-flex; align-items:center; gap:6px; }
+    .btn-primary { background:#4f7eff; color:#fff; }
+    .btn-primary:hover { background:#6b93ff; }
+    .btn-outline { background:transparent; border:1px solid #2e3447; color:#e8eaf0; }
+    .btn-outline:hover { background:rgba(255,255,255,0.06); }
+    .btn-edit-p { background:rgba(79,126,255,0.1); color:#4f7eff; border:none; font-size:12px; padding:5px 10px; border-radius:6px; cursor:pointer; font-family:inherit; }
+    .btn-edit-p:hover { background:rgba(79,126,255,0.2); }
+    .btn-hapus-p { background:rgba(255,95,95,0.1); color:#ff5f5f; border:none; font-size:12px; padding:5px 10px; border-radius:6px; cursor:pointer; font-family:inherit; }
+    .btn-hapus-p:hover { background:rgba(255,95,95,0.2); }
+
+    .info-box { background:rgba(79,126,255,0.06); border:1px solid rgba(79,126,255,0.15); border-radius:10px; padding:12px 16px; font-size:13px; color:#7b82a0; margin-bottom:16px; }
+    .info-box strong { color:#e8eaf0; }
+
+    .filter-bar { background:#181c27; border:1px solid #2e3447; border-radius:12px; padding:14px 16px; display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin-bottom:18px; }
+    .filter-bar select, .filter-bar input { background:rgba(255,255,255,0.05); border:1px solid #2e3447; color:#e8eaf0; padding:8px 12px; border-radius:8px; font-size:13px; font-family:inherit; outline:none; }
+    .search-wrap { position:relative; flex:1; min-width:180px; }
+    .search-icon { position:absolute; left:10px; top:50%; transform:translateY(-50%); opacity:0.4; }
+    .search-wrap input { width:100%; padding-left:32px; }
+
+    .table-wrap { background:#181c27; border:1px solid #2e3447; border-radius:12px; overflow:hidden; }
+    table { width:100%; border-collapse:collapse; }
+    th { background:rgba(255,255,255,0.03); padding:12px 16px; font-size:11px; font-weight:600; color:#7b82a0; text-transform:uppercase; border-bottom:1px solid #2e3447; text-align:left; }
+    td { padding:12px 16px; font-size:13px; border-bottom:1px solid rgba(255,255,255,0.04); vertical-align:middle; }
+    tr:last-child td { border-bottom:none; }
+    tr:hover td { background:rgba(255,255,255,0.015); }
+    .empty-td { text-align:center; padding:40px; color:#4a5068; }
+
+    .nama-pengguna { font-weight:500; }
+    .sub-pengguna { font-size:11px; color:#7b82a0; margin-top:2px; }
+    .nama-barang-p { font-weight:500; font-size:13px; }
+    .sub-barang { font-size:11px; color:#7b82a0; }
+
+    .page-header { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:22px; flex-wrap:wrap; }
+    .page-header h1 { font-size:20px; font-weight:700; margin-bottom:4px; }
+    .page-header p { font-size:13px; color:#7b82a0; }
+    .alert { display:none; padding:12px 16px; border-radius:8px; margin-bottom:16px; font-size:13px; }
+    .alert-success { display:block; background:rgba(76,222,154,0.1); border:1px solid rgba(76,222,154,0.2); color:#4cde9a; }
+    .alert-error { display:block; background:rgba(255,95,95,0.1); border:1px solid rgba(255,95,95,0.2); color:#ff5f5f; }
+  </style>
+</head>
+<body data-page="pengguna">
+
+<div class="loading-overlay" id="loading"><div class="loading-spinner"></div></div>
+
+<!-- Header -->
+<header class="site-header">
+  <div class="header-inner">
+    <a href="index.html" class="header-logo">
+      <div class="header-logo-icon">🏛️</div>
+      <div class="header-logo-text">
+        <span class="title">Inventaris Barang</span>
+        <span class="subtitle">Kecamatan Tenjo — Kab. Bogor</span>
+      </div>
+    </a>
+    <nav class="header-nav">
+      <a href="index.html"><span>📋</span> <span>Daftar Aset</span></a>
+      <a href="tambah.html"><span>➕</span> <span>Tambah</span></a>
+      <a href="barcode.html"><span>🏷️</span> <span>Barcode</span></a>
+      <a href="peminjaman.html"><span>🤝</span> <span>Peminjaman</span></a>
+      <a href="pengguna-barang.html" class="active"><span>👤</span> <span>Pengguna</span></a>
+      <span class="nav-user">👤 <span id="admin-user"></span></span>
+      <button onclick="logoutAdmin()" class="btn-logout" title="Keluar">🚪 Keluar</button>
+    </nav>
+  </div>
+</header>
+
+<main class="main-content">
+
+  <div class="alert" id="alert-box"></div>
+
+  <div class="page-header">
+    <div>
+      <h1>👤 Pengguna Barang</h1>
+      <p>Catat pengguna barang dengan dokumen Pakta Integritas & SPTJM</p>
+    </div>
+    <button class="btn btn-primary" onclick="bukaTambahPengguna()">➕ Tambah Pengguna</button>
+  </div>
+
+  <!-- Filter -->
+  <div class="filter-bar">
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="search-input" placeholder="Cari nama pengguna atau barang...">
+    </div>
+    <select id="filter-status">
+      <option value="">Semua Status</option>
+      <option value="aktif">Aktif</option>
+      <option value="tidak aktif">Tidak Aktif</option>
+      <option value="pensiun">Pensiun</option>
+    </select>
+  </div>
+
+  <!-- Tabel -->
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>Barang</th>
+          <th>Pengguna</th>
+          <th>Tgl Serah</th>
+          <th>Masa Jabatan</th>
+          <th>Status</th>
+          <th>Dokumen</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="pengguna-tbody">
+        <tr><td colspan="8" class="empty-td">⏳ Memuat data...</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</main>
+
+<!-- Modal Tambah/Edit Pengguna -->
+<div class="modal-overlay" id="modal-pengguna">
+  <div class="modal">
+    <div class="modal-title" id="modal-title">➕ Tambah Pengguna Barang</div>
+    <div class="modal-desc">Isi data pengguna dan barang yang digunakan</div>
+
+    <div class="info-box">
+      Dokumen Pakta Integritas & SPTJM dapat diunggah setelah data pengguna disimpan.
+    </div>
+
+    <div class="form-group">
+      <label>Barang *</label>
+      <select id="p-aset-id">
+        <option value="">-- Pilih Barang --</option>
+      </select>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Nama Pengguna *</label>
+        <input type="text" id="p-nama" placeholder="Nama lengkap">
+      </div>
+      <div class="form-group">
+        <label>NIP *</label>
+        <input type="text" id="p-nip" placeholder="NIP">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Jabatan/Unit *</label>
+      <input type="text" id="p-jabatan" placeholder="Misal: Kasi Trantibum">
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Tgl Mulai Pengguna *</label>
+        <input type="date" id="p-tgl-mulai">
+      </div>
+      <div class="form-group">
+        <label>Tgl Serah Barang *</label>
+        <input type="date" id="p-tgl-serah">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Masa Jabatan Akhir (opsional)</label>
+      <input type="date" id="p-masa-akhir">
+    </div>
+
+    <div class="form-group">
+      <label>Status</label>
+      <select id="p-status">
+        <option value="aktif">Aktif</option>
+        <option value="tidak aktif">Tidak Aktif</option>
+        <option value="pensiun">Pensiun</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Catatan</label>
+      <textarea id="p-catatan" placeholder="Catatan tambahan..."></textarea>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="tutupModal('modal-pengguna')">Batal</button>
+      <button class="btn btn-primary" onclick="simpanPengguna()">💾 Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Upload Dokumen -->
+<div class="modal-overlay" id="modal-dokumen">
+  <div class="modal">
+    <div class="modal-title">📄 Upload Dokumen</div>
+    <div class="modal-desc" id="dokumen-desc">Pengguna: —</div>
+
+    <div class="form-group">
+      <label>Jenis Dokumen *</label>
+      <select id="d-jenis">
+        <option value="">-- Pilih Jenis --</option>
+        <option value="Pakta Integritas">📋 Pakta Integritas</option>
+        <option value="SPTJM">📋 SPTJM (Surat Pertanggungjawaban Mutlak)</option>
+        <option value="Berita Acara Serah Terima">📋 Berita Acara Serah Terima</option>
+        <option value="Lainnya">📋 Lainnya</option>
+      </select>
+    </div>
+
+    <div class="file-upload-area" id="file-upload-area">
+      <div class="file-upload-icon">📁</div>
+      <div class="file-upload-text">Klik atau drag file PDF di sini</div>
+      <div class="file-upload-hint">Max 10 MB</div>
+      <input type="file" id="file-input" accept=".pdf" data-max-size="10485760">
+    </div>
+
+    <div class="dokumen-list" id="dokumen-preview" style="display:none">
+      <div style="font-size:11px;color:#7b82a0;margin-bottom:8px">File dipilih:</div>
+      <div id="preview-nama" style="color:#e8eaf0;font-weight:500;font-size:13px">—</div>
+    </div>
+
+    <div id="dokumen-list-existing" style="margin-top:16px"></div>
+
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="tutupModal('modal-dokumen')">Batal</button>
+      <button class="btn btn-primary" onclick="simpanDokumen()" id="btn-upload-dokumen">📤 Upload</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="auth.js"></script>
+<script src="app.js"></script>
+<script>
+  let semuaPengguna = [];
+  let idPenggunaSaatIni = null;
+  let fileDipilih = null;
+
+  // ── LOAD DATA ──────────────────────────────────────────
+  async function loadPengguna(filter = {}) {
+    showLoading(true);
+    try {
+      let query = db
+        .from('pengguna_barang')
+        .select(`
+          id, nama_pengguna, nip, jabatan_unit,
+          tgl_mulai_pengguna, tgl_serah_barang, masa_jabatan_akhir,
+          status_pengguna, catatan,
+          aset ( id, nama_barang, merk_type, kib ),
+          dokumen_pengguna ( id, jenis_dokumen, nama_file, file_size )
+        `)
+        .order('tgl_serah_barang', { ascending: false });
+
+      if (filter.status) query = query.eq('status_pengguna', filter.status);
+
+      const { data, error } = await query;
+      if (error) throw error;
+
+      let hasil = data || [];
+
+      if (filter.search) {
+        const q = filter.search.toLowerCase();
+        hasil = hasil.filter(r =>
+          r.nama_pengguna?.toLowerCase().includes(q) ||
+          r.aset?.nama_barang?.toLowerCase().includes(q)
+        );
+      }
+
+      semuaPengguna = hasil;
+      renderTabel(hasil);
+    } catch (err) {
+      showAlert('Gagal memuat data: ' + err.message, 'error');
+    } finally {
+      showLoading(false);
+    }
+  }
+
+  function renderTabel(data) {
+    const tbody = document.getElementById('pengguna-tbody');
+    if (!data || data.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="8" class="empty-td">📭 Belum ada data pengguna.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = data.map((r, i) => {
+      const statusMap = {
+        'aktif': '<span class="status-badge status-aktif">✅ Aktif</span>',
+        'tidak aktif': '<span class="status-badge status-tidak-aktif">⏸️ Tidak Aktif</span>',
+        'pensiun': '<span class="status-badge status-pensiun">🏆 Pensiun</span>',
+      };
+      const dokumenCount = (r.dokumen_pengguna || []).length;
+      return `
+        <tr>
+          <td>${i + 1}</td>
+          <td>
+            <div class="nama-barang-p">${escH(r.aset?.nama_barang || '-')}</div>
+            <div class="sub-barang">${escH(r.aset?.kib || '')}</div>
+          </td>
+          <td>
+            <div class="nama-pengguna">${escH(r.nama_pengguna)}</div>
+            <div class="sub-pengguna">${escH(r.jabatan_unit)}${r.nip ? ' · ' + escH(r.nip) : ''}</div>
+          </td>
+          <td>${formatTgl(r.tgl_serah_barang)}</td>
+          <td>${formatTgl(r.tgl_mulai_pengguna)} — ${r.masa_jabatan_akhir ? formatTgl(r.masa_jabatan_akhir) : 'Sekarang'}</td>
+          <td>${statusMap[r.status_pengguna] || r.status_pengguna}</td>
+          <td>
+            <button class="btn-edit-p" onclick="bukaUploadDokumen('${r.id}','${escH(r.nama_pengguna)}')" title="Upload dokumen">
+              📄 ${dokumenCount > 0 ? '(' + dokumenCount + ')' : 'Upload'}
+            </button>
+          </td>
+          <td style="white-space:nowrap">
+            <button class="btn-edit-p" onclick="bukaEditPengguna('${r.id}')">✏️</button>
+            <button class="btn-hapus-p" onclick="hapusPengguna('${r.id}')">🗑️</button>
+          </td>
+        </tr>`;
+    }).join('');
+  }
+
+  // ── LOAD DROPDOWN ASET ─────────────────────────────────
+  async function loadDropdownAset() {
+    const { data } = await db.from('aset').select('id,nama_barang,kib').order('nama_barang');
+    const sel = document.getElementById('p-aset-id');
+    if (data) {
+      data.forEach(a => {
+        const opt = document.createElement('option');
+        opt.value = a.id;
+        opt.textContent = `${a.nama_barang} [${a.kib}]`;
+        sel.appendChild(opt);
+      });
+    }
+  }
+
+  // ── MODAL PENGGUNA ──────────────────────────────────────
+  function bukaTambahPengguna() {
+    idPenggunaSaatIni = null;
+    document.getElementById('modal-title').textContent = '➕ Tambah Pengguna Barang';
+    document.getElementById('p-aset-id').value = '';
+    document.getElementById('p-nama').value = '';
+    document.getElementById('p-nip').value = '';
+    document.getElementById('p-jabatan').value = '';
+    document.getElementById('p-tgl-mulai').value = new Date().toISOString().split('T')[0];
+    document.getElementById('p-tgl-serah').value = new Date().toISOString().split('T')[0];
+    document.getElementById('p-masa-akhir').value = '';
+    document.getElementById('p-status').value = 'aktif';
+    document.getElementById('p-catatan').value = '';
+    document.getElementById('modal-pengguna').classList.add('show');
+  }
+
+  function bukaEditPengguna(id) {
+    const r = semuaPengguna.find(x => x.id === id);
+    if (!r) return;
+    idPenggunaSaatIni = id;
+    document.getElementById('modal-title').textContent = '✏️ Edit Pengguna Barang';
+    document.getElementById('p-aset-id').value = r.aset_id;
+    document.getElementById('p-nama').value = r.nama_pengguna;
+    document.getElementById('p-nip').value = r.nip;
+    document.getElementById('p-jabatan').value = r.jabatan_unit;
+    document.getElementById('p-tgl-mulai').value = r.tgl_mulai_pengguna;
+    document.getElementById('p-tgl-serah').value = r.tgl_serah_barang;
+    document.getElementById('p-masa-akhir').value = r.masa_jabatan_akhir || '';
+    document.getElementById('p-status').value = r.status_pengguna;
+    document.getElementById('p-catatan').value = r.catatan || '';
+    document.getElementById('modal-pengguna').classList.add('show');
+  }
+
+  async function simpanPengguna() {
+    const asetId = document.getElementById('p-aset-id').value;
+    const nama = document.getElementById('p-nama').value.trim();
+    const nip = document.getElementById('p-nip').value.trim();
+    const jabatan = document.getElementById('p-jabatan').value.trim();
+    const tglMulai = document.getElementById('p-tgl-mulai').value;
+    const tglSerah = document.getElementById('p-tgl-serah').value;
+    const masaAkhir = document.getElementById('p-masa-akhir').value || null;
+    const status = document.getElementById('p-status').value;
+    const catatan = document.getElementById('p-catatan').value.trim();
+
+    if (!asetId || !nama || !nip || !jabatan || !tglMulai || !tglSerah) {
+      alert('Mohon isi semua field yang wajib (*).');
+      return;
+    }
+
+    const data = {
+      aset_id: asetId,
+      nama_pengguna: nama, nip, jabatan_unit: jabatan,
+      tgl_mulai_pengguna: tglMulai,
+      tgl_serah_barang: tglSerah,
+      masa_jabatan_akhir: masaAkhir,
+      status_pengguna: status,
+      catatan,
+    };
+
+    let error;
+    if (idPenggunaSaatIni) {
+      ({ error } = await db.from('pengguna_barang').update(data).eq('id', idPenggunaSaatIni));
+    } else {
+      ({ error } = await db.from('pengguna_barang').insert([data]));
+    }
+
+    if (error) { showAlert('Gagal simpan: ' + error.message, 'error'); return; }
+    tutupModal('modal-pengguna');
+    showAlert('✅ Data berhasil disimpan!', 'success');
+    loadPengguna();
+  }
+
+  // ── MODAL DOKUMEN ──────────────────────────────────────
+  function bukaUploadDokumen(id, nama) {
+    idPenggunaSaatIni = id;
+    const r = semuaPengguna.find(x => x.id === id);
+    document.getElementById('dokumen-desc').textContent = `Pengguna: ${nama}`;
+
+    // Tampilkan dokumen yang sudah ada
+    const listExisting = document.getElementById('dokumen-list-existing');
+    if (r && r.dokumen_pengguna && r.dokumen_pengguna.length > 0) {
+      listExisting.innerHTML = `
+        <div class="dokumen-list">
+          <div style="font-size:11px;color:#7b82a0;margin-bottom:8px">Dokumen yang sudah diupload:</div>
+          ${r.dokumen_pengguna.map(d => `
+            <div class="dokumen-item">
+              <div>
+                <div class="dokumen-nama">📄 ${escH(d.jenis_dokumen)}</div>
+                <div class="dokumen-info">${escH(d.nama_file)}</div>
+              </div>
+              <div class="btn-dokumen">
+                <button class="btn-download" onclick="downloadDokumen('${d.id}')">⬇️ Download</button>
+                <button class="btn-hapus-dokumen" onclick="hapusDokumen('${d.id}')">🗑️</button>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    } else {
+      listExisting.innerHTML = '';
+    }
+
+    fileDipilih = null;
+    document.getElementById('d-jenis').value = '';
+    document.getElementById('file-input').value = '';
+    document.getElementById('dokumen-preview').style.display = 'none';
+    document.getElementById('modal-dokumen').classList.add('show');
+  }
+
+  // Drag & drop upload
+  const uploadArea = document.getElementById('file-upload-area');
+  const fileInput = document.getElementById('file-input');
+
+  uploadArea.addEventListener('click', () => fileInput.click());
+  uploadArea.addEventListener('dragover', e => {
+    e.preventDefault();
+    uploadArea.classList.add('dragover');
+  });
+  uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
+  uploadArea.addEventListener('drop', e => {
+    e.preventDefault();
+    uploadArea.classList.remove('dragover');
+    if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+  });
+
+  fileInput.addEventListener('change', e => {
+    if (e.target.files[0]) handleFile(e.target.files[0]);
+  });
+
+  function handleFile(f) {
+    const maxSize = 10 * 1024 * 1024;
+    if (f.type !== 'application/pdf') {
+      alert('Hanya file PDF yang diterima.');
+      return;
+    }
+    if (f.size > maxSize) {
+      alert('File terlalu besar (max 10 MB).');
+      return;
+    }
+    fileDipilih = f;
+    document.getElementById('preview-nama').textContent = f.name;
+    document.getElementById('dokumen-preview').style.display = 'block';
+  }
+
+  async function simpanDokumen() {
+    if (!fileDipilih) { alert('Pilih file PDF terlebih dahulu.'); return; }
+    const jenis = document.getElementById('d-jenis').value;
+    if (!jenis) { alert('Pilih jenis dokumen.'); return; }
+
+    const btn = document.getElementById('btn-upload-dokumen');
+    btn.disabled = true;
+    btn.textContent = '⏳ Uploading...';
+
+    const filePath = `dokumen/${idPenggunaSaatIni}/${Date.now()}_${fileDipilih.name}`;
+    const { error: uploadError } = await db.storage
+      .from('dokumen-barang')
+      .upload(filePath, fileDipilih);
+
+    if (uploadError) {
+      showAlert('Gagal upload file: ' + uploadError.message, 'error');
+      btn.disabled = false;
+      btn.textContent = '📤 Upload';
+      return;
+    }
+
+    const { error: dbError } = await db.from('dokumen_pengguna').insert([{
+      pengguna_barang_id: idPenggunaSaatIni,
+      jenis_dokumen: jenis,
+      nama_file: fileDipilih.name,
+      file_path: filePath,
+      file_size: fileDipilih.size,
+    }]);
+
+    btn.disabled = false;
+    btn.textContent = '📤 Upload';
+
+    if (dbError) { showAlert('Gagal simpan record: ' + dbError.message, 'error'); return; }
+    showAlert('✅ Dokumen berhasil diupload!', 'success');
+    loadPengguna();
+    tutupModal('modal-dokumen');
+  }
+
+  async function downloadDokumen(id) {
+    const d = await db.from('dokumen_pengguna').select('file_path').eq('id', id).single();
+    if (d.error) { alert('Gagal ambil file info'); return; }
+    const { data, error } = await db.storage.from('dokumen-barang').download(d.data.file_path);
+    if (error) { alert('Gagal download: ' + error.message); return; }
+    const url = URL.createObjectURL(data);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = d.data.file_path.split('/').pop();
+    a.click();
+  }
+
+  async function hapusDokumen(id) {
+    if (!confirm('Hapus dokumen ini?')) return;
+    const { error } = await db.from('dokumen_pengguna').delete().eq('id', id);
+    if (error) { showAlert('Gagal hapus: ' + error.message, 'error'); return; }
+    showAlert('🗑️ Dokumen dihapus.', 'success');
+    bukaUploadDokumen(idPenggunaSaatIni, 'Loading...');
+  }
+
+  async function hapusPengguna(id) {
+    if (!confirm('Hapus pengguna barang ini? Dokumen akan ikut terhapus.')) return;
+    const { error } = await db.from('pengguna_barang').delete().eq('id', id);
+    if (error) { showAlert('Gagal hapus: ' + error.message, 'error'); return; }
+    showAlert('🗑️ Data dihapus.', 'success');
+    loadPengguna();
+  }
+
+  // ── UTILS ──────────────────────────────────────────────
+  function tutupModal(id) { document.getElementById(id).classList.remove('show'); }
+  function escH(s) { return s ? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') : ''; }
+  function formatTgl(d) {
+    if (!d) return '-';
+    const dt = new Date(d);
+    return dt.toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' });
+  }
+
+  // Filter
+  let ft;
+  document.getElementById('search-input').addEventListener('input', function() {
+    clearTimeout(ft);
+    ft = setTimeout(() => applyFilter(), 400);
+  });
+  document.getElementById('filter-status').addEventListener('change', applyFilter);
+  function applyFilter() {
+    loadPengguna({
+      search: document.getElementById('search-input').value.trim(),
+      status: document.getElementById('filter-status').value,
+    });
+  }
+
+  // Tutup modal klik overlay
+  document.querySelectorAll('.modal-overlay').forEach(el => {
+    el.addEventListener('click', e => { if (e.target === el) el.classList.remove('show'); });
+  });
+
+  // Init
+  document.addEventListener('DOMContentLoaded', () => {
+    loadDropdownAset();
+    loadPengguna();
+  });
+</script>
+
+</body>
+</html>
