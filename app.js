@@ -181,16 +181,21 @@ function fillForm(data) {
   const fields = [
     'kib', 'kode_barang', 'id_barang', 'no_register', 'nama_barang',
     'merk_type', 'ukuran_cc', 'bahan', 'tahun_perolehan', 'cara_perolehan',
-    'sumber_dana', 'harga', 'jumlah', 'kondisi', 'status_barang',
-    'luas_tanah', 'letak_alamat', 'status_tanah', 'no_sertifikat',
-    'no_pabrik', 'no_rangka', 'no_mesin', 'no_polisi', 'no_bpkb',
+    'sumber_dana', 'harga', 'jumlah', 'kondisi', 'status_barang', 'status_aset',
     'tgl_buku', 'no_bast', 'tgl_bast', 'id_penerimaan',
     'lokasi', 'penggunaan', 'keterangan',
+    // KIB A
+    'luas_tanah', 'tahun_perolehan_tanah', 'letak_alamat', 'status_tanah',
+    'no_urut_sertifikat', 'tgl_sertifikat', 'no_sertifikat', 'penggunaan_tanah',
+    // KIB B
+    'no_pabrik', 'no_rangka', 'no_mesin', 'no_polisi', 'no_bpkb',
     // KIB C
-    'kondisi_bangunan', 'luas_lantai', 'jumlah_lantai',
-    'dokumen_gedung', 'no_imb', 'tgl_imb', 'letak_bangunan',
+    'kondisi_bangunan', 'luas_lantai', 'konstruksi_bertingkat', 'konstruksi_beton',
+    'letak_bangunan', 'tgl_imb', 'no_imb',
+    'status_tanah_gedung', 'no_kode_tanah', 'id_awal_tanah', 'status_sertifikat_tanah',
     // KIB E
-    'spesifikasi', 'penerbit', 'judul_koleksi', 'satuan',
+    'tahun_cetak', 'ukuran_aset', 'judul_koleksi', 'spesifikasi',
+    'asal_daerah', 'penerbit', 'bahan_aset', 'jenis_aset',
   ];
   fields.forEach(f => {
     const el = document.getElementById(f);
@@ -203,13 +208,20 @@ function getFormData() {
   const fields = [
     'kib', 'kode_barang', 'id_barang', 'no_register', 'nama_barang',
     'merk_type', 'ukuran_cc', 'bahan', 'cara_perolehan', 'sumber_dana',
-    'kondisi', 'status_barang', 'letak_alamat', 'status_tanah', 'no_sertifikat',
+    'kondisi', 'status_barang', 'status_aset', 'lokasi', 'penggunaan', 'keterangan',
+    'no_bast', 'id_penerimaan',
+    // KIB A
+    'letak_alamat', 'status_tanah', 'no_urut_sertifikat', 'tgl_sertifikat',
+    'no_sertifikat', 'penggunaan_tanah',
+    // KIB B
     'no_pabrik', 'no_rangka', 'no_mesin', 'no_polisi', 'no_bpkb',
-    'no_bast', 'id_penerimaan', 'lokasi', 'penggunaan', 'keterangan',
     // KIB C
-    'kondisi_bangunan', 'dokumen_gedung', 'no_imb', 'letak_bangunan',
+    'kondisi_bangunan', 'konstruksi_bertingkat', 'konstruksi_beton',
+    'letak_bangunan', 'no_imb', 'status_tanah_gedung',
+    'no_kode_tanah', 'id_awal_tanah', 'status_sertifikat_tanah',
     // KIB E
-    'spesifikasi', 'penerbit', 'judul_koleksi', 'satuan',
+    'spesifikasi', 'penerbit', 'judul_koleksi',
+    'asal_daerah', 'bahan_aset', 'jenis_aset', 'ukuran_aset',
   ];
   const result = {};
   fields.forEach(f => {
@@ -224,15 +236,19 @@ function getFormData() {
   const luasEl = document.getElementById('luas_tanah');
   const luasLantaiEl = document.getElementById('luas_lantai');
   const jumlahLantaiEl = document.getElementById('jumlah_lantai');
+  const tahunTanahEl = document.getElementById('tahun_perolehan_tanah');
+  const tahunCetakEl = document.getElementById('tahun_cetak');
   if (hargaEl) result.harga = parseInt(hargaEl.value.replace(/\D/g, '')) || 0;
   if (jumlahEl) result.jumlah = parseInt(jumlahEl.value) || 1;
   if (tahunEl) result.tahun_perolehan = parseInt(tahunEl.value) || null;
   if (luasEl) result.luas_tanah = parseFloat(luasEl.value) || null;
   if (luasLantaiEl) result.luas_lantai = parseFloat(luasLantaiEl.value) || null;
   if (jumlahLantaiEl) result.jumlah_lantai = parseInt(jumlahLantaiEl.value) || null;
+  if (tahunTanahEl) result.tahun_perolehan_tanah = parseInt(tahunTanahEl.value) || null;
+  if (tahunCetakEl) result.tahun_cetak = parseInt(tahunCetakEl.value) || null;
 
   // Tanggal
-  ['tgl_buku', 'tgl_bast', 'tgl_imb'].forEach(f => {
+  ['tgl_buku', 'tgl_bast', 'tgl_imb', 'tgl_sertifikat'].forEach(f => {
     const el = document.getElementById(f);
     result[f] = el?.value || null;
   });
