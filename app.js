@@ -6,8 +6,8 @@
 const SUPABASE_URL = 'https://ibektroxjjibniwidmpk.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_b-oL0WNdkqDjUFhepAkADw_uy9coRD6'; // anon public key
 
-const { createClient } = supabase;
-const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+// Gunakan client bersama dari auth guard (hindari double GoTrueClient)
+const db = window._authClient || supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ============================================
 // UTILITY
@@ -337,7 +337,8 @@ function initHargaFormat() {
 // INIT PER HALAMAN
 // ============================================
 
-document.addEventListener('DOMContentLoaded', async () => {
+// Jalankan langsung karena app.js di-load secara dinamis setelah DOM sudah siap
+(async () => {
   const page = document.body.dataset.page;
 
   if (page === 'index') {
