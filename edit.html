@@ -387,23 +387,7 @@
 
 <!-- Supabase CDN — harus paling pertama -->
   <script src="supabase.js"></script>
-  <script>
-    // Auth guard — cek session, lalu set window._authClient
-    window._appReady = (async function () {
-      const SUPABASE_URL = 'https://ibektroxjjibniwidmpk.supabase.co';
-      const SUPABASE_KEY = 'sb_publishable_b-oL0WNdkqDjUFhepAkADw_uy9coRD6';
-      window._authClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-      const { data: { session } } = await window._authClient.auth.getSession();
-      if (!session) { window.location.replace('login.html'); return false; }
-      const el = document.getElementById('admin-user');
-      if (el) el.textContent = session.user.email;
-      window.logoutAdmin = async function () {
-        await window._authClient.auth.signOut();
-        window.location.replace('login.html');
-      };
-      return true;
-    })();
-  </script>
+  <script src="auth.js"></script>
   <script src="app.js" defer></script>
 </body>
 </html>

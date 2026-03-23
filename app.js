@@ -380,4 +380,4 @@ function initHargaFormat() {
       showLoading(false);
     }
   }
-});
+})();
