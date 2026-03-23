@@ -189,76 +189,126 @@
       <div class="form-section" id="section-gedung" style="display:none">
         <div class="form-section-title">🏢 Data Gedung & Bangunan (KIB C)</div>
         <div class="form-grid">
+
           <div class="form-group">
             <label>Kondisi Bangunan</label>
             <select id="kondisi_bangunan">
               <option value="">— Pilih —</option>
-              <option>Permanen</option>
-              <option>Semi Permanen</option>
-              <option>Darurat</option>
+              <option value="B">B — Baik</option>
+              <option value="KB">KB — Kurang Baik</option>
+              <option value="RB">RB — Rusak Berat</option>
             </select>
           </div>
           <div class="form-group">
             <label>Luas Lantai (m²)</label>
             <input type="number" id="luas_lantai" placeholder="200">
           </div>
+
           <div class="form-group">
-            <label>Jumlah Lantai</label>
-            <input type="number" id="jumlah_lantai" placeholder="1" min="1">
-          </div>
-          <div class="form-group">
-            <label>Dokumen Gedung</label>
-            <select id="dokumen_gedung">
+            <label>Konstruksi — Bertingkat</label>
+            <select id="konstruksi_bertingkat">
               <option value="">— Pilih —</option>
-              <option>IMB/PBG Ada</option>
-              <option>IMB/PBG Tidak Ada</option>
-              <option>Dalam Proses</option>
+              <option value="Bertingkat">Bertingkat</option>
+              <option value="Tidak">Tidak Bertingkat</option>
             </select>
           </div>
           <div class="form-group">
-            <label>No. IMB / PBG</label>
-            <input type="text" id="no_imb" placeholder="Nomor IMB/PBG">
+            <label>Konstruksi — Beton</label>
+            <select id="konstruksi_beton">
+              <option value="">— Pilih —</option>
+              <option value="Beton">Beton</option>
+              <option value="Tidak">Tidak Beton</option>
+            </select>
           </div>
-          <div class="form-group">
-            <label>Tanggal IMB / PBG</label>
-            <input type="date" id="tgl_imb">
-          </div>
+
           <div class="form-group form-col-full">
             <label>Letak / Alamat Bangunan</label>
             <input type="text" id="letak_bangunan" placeholder="Kp. ..., Desa ..., Kec. Tenjo">
           </div>
+
+          <div class="form-group">
+            <label>Tanggal Dokumen Gedung</label>
+            <input type="date" id="tgl_imb">
+          </div>
+          <div class="form-group">
+            <label>No. Dokumen Gedung (IMB/PBG)</label>
+            <input type="text" id="no_imb" placeholder="Nomor IMB/PBG">
+          </div>
+
+          <div class="form-group">
+            <label>Status Tanah / Penggunaan</label>
+            <input type="text" id="status_tanah_gedung" placeholder="Pemerintah Daerah / Hak Pakai / dll">
+          </div>
+          <div class="form-group">
+            <label>No. Kode Tanah</label>
+            <input type="text" id="no_kode_tanah" placeholder="Kode KIB A tanah di bawah bangunan">
+          </div>
+          <div class="form-group">
+            <label>ID Awal Tanah</label>
+            <input type="text" id="id_awal_tanah" placeholder="ID aset tanah awal">
+          </div>
+          <div class="form-group">
+            <label>Status Sertifikat Tanah</label>
+            <select id="status_sertifikat_tanah">
+              <option value="">— Pilih —</option>
+              <option>Bersertifikat</option>
+              <option>Belum Bersertifikat</option>
+              <option>Dalam Proses</option>
+            </select>
+          </div>
+
         </div>
       </div>
 
       <!-- Khusus KIB E — Aset Tetap Lainnya -->
       <div class="form-section" id="section-lainnya" style="display:none">
         <div class="form-section-title">📦 Data Aset Tetap Lainnya (KIB E)</div>
+
+        <p style="font-size:12px;color:#64748b;margin-bottom:16px;padding:0 0 8px;border-bottom:1px solid #e2e8f0;">
+          Isi sesuai sub-kategori: <strong>Buku Perpustakaan</strong>, <strong>Barang Bercorak Kesenian/Kebudayaan</strong>, atau <strong>Hewan Ternak</strong>. Kosongkan field yang tidak relevan.
+        </p>
+
         <div class="form-grid">
+          <!-- Umum -->
           <div class="form-group">
-            <label>Spesifikasi / Uraian</label>
-            <input type="text" id="spesifikasi" placeholder="Spesifikasi detail aset">
+            <label>Tahun Cetak / Beli</label>
+            <input type="number" id="tahun_cetak" placeholder="2024" min="1900" max="2099">
           </div>
           <div class="form-group">
-            <label>Penerbit / Asal</label>
-            <input type="text" id="penerbit" placeholder="Penerbit / produsen / asal">
+            <label>Ukuran</label>
+            <input type="text" id="ukuran_aset" placeholder="Dimensi / ukuran barang">
+          </div>
+
+          <!-- Buku Perpustakaan -->
+          <div class="form-group">
+            <label>Judul / Pencipta <span style="color:#94a3b8">(Buku/Seni)</span></label>
+            <input type="text" id="judul_koleksi" placeholder="Judul buku atau nama pencipta">
           </div>
           <div class="form-group">
-            <label>Judul / Nama Koleksi</label>
-            <input type="text" id="judul_koleksi" placeholder="Judul buku, nama koleksi, dll">
+            <label>Spesifikasi <span style="color:#94a3b8">(Buku/Seni)</span></label>
+            <input type="text" id="spesifikasi" placeholder="Peta Kabupaten / Isi buku / dll">
+          </div>
+
+          <!-- Barang Kesenian/Kebudayaan -->
+          <div class="form-group">
+            <label>Asal Daerah <span style="color:#94a3b8">(Kesenian)</span></label>
+            <input type="text" id="asal_daerah" placeholder="Asal daerah barang kebudayaan">
           </div>
           <div class="form-group">
-            <label>Satuan</label>
-            <select id="satuan">
-              <option value="">— Pilih —</option>
-              <option>Buah</option>
-              <option>Unit</option>
-              <option>Set</option>
-              <option>Buku</option>
-              <option>Eksemplar</option>
-              <option>Ekor</option>
-              <option>Lainnya</option>
-            </select>
+            <label>Pencipta <span style="color:#94a3b8">(Kesenian)</span></label>
+            <input type="text" id="penerbit" placeholder="Nama pencipta / seniman">
           </div>
+
+          <!-- Hewan Ternak -->
+          <div class="form-group">
+            <label>Bahan <span style="color:#94a3b8">(Material/Hewan)</span></label>
+            <input type="text" id="bahan_aset" placeholder="Batu Granit / Marmer / Kayu / dll">
+          </div>
+          <div class="form-group">
+            <label>Jenis <span style="color:#94a3b8">(Hewan Ternak)</span></label>
+            <input type="text" id="jenis_aset" placeholder="Sapi / Kambing / dll">
+          </div>
+
         </div>
       </div>
 
