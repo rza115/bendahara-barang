@@ -410,8 +410,7 @@
   </main>
 
   <!-- Supabase CDN — harus PERTAMA -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <!-- Auth guard — setelah Supabase, sebelum app.js -->
+  <script src="supabase.js"></script>
 <!-- Auth guard inline — menggantikan auth.js agar tidak ada race condition -->
   <script>
     (async function () {
