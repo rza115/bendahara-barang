@@ -22,8 +22,13 @@
         </div>
       </a>
       <nav class="header-nav">
-        <a href="index.html"><span>📋</span> <span>Daftar Aset</span></a>
+        <a href="index.html"><span>🗂️</span> <span>Daftar Aset</span></a>
         <a href="tambah.html" class="active"><span>➕</span> <span>Tambah</span></a>
+        <a href="peminjaman.html"><span>🔄</span> <span>Peminjaman</span></a>
+        <a href="pengguna-barang.html"><span>👤</span> <span>Pengguna</span></a>
+        <a href="barcode.html"><span>📷</span> <span>Barcode</span></a>
+        <span class="nav-user"><span id="admin-user"></span></span>
+        <button onclick="logoutAdmin()" class="btn-logout" title="Keluar">Keluar</button>
       </nav>
     </div>
   </header>
@@ -404,10 +409,7 @@
 
   </main>
 
-  <!-- Supabase CDN — harus paling pertama -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <!-- Auth guard — setelah Supabase, sebelum app.js -->
-  <script src="auth.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
