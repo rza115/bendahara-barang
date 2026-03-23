@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inventaris Barang — Kecamatan Tenjo</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="index">
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loading">
+    <div class="loading-spinner"></div>
+  </div>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="header-logo">
+        <div class="header-logo-icon">🏛️</div>
+        <div class="header-logo-text">
+          <span class="title">Inventaris Barang</span>
+          <span class="subtitle">Kecamatan Tenjo — Kab. Bogor</span>
+        </div>
+      </a>
+      <nav class="header-nav">
+        <a href="index.html" class="active">
+          <span>📋</span> <span>Daftar Aset</span>
+        </a>
+        <a href="tambah.html">
+          <span>➕</span> <span>Tambah</span>
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main class="main-content">
+
+    <!-- Alert -->
+    <div class="alert" id="alert-box"></div>
+
+    <!-- Page Header -->
+    <div class="page-header">
+      <div>
+        <h1>📦 Kartu Inventaris Barang</h1>
+        <p>Daftar seluruh aset tetap per 31 Desember 2025</p>
+      </div>
+      <a href="tambah.html" class="btn btn-primary">
+        ➕ Tambah Aset
+      </a>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card accent">
+        <div class="stat-icon">📦</div>
+        <div class="stat-value" id="total-aset">—</div>
+        <div class="stat-label">Total Aset</div>
+      </div>
+      <div class="stat-card gold">
+        <div class="stat-icon">💰</div>
+        <div class="stat-value" id="total-nilai" style="font-size:14px">—</div>
+        <div class="stat-label">Total Nilai</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🏞️</div>
+        <div class="stat-value" id="total-kib-a">—</div>
+        <div class="stat-label">KIB A — Tanah</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">⚙️</div>
+        <div class="stat-value" id="total-kib-b">—</div>
+        <div class="stat-label">KIB B — Peralatan</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🏢</div>
+        <div class="stat-value" id="total-kib-c">—</div>
+        <div class="stat-label">KIB C — Gedung</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📦</div>
+        <div class="stat-value" id="total-kib-e">—</div>
+        <div class="stat-label">KIB E — Lainnya</div>
+      </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="search-input" placeholder="Cari nama barang...">
+      </div>
+      <select id="filter-kib" style="width:auto">
+        <option value="">Semua KIB</option>
+        <option value="KIB A">KIB A — Tanah</option>
+        <option value="KIB B">KIB B — Peralatan & Mesin</option>
+        <option value="KIB C">KIB C — Gedung & Bangunan</option>
+        <option value="KIB E">KIB E — Aset Tetap Lainnya</option>
+      </select>
+      <select id="filter-kondisi" style="width:auto">
+        <option value="">Semua Kondisi</option>
+        <option value="Baik">Baik</option>
+        <option value="Rusak Ringan">Rusak Ringan</option>
+        <option value="Rusak Berat">Rusak Berat</option>
+      </select>
+    </div>
+
+    <!-- Table -->
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Nama Barang</th>
+            <th>KIB</th>
+            <th>Tahun</th>
+            <th>Harga</th>
+            <th>Kondisi</th>
+            <th>Lokasi/Penggunaan</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="aset-tbody">
+          <tr><td colspan="8" class="empty-state">
+            <div>⏳</div><p>Memuat data...</p>
+          </td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+
+  <!-- Supabase CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="app.js"></script>
+
+</body>
+</html>

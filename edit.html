@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Aset — Inventaris Kecamatan Tenjo</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="edit">
+
+  <div class="loading-overlay" id="loading">
+    <div class="loading-spinner"></div>
+  </div>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="header-logo">
+        <div class="header-logo-icon">🏛️</div>
+        <div class="header-logo-text">
+          <span class="title">Inventaris Barang</span>
+          <span class="subtitle">Kecamatan Tenjo — Kab. Bogor</span>
+        </div>
+      </a>
+      <nav class="header-nav">
+        <a href="index.html"><span>📋</span> <span>Daftar Aset</span></a>
+        <a href="tambah.html"><span>➕</span> <span>Tambah</span></a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main-content">
+
+    <div class="alert" id="alert-box"></div>
+
+    <div class="page-header">
+      <div>
+        <h1>✏️ Edit Aset</h1>
+        <p>Perbarui data aset yang sudah terdaftar</p>
+      </div>
+      <a href="index.html" class="btn btn-secondary">← Kembali</a>
+    </div>
+
+    <div class="form-card">
+
+      <div class="form-section">
+        <div class="form-section-title">📋 Identitas Barang</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Kategori KIB <span class="req">*</span></label>
+            <select id="kib">
+              <option value="">— Pilih KIB —</option>
+              <option value="KIB A">KIB A — Tanah</option>
+              <option value="KIB B">KIB B — Peralatan & Mesin</option>
+              <option value="KIB C">KIB C — Gedung & Bangunan</option>
+              <option value="KIB E">KIB E — Aset Tetap Lainnya</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Nama Barang <span class="req">*</span></label>
+            <input type="text" id="nama_barang">
+          </div>
+          <div class="form-group">
+            <label>Kode Barang</label>
+            <input type="text" id="kode_barang">
+          </div>
+          <div class="form-group">
+            <label>ID Barang</label>
+            <input type="text" id="id_barang">
+          </div>
+          <div class="form-group">
+            <label>No. Register</label>
+            <input type="text" id="no_register">
+          </div>
+          <div class="form-group">
+            <label>Merk / Type</label>
+            <input type="text" id="merk_type">
+          </div>
+          <div class="form-group">
+            <label>Ukuran / CC</label>
+            <input type="text" id="ukuran_cc">
+          </div>
+          <div class="form-group">
+            <label>Bahan</label>
+            <input type="text" id="bahan">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title">💰 Data Perolehan</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Tahun Perolehan</label>
+            <input type="number" id="tahun_perolehan" min="1900" max="2099">
+          </div>
+          <div class="form-group">
+            <label>Jumlah Unit</label>
+            <input type="number" id="jumlah" min="1">
+          </div>
+          <div class="form-group">
+            <label>Harga (Rp)</label>
+            <input type="text" id="harga">
+          </div>
+          <div class="form-group">
+            <label>Cara Perolehan</label>
+            <select id="cara_perolehan">
+              <option value="">— Pilih —</option>
+              <option>Pengadaan APBD</option>
+              <option>Hibah/Sumbangan</option>
+              <option>Mutasi</option>
+              <option>Reklas</option>
+              <option>Lainnya</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Sumber Dana</label>
+            <select id="sumber_dana">
+              <option value="">— Pilih —</option>
+              <option>APBD</option>
+              <option>APBN</option>
+              <option>Hibah</option>
+              <option>Lainnya</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Kondisi</label>
+            <select id="kondisi">
+              <option value="Baik">Baik</option>
+              <option value="Rusak Ringan">Rusak Ringan</option>
+              <option value="Rusak Berat">Rusak Berat</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section" id="section-tanah" style="display:none">
+        <div class="form-section-title">🏞️ Data Tanah (KIB A)</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Luas Tanah (m²)</label>
+            <input type="number" id="luas_tanah">
+          </div>
+          <div class="form-group">
+            <label>Status Tanah</label>
+            <input type="text" id="status_tanah">
+          </div>
+          <div class="form-group">
+            <label>No. Sertifikat</label>
+            <input type="text" id="no_sertifikat">
+          </div>
+          <div class="form-group form-col-full">
+            <label>Letak / Alamat</label>
+            <input type="text" id="letak_alamat">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section" id="section-kendaraan" style="display:none">
+        <div class="form-section-title">🚗 Data Kendaraan (KIB B)</div>
+        <div class="form-grid cols-3">
+          <div class="form-group">
+            <label>No. Pabrik</label>
+            <input type="text" id="no_pabrik">
+          </div>
+          <div class="form-group">
+            <label>No. Rangka</label>
+            <input type="text" id="no_rangka">
+          </div>
+          <div class="form-group">
+            <label>No. Mesin</label>
+            <input type="text" id="no_mesin">
+          </div>
+          <div class="form-group">
+            <label>No. Polisi</label>
+            <input type="text" id="no_polisi">
+          </div>
+          <div class="form-group">
+            <label>No. BPKB</label>
+            <input type="text" id="no_bpkb">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title">📄 Dokumen</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Tanggal Buku</label>
+            <input type="date" id="tgl_buku">
+          </div>
+          <div class="form-group">
+            <label>No. BAST</label>
+            <input type="text" id="no_bast">
+          </div>
+          <div class="form-group">
+            <label>Tanggal BAST</label>
+            <input type="date" id="tgl_bast">
+          </div>
+          <div class="form-group">
+            <label>ID Penerimaan</label>
+            <input type="text" id="id_penerimaan">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title">📍 Lokasi & Keterangan</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Lokasi Aset</label>
+            <input type="text" id="lokasi">
+          </div>
+          <div class="form-group">
+            <label>Penggunaan</label>
+            <input type="text" id="penggunaan">
+          </div>
+          <div class="form-group form-col-full">
+            <label>Keterangan</label>
+            <textarea id="keterangan" rows="3"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button id="btn-simpan" class="btn btn-primary">💾 Simpan Perubahan</button>
+        <a href="index.html" class="btn btn-secondary">Batal</a>
+      </div>
+
+    </div>
+
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="app.js"></script>
+</body>
+</html>
