@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Inventaris Kecamatan Tenjo</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    /* ===== DASHBOARD SPECIFIC ===== */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .dash-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      transition: box-shadow .2s;
+    }
+    .dash-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,.15); }
+    .dash-icon {
+      font-size: 2rem;
+      width: 52px; height: 52px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .dash-icon.blue  { background: rgba(99,179,237,.15); }
+    .dash-icon.green { background: rgba(72,187,120,.15); }
+    .dash-icon.gold  { background: rgba(237,195,90,.15); }
+    .dash-icon.red   { background: rgba(252,129,129,.15); }
+    .dash-icon.purple{ background: rgba(183,148,244,.15); }
+    .dash-label { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
+    .dash-value { font-size: 1.6rem; font-weight: 700; color: var(--text); line-height:1; }
+    .dash-sub   { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+
+    .charts-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 28px;
+    }
+    @media(max-width:700px){ .charts-grid { grid-template-columns: 1fr; } }
+
+    .chart-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .chart-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 16px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .chart-wrap { position: relative; height: 220px; }
+
+    .section-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 12px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .pinjam-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .pinjam-table th {
+      text-align: left; padding: 10px 12px;
+      background: var(--surface-alt, #1e293b);
+      color: var(--text-muted);
+      font-weight: 500; font-size: 11px; text-transform: uppercase;
+      border-bottom: 1px solid var(--border);
+    }
+    .pinjam-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: middle;
+    }
+    .pinjam-table tr:last-child td { border-bottom: none; }
+    .pinjam-table tr:hover td { background: rgba(255,255,255,.03); }
+    .badge-dipinjam  { background: rgba(237,195,90,.15); color: #edc35a; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight:600; }
+    .badge-terlambat { background: rgba(252,129,129,.15); color: #fc8181; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight:600; }
+    .tabel-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      overflow-x: auto;
+    }
+    .empty-dash { text-align:center; padding: 32px; color: var(--text-muted); font-size:13px; }
+    .refresh-btn {
+      background: none; border: 1px solid var(--border);
+      color: var(--text-muted); border-radius: 8px;
+      padding: 6px 14px; font-size: 12px; cursor: pointer;
+      display:flex; align-items:center; gap:6px;
+      transition: all .2s;
+    }
+    .refresh-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .page-header-row {
+      display:flex; align-items:center; justify-content:space-between;
+      margin-bottom: 20px; flex-wrap: wrap; gap:10px;
+    }
+    .last-update { font-size:11px; color:var(--text-muted); }
+  </style>
+</head>
+<body data-page="dashboard">
+  <div class="loading-overlay" id="loading"><div class="loading-spinner"></div></div>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="header-logo">
+        <div class="header-logo-icon"></div>
+        <div class="header-logo-text">
+          <span class="title">Inventaris Barang</span>
+          <span class="subtitle">Kecamatan Tenjo Kab. Bogor</span>
+        </div>
+      </a>
+      <nav class="header-nav">
+        <a href="dashboard.html" class="active"><span>📊</span> <span>Dashboard</span></a>
+        <a href="index.html"><span>🗂️</span> <span>Daftar Aset</span></a>
+        <a href="tambah.html"><span>➕</span> <span>Tambah</span></a>
+        <a href="peminjaman.html"><span>🔄</span> <span>Peminjaman</span></a>
+        <a href="pengguna-barang.html"><span>👤</span> <span>Pengguna</span></a>
+        <a href="barcode.html"><span>📷</span> <span>Barcode</span></a>
+        <span class="nav-user"><span id="admin-user"></span></span>
+        <button onclick="logoutAdmin()" class="btn-logout" title="Keluar">Keluar</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <div class="page-header-row">
+      <div>
+        <h1 style="font-size:1.4rem;font-weight:700;margin:0 0 4px">📊 Dashboard Ringkasan</h1>
+        <p style="margin:0;color:var(--text-muted);font-size:13px">Inventaris Aset Kecamatan Tenjo — per 31 Desember 2025</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span class="last-update" id="last-update"></span>
+        <button class="refresh-btn" onclick="initDashboard()">🔄 Refresh</button>
+      </div>
+    </div>
+
+    <!-- STAT CARDS -->
+    <div class="dashboard-grid" id="stat-cards">
+      <!-- diisi JS -->
+    </div>
+
+    <!-- CHARTS -->
+    <div class="charts-grid">
+      <div class="chart-card">
+        <div class="chart-title">🥧 Sebaran Aset per KIB</div>
+        <div class="chart-wrap"><canvas id="chartKIB"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">📊 Aset per Kondisi</div>
+        <div class="chart-wrap"><canvas id="chartKondisi"></canvas></div>
+      </div>
+    </div>
+
+    <!-- TABEL PEMINJAMAN AKTIF -->
+    <div class="tabel-card">
+      <div class="section-title">🔄 Peminjaman Aktif / Belum Dikembalikan</div>
+      <div id="tabel-pinjam-wrap">
+        <div class="empty-dash">Memuat data...</div>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="auth.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = 'https://ibektroxjjibniwidmpk.supabase.co'
+    const SUPABASE_KEY = 'sb-publishable-b-oL0WNdkqDjUFhepAkADwuy9coRD6'
+    const { createClient } = supabase
+    const db = createClient(SUPABASE_URL, SUPABASE_KEY)
+
+    function formatRupiah(angka) {
+      if (!angka && angka !== 0) return '-'
+      return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka)
+    }
+    function showLoading(show = true) {
+      const el = document.getElementById('loading')
+      if (el) el.style.display = show ? 'flex' : 'none'
+    }
+
+    let chartKIB = null, chartKondisi = null
+
+    async function initDashboard() {
+      showLoading(true)
+      try {
+        const [asetRes, pinjamRes] = await Promise.all([
+          db.from('aset').select('id, kib, kondisi, harga, namabarang, created_at'),
+          db.from('peminjaman').select('id, nama_peminjam, tgl_pinjam, tgl_batas_kembali, status, aset(namabarang)').eq('status', 'dipinjam').order('tgl_batas_kembali')
+        ])
+
+        const aset   = asetRes.data  || []
+        const pinjam = pinjamRes.data || []
+
+        renderStatCards(aset, pinjam)
+        renderChartKIB(aset)
+        renderChartKondisi(aset)
+        renderTabelPinjam(pinjam)
+
+        document.getElementById('last-update').textContent =
+          'Update: ' + new Date().toLocaleTimeString('id-ID', {hour:'2-digit',minute:'2-digit'})
+      } catch(e) {
+        console.error(e)
+      } finally {
+        showLoading(false)
+      }
+    }
+
+    function renderStatCards(aset, pinjam) {
+      const totalAset   = aset.length
+      const totalNilai  = aset.reduce((s, r) => s + (parseInt(r.harga) || 0), 0)
+      const kondisiBaik = aset.filter(r => r.kondisi === 'Baik').length
+      const totalPinjam = pinjam.length
+      const today       = new Date().toISOString().split('T')[0]
+      const terlambat   = pinjam.filter(r => r.tgl_batas_kembali < today).length
+
+      const cards = [
+        { icon: '🗂️', cls: 'blue',   label: 'Total Aset',           value: totalAset.toLocaleString('id-ID'),    sub: 'unit terdaftar' },
+        { icon: '💰', cls: 'gold',   label: 'Total Nilai Aset',     value: formatRupiah(totalNilai),              sub: 'estimasi nilai' },
+        { icon: '✅', cls: 'green',  label: 'Kondisi Baik',         value: kondisiBaik.toLocaleString('id-ID'),   sub: `dari ${totalAset} unit` },
+        { icon: '🔄', cls: 'purple', label: 'Sedang Dipinjam',      value: totalPinjam.toLocaleString('id-ID'),   sub: 'unit aktif' },
+        { icon: '⚠️', cls: 'red',    label: 'Terlambat Kembali',    value: terlambat.toLocaleString('id-ID'),     sub: 'unit melewati batas' },
+      ]
+
+      document.getElementById('stat-cards').innerHTML = cards.map(c => `
+        <div class="dash-card">
+          <div class="dash-icon ${c.cls}">${c.icon}</div>
+          <div>
+            <div class="dash-label">${c.label}</div>
+            <div class="dash-value">${c.value}</div>
+            <div class="dash-sub">${c.sub}</div>
+          </div>
+        </div>`).join('')
+    }
+
+    function renderChartKIB(aset) {
+      const map = { 'KIB A': 0, 'KIB B': 0, 'KIB C': 0, 'KIB E': 0 }
+      aset.forEach(r => { if (map[r.kib] !== undefined) map[r.kib]++ })
+      const labels = ['KIB A Tanah', 'KIB B Peralatan', 'KIB C Gedung', 'KIB E Lainnya']
+      const data   = Object.values(map)
+      const colors = ['#63b3ed','#68d391','#edc35a','#b794f4']
+
+      if (chartKIB) chartKIB.destroy()
+      chartKIB = new Chart(document.getElementById('chartKIB'), {
+        type: 'doughnut',
+        data: { labels, datasets: [{ data, backgroundColor: colors, borderWidth: 2, borderColor: '#0f172a' }] },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'bottom', labels: { color: '#94a3b8', font: { size: 11 }, padding: 12 } },
+            tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw} unit` } }
+          }
+        }
+      })
+    }
+
+    function renderChartKondisi(aset) {
+      const map = { 'Baik': 0, 'Rusak Ringan': 0, 'Rusak Berat': 0 }
+      aset.forEach(r => { if (map[r.kondisi] !== undefined) map[r.kondisi]++ })
+      const colors = ['#68d391','#edc35a','#fc8181']
+
+      if (chartKondisi) chartKondisi.destroy()
+      chartKondisi = new Chart(document.getElementById('chartKondisi'), {
+        type: 'bar',
+        data: {
+          labels: Object.keys(map),
+          datasets: [{
+            label: 'Jumlah Aset',
+            data: Object.values(map),
+            backgroundColor: colors,
+            borderRadius: 8,
+            borderSkipped: false
+          }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: { callbacks: { label: ctx => ` ${ctx.raw} unit` } }
+          },
+          scales: {
+            x: { grid: { color: 'rgba(255,255,255,.05)' }, ticks: { color: '#94a3b8' } },
+            y: { grid: { color: 'rgba(255,255,255,.05)' }, ticks: { color: '#94a3b8', stepSize: 1 }, beginAtZero: true }
+          }
+        }
+      })
+    }
+
+    function renderTabelPinjam(pinjam) {
+      const today = new Date().toISOString().split('T')[0]
+      const wrap  = document.getElementById('tabel-pinjam-wrap')
+
+      if (!pinjam.length) {
+        wrap.innerHTML = '<div class="empty-dash">✅ Tidak ada peminjaman aktif saat ini</div>'
+        return
+      }
+
+      const rows = pinjam.map(r => {
+        const terlambat = r.tgl_batas_kembali < today
+        const badge     = terlambat
+          ? `<span class="badge-terlambat">⚠️ Terlambat</span>`
+          : `<span class="badge-dipinjam">🔄 Dipinjam</span>`
+        const namaBarang = r.aset?.namabarang || '-'
+        const tglBatas   = r.tgl_batas_kembali
+          ? new Date(r.tgl_batas_kembali).toLocaleDateString('id-ID', {day:'2-digit',month:'short',year:'numeric'})
+          : '-'
+        const tglPinjam  = r.tgl_pinjam
+          ? new Date(r.tgl_pinjam).toLocaleDateString('id-ID', {day:'2-digit',month:'short',year:'numeric'})
+          : '-'
+        return `<tr>
+          <td>${r.nama_peminjam || '-'}</td>
+          <td>${namaBarang}</td>
+          <td>${tglPinjam}</td>
+          <td>${tglBatas}</td>
+          <td>${badge}</td>
+        </tr>`
+      }).join('')
+
+      wrap.innerHTML = `
+        <table class="pinjam-table">
+          <thead>
+            <tr>
+              <th>Nama Peminjam</th>
+              <th>Nama Barang</th>
+              <th>Tgl Pinjam</th>
+              <th>Batas Kembali</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>`
+    }
+
+    document.addEventListener('DOMContentLoaded', initDashboard)
+  </script>
+</body>
+</html>
