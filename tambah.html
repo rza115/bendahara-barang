@@ -144,23 +144,46 @@
             <input type="number" id="luas_tanah" placeholder="500">
           </div>
           <div class="form-group">
-            <label>Status Tanah</label>
-            <input type="text" id="status_tanah" placeholder="Pakai/Bersertifikat">
-          </div>
-          <div class="form-group">
-            <label>No. Sertifikat</label>
-            <input type="text" id="no_sertifikat">
+            <label>Tahun Perolehan Tanah</label>
+            <input type="number" id="tahun_perolehan_tanah" placeholder="1980" min="1900" max="2099">
           </div>
           <div class="form-group form-col-full">
             <label>Letak / Alamat</label>
-            <input type="text" id="letak_alamat" placeholder="Kp. ..., Desa ..., Kec. Tenjo">
+            <input type="text" id="letak_alamat" placeholder="Kp. ..., Desa ..., Kec. Tenjo, Kab. Bogor">
+          </div>
+          <div class="form-group">
+            <label>Hak / Status Sertifikat</label>
+            <select id="status_tanah">
+              <option value="">— Pilih —</option>
+              <option>Pakai/Bersertifikat</option>
+              <option>Milik/Bersertifikat</option>
+              <option>Pakai/Belum Bersertifikat</option>
+              <option>Sewa</option>
+              <option>Pinjam Pakai</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>No. Urut Sertifikat</label>
+            <input type="text" id="no_urut_sertifikat" placeholder="No. urut">
+          </div>
+          <div class="form-group">
+            <label>Tanggal Sertifikat</label>
+            <input type="date" id="tgl_sertifikat">
+          </div>
+          <div class="form-group">
+            <label>Nomor Sertifikat</label>
+            <input type="text" id="no_sertifikat" placeholder="Nomor sertifikat tanah">
+          </div>
+          <div class="form-group">
+            <label>Penggunaan Tanah</label>
+            <input type="text" id="penggunaan_tanah" placeholder="Kantor / Rumah Dinas / dll">
           </div>
         </div>
       </div>
 
-      <!-- Khusus KIB B — Kendaraan -->
+      <!-- Khusus KIB B — Peralatan & Mesin -->
       <div class="form-section" id="section-kendaraan" style="display:none">
-        <div class="form-section-title">🚗 Data Kendaraan (KIB B)</div>
+        <div class="form-section-title">🚗 Nomor Identitas (KIB B)</div>
         <div class="form-grid cols-3">
           <div class="form-group">
             <label>No. Pabrik</label>
@@ -314,7 +337,7 @@
 
       <!-- Dokumen -->
       <div class="form-section">
-        <div class="form-section-title">📄 Dokumen</div>
+        <div class="form-section-title">📄 Dokumen & Status</div>
         <div class="form-grid">
           <div class="form-group">
             <label>Tanggal Buku</label>
@@ -331,6 +354,23 @@
           <div class="form-group">
             <label>ID Penerimaan</label>
             <input type="text" id="id_penerimaan">
+          </div>
+          <div class="form-group">
+            <label>Status Aset</label>
+            <select id="status_aset">
+              <option value="Aset Tetap">Aset Tetap</option>
+              <option value="Aset Tidak Berwujud">Aset Tidak Berwujud</option>
+              <option value="Ekstra Komptabel">Ekstra Komptabel</option>
+              <option value="Penghapusan">Penghapusan</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Status Barang</label>
+            <select id="status_barang">
+              <option value="Inventaris">Inventaris</option>
+              <option value="Pinjaman">Pinjaman</option>
+              <option value="Titipan">Titipan</option>
+            </select>
           </div>
         </div>
       </div>
