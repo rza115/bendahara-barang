@@ -134,9 +134,39 @@
 
   <!-- Supabase CDN — harus PERTAMA -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <!-- Auth guard — setelah Supabase, sebelum app.js -->
-  <script src="auth.js"></script>
-  <script src="app.js"></script>
+
+  <!-- Auth guard inline — menggantikan auth.js agar tidak ada race condition -->
+  <script>
+    (async function () {
+      const SUPABASE_URL = 'https://ibektroxjjibniwidmpk.supabase.co';
+      const SUPABASE_KEY = 'sb_publishable_b-oL0WNdkqDjUFhepAkADw_uy9coRD6';
+
+      // Satu client, dipakai bersama oleh auth dan app.js
+      window._authClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+      // Cek sesi aktif
+      const { data: { session } } = await window._authClient.auth.getSession();
+      if (!session) {
+        window.location.replace('login.html');
+        return;
+      }
+
+      // Tampilkan email
+      const el = document.getElementById('admin-user');
+      if (el) el.textContent = session.user.email;
+
+      // Fungsi logout global
+      window.logoutAdmin = async function () {
+        await window._authClient.auth.signOut();
+        window.location.replace('login.html');
+      };
+
+      // Baru load app.js setelah auth selesai
+      const script = document.createElement('script');
+      script.src = 'app.js';
+      document.body.appendChild(script);
+    })();
+  </script>
 
 </body>
 </html>
