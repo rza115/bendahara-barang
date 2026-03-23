@@ -1,32 +1,41 @@
 // ============================================
-// auth.js — Session Guard (Supabase Auth)
+// auth.js — Session Guard
 // Sertakan di index.html, tambah.html, edit.html
-// SETELAH supabase.js (lokal), SEBELUM app.js
+// SEBELUM app.js: <script src="auth.js"></script>
 // ============================================
 
-window._appReady = (async function () {
-  const SUPABASE_URL = 'https://ibektroxjjibniwidmpk.supabase.co';
-  const SUPABASE_KEY = 'sb_publishable_b-oL0WNdkqDjUFhepAkADw_uy9coRD6';
+(function () {
+  const SESSION_KEY = 'inventaris_auth';
 
-  // Satu client, dipakai bersama oleh auth dan app.js
-  window._authClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-  // Cek sesi aktif
-  const { data: { session } } = await window._authClient.auth.getSession();
-  if (!session) {
-    window.location.replace('login.html');
-    return false;
+  function getSession() {
+    try {
+      const raw = sessionStorage.getItem(SESSION_KEY);
+      if (!raw) return null;
+      const s = JSON.parse(raw);
+      if (s.exp && Date.now() < s.exp) return s;
+      sessionStorage.removeItem(SESSION_KEY);
+      return null;
+    } catch {
+      sessionStorage.removeItem(SESSION_KEY);
+      return null;
+    }
   }
 
-  // Tampilkan email user
-  const el = document.getElementById('admin-user');
-  if (el) el.textContent = session.user.email;
+  // Redirect ke login kalau belum login
+  const session = getSession();
+  if (!session) {
+    window.location.replace('login.html');
+  }
 
-  // Fungsi logout global
-  window.logoutAdmin = async function () {
-    await window._authClient.auth.signOut();
+  // Fungsi logout — bisa dipanggil dari tombol logout
+  window.logoutAdmin = function () {
+    sessionStorage.removeItem(SESSION_KEY);
     window.location.replace('login.html');
   };
 
-  return true;
+  // Tampilkan nama user di header jika ada elemen #admin-user
+  document.addEventListener('DOMContentLoaded', () => {
+    const el = document.getElementById('admin-user');
+    if (el && session) el.textContent = session.user;
+  });
 })();

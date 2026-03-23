@@ -37,6 +37,7 @@
       position: relative;
     }
 
+    /* Ambient background */
     body::before {
       content: '';
       position: fixed;
@@ -47,6 +48,7 @@
       pointer-events: none;
     }
 
+    /* Grid texture */
     body::after {
       content: '';
       position: fixed;
@@ -73,6 +75,7 @@
       to   { opacity: 1; transform: translateY(0); }
     }
 
+    /* Brand */
     .brand {
       text-align: center;
       margin-bottom: 36px;
@@ -109,6 +112,7 @@
       text-transform: uppercase;
     }
 
+    /* Card */
     .card {
       background: var(--surface);
       border: 1px solid var(--border-light);
@@ -132,7 +136,10 @@
       margin-bottom: 28px;
     }
 
-    .form-group { margin-bottom: 18px; }
+    /* Form */
+    .form-group {
+      margin-bottom: 18px;
+    }
 
     label {
       display: block;
@@ -144,7 +151,9 @@
       margin-bottom: 8px;
     }
 
-    .input-wrap { position: relative; }
+    .input-wrap {
+      position: relative;
+    }
 
     .input-icon {
       position: absolute;
@@ -156,9 +165,8 @@
       opacity: 0.5;
     }
 
-    input[type="email"],
-    input[type="password"],
-    input[type="text"] {
+    input[type="text"],
+    input[type="password"] {
       width: 100%;
       background: rgba(255,255,255,0.04);
       border: 1px solid var(--border-light);
@@ -179,6 +187,7 @@
 
     input::placeholder { color: var(--text-dim); }
 
+    /* Toggle password */
     .toggle-pw {
       position: absolute;
       right: 12px;
@@ -194,6 +203,7 @@
     }
     .toggle-pw:hover { opacity: 0.8; }
 
+    /* Error */
     .error-msg {
       display: none;
       background: var(--error-bg);
@@ -208,6 +218,7 @@
     }
     .error-msg.show { display: flex; }
 
+    /* Button */
     .btn-login {
       width: 100%;
       padding: 13px;
@@ -253,8 +264,11 @@
     .btn-login.loading .btn-text { display: none; }
     .btn-login.loading .spinner { display: block; }
 
-    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
 
+    /* Footer */
     .footer-note {
       text-align: center;
       margin-top: 20px;
@@ -262,6 +276,7 @@
       color: var(--text-dim);
     }
 
+    /* Shake animation on wrong password */
     @keyframes shake {
       0%, 100% { transform: translateX(0); }
       20% { transform: translateX(-6px); }
@@ -269,12 +284,14 @@
       60% { transform: translateX(-4px); }
       80% { transform: translateX(4px); }
     }
+
     .shake { animation: shake 0.4s ease; }
   </style>
 </head>
 <body>
 
 <div class="wrapper">
+
   <div class="brand">
     <div class="brand-icon">🏛️</div>
     <div class="brand-title">Inventaris Barang</div>
@@ -287,14 +304,14 @@
 
     <div class="error-msg" id="error-msg">
       <span>⚠️</span>
-      <span id="error-text">Email atau password salah.</span>
+      <span id="error-text">Username atau password salah.</span>
     </div>
 
     <div class="form-group">
-      <label>Email</label>
+      <label>Username</label>
       <div class="input-wrap">
-        <span class="input-icon">✉️</span>
-        <input type="email" id="email" placeholder="Masukkan email" autocomplete="email">
+        <span class="input-icon">👤</span>
+        <input type="text" id="username" placeholder="Masukkan username" autocomplete="username">
       </div>
     </div>
 
@@ -316,22 +333,36 @@
       Lupa password? Hubungi administrator sistem.
     </div>
   </div>
+
 </div>
 
-<!-- Supabase CDN -->
-<script src="supabase.js"></script>
 <script>
-  const SUPABASE_URL = 'https://ibektroxjjibniwidmpk.supabase.co';
-  const SUPABASE_KEY = 'sb_publishable_b-oL0WNdkqDjUFhepAkADw_uy9coRD6';
+  // ============================================
+  // KONFIGURASI AKUN ADMIN
+  // Ganti username & password di sini
+  // ============================================
+  const ADMIN_ACCOUNTS = [
+    { username: 'admin',   password: 'tenjo2025' },
+    { username: 'bendahara', password: 'kectenjo#1' },
+  ];
 
-  const { createClient } = supabase;
-  const authClient = createClient(SUPABASE_URL, SUPABASE_KEY);
+  const SESSION_KEY = 'inventaris_auth';
+  const SESSION_DURATION_MS = 8 * 60 * 60 * 1000; // 8 jam
 
-  // Jika sudah login, langsung ke index
-  (async () => {
-    const { data: { session } } = await authClient.auth.getSession();
-    if (session) window.location.replace('index.html');
-  })();
+  // Kalau sudah login, langsung ke index
+  function checkSession() {
+    const raw = sessionStorage.getItem(SESSION_KEY);
+    if (!raw) return;
+    try {
+      const s = JSON.parse(raw);
+      if (s.exp && Date.now() < s.exp) {
+        window.location.replace('index.html');
+      } else {
+        sessionStorage.removeItem(SESSION_KEY);
+      }
+    } catch { sessionStorage.removeItem(SESSION_KEY); }
+  }
+  checkSession();
 
   // Toggle show/hide password
   const pwInput = document.getElementById('password');
@@ -339,53 +370,60 @@
     pwInput.type = pwInput.type === 'password' ? 'text' : 'password';
   });
 
-  // Enter key support
-  document.getElementById('email').addEventListener('keydown', e => {
-    if (e.key === 'Enter') document.getElementById('password').focus();
-  });
+  // Login
+  document.getElementById('btn-login').addEventListener('click', doLogin);
   document.getElementById('password').addEventListener('keydown', e => {
     if (e.key === 'Enter') doLogin();
   });
-  document.getElementById('btn-login').addEventListener('click', doLogin);
+  document.getElementById('username').addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('password').focus();
+  });
 
-  async function doLogin() {
-    const email    = document.getElementById('email').value.trim();
+  function doLogin() {
+    const username = document.getElementById('username').value.trim();
     const password = document.getElementById('password').value;
-    const btn      = document.getElementById('btn-login');
-    const errorEl  = document.getElementById('error-msg');
-    const errorTxt = document.getElementById('error-text');
+    const btn = document.getElementById('btn-login');
+    const errorEl = document.getElementById('error-msg');
+    const errorText = document.getElementById('error-text');
 
-    if (!email || !password) {
-      showError('Email dan password wajib diisi.');
+    if (!username || !password) {
+      showError('Username dan password wajib diisi.');
       return;
     }
 
+    // Loading state
     btn.disabled = true;
     btn.classList.add('loading');
     errorEl.classList.remove('show');
 
-    const { data, error } = await authClient.auth.signInWithPassword({ email, password });
+    // Simulasi delay (bisa dihapus)
+    setTimeout(() => {
+      const match = ADMIN_ACCOUNTS.find(
+        a => a.username === username && a.password === password
+      );
 
-    if (error) {
-      btn.disabled = false;
-      btn.classList.remove('loading');
-      // Terjemahkan pesan error Supabase ke Bahasa Indonesia
-      const pesanError = {
-        'Invalid login credentials': 'Email atau password salah.',
-        'Email not confirmed': 'Email belum dikonfirmasi. Cek inbox email Anda.',
-        'Too many requests': 'Terlalu banyak percobaan. Tunggu beberapa menit.',
-      };
-      showError(pesanError[error.message] || error.message);
-      document.querySelector('.card').classList.add('shake');
-      setTimeout(() => document.querySelector('.card').classList.remove('shake'), 400);
-    } else {
-      window.location.replace('index.html');
-    }
+      if (match) {
+        // Simpan sesi
+        const session = {
+          user: username,
+          exp: Date.now() + SESSION_DURATION_MS
+        };
+        sessionStorage.setItem(SESSION_KEY, JSON.stringify(session));
+        window.location.replace('index.html');
+      } else {
+        btn.disabled = false;
+        btn.classList.remove('loading');
+        showError('Username atau password salah.');
+        document.querySelector('.card').classList.add('shake');
+        setTimeout(() => document.querySelector('.card').classList.remove('shake'), 400);
+      }
+    }, 600);
   }
 
   function showError(msg) {
+    const errorEl = document.getElementById('error-msg');
     document.getElementById('error-text').textContent = msg;
-    document.getElementById('error-msg').classList.add('show');
+    errorEl.classList.add('show');
   }
 </script>
 
