@@ -22,6 +22,17 @@ function formatRupiah(angka) {
   }).format(angka);
 }
 
+// FIX: Escape HTML untuk mencegah XSS
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 function showAlert(msg, type = 'success') {
   const el = document.getElementById('alert-box');
   if (!el) return;
@@ -55,11 +66,15 @@ function getKondisiBadge(kondisi) {
   return map[kondisi] || 'badge-baik';
 }
 
+// FIX: Simpan filter aktif agar bisa dipakai ulang saat hapus
+let activeFilter = {};
+
 // ============================================
 // INDEX PAGE — DAFTAR ASET
 // ============================================
 
 async function loadAset(filter = {}) {
+  activeFilter = filter; // simpan filter aktif
   showLoading(true);
   try {
     let query = db.from('aset').select('*').order('kib').order('nama_barang');
@@ -95,18 +110,18 @@ function renderTable(data) {
     <tr>
       <td class="td-no">${i + 1}</td>
       <td>
-        <div class="nama-barang">${row.nama_barang}</div>
-        ${row.merk_type ? `<div class="sub-info">${row.merk_type}</div>` : ''}
-        ${row.kode_barang ? `<div class="kode-info">${row.kode_barang}</div>` : ''}
+        <div class="nama-barang">${escapeHtml(row.nama_barang)}</div>
+        ${row.merk_type ? `<div class="sub-info">${escapeHtml(row.merk_type)}</div>` : ''}
+        ${row.kode_barang ? `<div class="kode-info">${escapeHtml(row.kode_barang)}</div>` : ''}
       </td>
-      <td><span class="kib-badge kib-${row.kib.replace(' ', '-').toLowerCase()}">${row.kib}</span></td>
+      <td><span class="kib-badge kib-${row.kib.replace(' ', '-').toLowerCase()}">${escapeHtml(row.kib)}</span></td>
       <td>${row.tahun_perolehan || '-'}</td>
       <td class="td-harga">${formatRupiah(row.harga)}</td>
-      <td>${row.kondisi ? `<span class="badge ${getKondisiBadge(row.kondisi)}">${row.kondisi}</span>` : '-'}</td>
-      <td>${row.lokasi || row.penggunaan || '-'}</td>
+      <td>${row.kondisi ? `<span class="badge ${getKondisiBadge(row.kondisi)}">${escapeHtml(row.kondisi)}</span>` : '-'}</td>
+      <td>${escapeHtml(row.lokasi || row.penggunaan || '-')}</td>
       <td class="td-action">
         <a href="edit.html?id=${row.id}" class="btn-edit" title="Edit">✏️</a>
-        <button onclick="hapusAset('${row.id}', '${row.nama_barang.replace(/'/g, "\\'")}')" class="btn-hapus" title="Hapus">🗑️</button>
+        <button onclick="hapusAset('${row.id}', '${escapeHtml(row.nama_barang)}')" class="btn-hapus" title="Hapus">🗑️</button>
       </td>
     </tr>
   `).join('');
@@ -135,7 +150,8 @@ async function hapusAset(id, nama) {
     const { error } = await db.from('aset').delete().eq('id', id);
     if (error) throw error;
     showAlert(`Aset "${nama}" berhasil dihapus.`);
-    loadAset();
+    // FIX: Pertahankan filter aktif setelah hapus
+    loadAset(activeFilter);
   } catch (err) {
     showAlert('Gagal menghapus: ' + err.message, 'error');
   } finally {
@@ -181,7 +197,7 @@ function fillForm(data) {
   const fields = [
     'kib', 'kode_barang', 'id_barang', 'no_register', 'nama_barang',
     'merk_type', 'ukuran_cc', 'bahan', 'tahun_perolehan', 'cara_perolehan',
-    'sumber_dana', 'harga', 'jumlah', 'kondisi', 'status_barang', 'status_aset',
+    'sumber_dana', 'jumlah', 'kondisi', 'status_barang', 'status_aset',
     'tgl_buku', 'no_bast', 'tgl_bast', 'id_penerimaan',
     'lokasi', 'penggunaan', 'keterangan',
     // KIB A
@@ -201,6 +217,13 @@ function fillForm(data) {
     const el = document.getElementById(f);
     if (el && data[f] != null) el.value = data[f];
   });
+
+  // FIX: Format harga ke Rupiah saat mengisi form edit
+  const hargaEl = document.getElementById('harga');
+  if (hargaEl && data.harga != null) {
+    hargaEl.value = parseInt(data.harga).toLocaleString('id-ID');
+  }
+
   toggleKIBFields();
 }
 
