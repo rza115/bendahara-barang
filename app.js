@@ -71,19 +71,35 @@ let activeFilter = {};
 
 async function loadAset(filter = {}) {
   activeFilter = filter;
-  console.log('[loadAset] called, db:', !!db, 'filter:', filter);
   showLoading(true);
   try {
-    let query = db.from('aset').select('*').order('kib').order('nama_barang');
+    let query = db.from('aset').select('*');
 
     if (filter.kib) query = query.eq('kib', filter.kib);
     if (filter.kondisi) query = query.eq('kondisi', filter.kondisi);
     if (filter.search) query = query.ilike('nama_barang', `%${filter.search}%`);
 
-    console.log('[loadAset] running query...');
+    // Default order
+    if (!filter.sort) {
+      query = query.order('kib').order('nama_barang');
+    }
+
     const { data, error } = await query;
-    console.log('[loadAset] result:', { data, error });
     if (error) throw error;
+
+    // Client-side sort
+    if (filter.sort && data) {
+      const sortMap = {
+        'terbaru':       (a, b) => (b.tahun_perolehan || 0) - (a.tahun_perolehan || 0),
+        'terlama':       (a, b) => (a.tahun_perolehan || 0) - (b.tahun_perolehan || 0),
+        'harga-tertinggi': (a, b) => (b.harga || 0) - (a.harga || 0),
+        'harga-terendah':  (a, b) => (a.harga || 0) - (b.harga || 0),
+        'nama-az':       (a, b) => a.nama_barang.localeCompare(b.nama_barang, 'id'),
+        'nama-za':       (a, b) => b.nama_barang.localeCompare(a.nama_barang, 'id'),
+      };
+      if (sortMap[filter.sort]) data.sort(sortMap[filter.sort]);
+    }
+
     renderTable(data);
     updateSummary(data);
   } catch (err) {
@@ -174,17 +190,20 @@ function initFilter() {
   const filterKIB = document.getElementById('filter-kib');
   const filterKondisi = document.getElementById('filter-kondisi');
   const searchInput = document.getElementById('search-input');
+  const sortBy = document.getElementById('sort-by');
 
   function applyFilter() {
     loadAset({
       kib: filterKIB?.value || '',
       kondisi: filterKondisi?.value || '',
-      search: searchInput?.value || ''
+      search: searchInput?.value || '',
+      sort: sortBy?.value || ''
     });
   }
 
   filterKIB?.addEventListener('change', applyFilter);
   filterKondisi?.addEventListener('change', applyFilter);
+  sortBy?.addEventListener('change', applyFilter);
 
   let searchTimer;
   searchInput?.addEventListener('input', () => {
