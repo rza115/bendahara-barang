@@ -614,11 +614,17 @@
     el.addEventListener('click', e => { if (e.target === el) el.classList.remove('show'); });
   });
 
-  // Init
-  document.addEventListener('DOMContentLoaded', () => {
-    loadDropdownAset();
-    loadPengguna();
-  });
+  // Initial load
+document.addEventListener('DOMContentLoaded', async () => {
+  const ready = await window._appReady;
+  if (!ready) return;
+  db = window._authClient; // ← ini yang hilang
+
+  loadDropdownAset();
+  loadPengguna();
+  // ... event listener lainnya tetap di sini
+});
+
 </script>
 
 </body>
