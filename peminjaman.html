@@ -281,7 +281,7 @@
 
       if (filter.status === 'terlambat') {
         const today = new Date().toISOString().split('T')[0];
-        query = query.eq('status', 'dipinjam').lt('tgl_batas_kembali', today);
+        query = query.eq('status', 'dipinjam').lte('tgl_batas_kembali', today);
       } else if (filter.status) {
         query = query.eq('status', filter.status);
       }
