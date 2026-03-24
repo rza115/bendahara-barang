@@ -258,7 +258,7 @@
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
 <script src="auth.js"></script>
 <script src="app.js"></script>
 <script>
@@ -494,10 +494,14 @@
   });
 
   // Init
-  document.addEventListener('DOMContentLoaded', () => {
-    loadDropdownAset();
-    loadPeminjaman();
+  document.addEventListener('DOMContentLoaded', async () => {
+  const ready = await window._appReady;
+  if (!ready) return;
+  db = window._authClient;
+  loadDropdownAset();
+  loadPeminjaman();
   });
+
 </script>
 </body>
 </html>
