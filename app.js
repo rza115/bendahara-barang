@@ -1,13 +1,9 @@
 // ============================================
 // app.js — Logika Supabase CRUD
-// Ganti SUPABASE_URL dan SUPABASE_KEY di bawah
 // ============================================
 
-const SUPABASE_URL = 'https://ibektroxjjibniwidmpk.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_b-oL0WNdkqDjUFhepAkADw_uy9coRD6'; // anon public key
-
-// Gunakan client bersama dari auth guard
-const db = window._authClient || supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// JANGAN inisialisasi db di sini — tunggu auth guard selesai dulu
+let db = null;
 
 // ============================================
 // UTILITY
@@ -124,10 +120,21 @@ function renderTable(data) {
       <td>${escapeHtml(row.lokasi || row.penggunaan || '-')}</td>
       <td class="td-action">
         <a href="edit.html?id=${row.id}" class="btn-edit" title="Edit">✏️</a>
-        <button onclick="hapusAset('${row.id}', '${escapeHtml(row.nama_barang)}')" class="btn-hapus" title="Hapus">🗑️</button>
+        <button
+          class="btn-hapus"
+          data-id="${row.id}"
+          data-nama="${escapeHtml(row.nama_barang)}"
+          title="Hapus">🗑️</button>
       </td>
     </tr>
   `).join('');
+
+  // Event delegation — aman dari XSS, tidak peduli karakter apapun di nama
+  tbody.onclick = (e) => {
+    const btn = e.target.closest('.btn-hapus');
+    if (!btn) return;
+    hapusAset(btn.dataset.id, btn.dataset.nama);
+  };
 }
 
 function updateSummary(data) {
@@ -218,7 +225,18 @@ function fillForm(data) {
   ];
   fields.forEach(f => {
     const el = document.getElementById(f);
-    if (el && data[f] != null) el.value = data[f];
+    if (!el || data[f] == null) return;
+    if (el.tagName === 'SELECT') {
+      // FIX: coba set by value dulu, jika gagal (tidak ada option yg cocok)
+      // cari option berdasarkan teks (untuk option tanpa value= eksplisit)
+      el.value = data[f];
+      if (el.value !== String(data[f])) {
+        const opt = Array.from(el.options).find(o => o.text === String(data[f]));
+        if (opt) el.value = opt.value;
+      }
+    } else {
+      el.value = data[f];
+    }
   });
 
   // FIX: Format harga ke Rupiah saat mengisi form edit
@@ -344,7 +362,11 @@ function initHargaFormat() {
 (async () => {
   const ready = await window._appReady;
   if (!ready) return; // redirect ke login sudah terjadi
-  console.log('[app.js] Script loaded, db ready:', !!db);
+
+  // FIX: db diambil SETELAH _appReady selesai — window._authClient sudah pasti ada
+  db = window._authClient;
+  console.log('[app.js] db ready:', !!db);
+
   const page = document.body.dataset.page;
   console.log('[app.js] Page:', page);
 
