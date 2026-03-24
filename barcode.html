@@ -460,20 +460,6 @@
     });
   }
 
-  // Check all
-  document.getElementById('check-all').addEventListener('change', function () {
-    document.querySelectorAll('.cb-aset').forEach(cb => { cb.checked = this.checked; });
-    updateCount();
-  });
-
-  // Filter
-  let filterTimeout;
-  document.getElementById('search-input').addEventListener('input', function () {
-    clearTimeout(filterTimeout);
-    filterTimeout = setTimeout(() => applyFilter(), 400);
-  });
-  document.getElementById('filter-kib').addEventListener('change', applyFilter);
-
   function applyFilter() {
     loadBarcode({
       search: document.getElementById('search-input').value.trim(),
@@ -555,8 +541,34 @@
     if (e.target === this) tutupModal();
   });
 
-  // Init
-  document.addEventListener('DOMContentLoaded', () => loadBarcode());
+  // ✅ Tunggu _appReady dulu, baru set db dan panggil loadBarcode
+// Init
+let filterTimeout;
+document.addEventListener('DOMContentLoaded', async () => {
+  const ready = await window._appReady;
+  if (!ready) return;
+  db = window._authClient;
+
+  document.getElementById('check-all').addEventListener('change', function () {
+    document.querySelectorAll('.cb-aset').forEach(cb => { cb.checked = this.checked; });
+    updateCount();
+  });
+
+  document.getElementById('search-input').addEventListener('input', function () {
+    clearTimeout(filterTimeout);
+    filterTimeout = setTimeout(() => applyFilter(), 400);
+  });
+
+  document.getElementById('filter-kib').addEventListener('change', applyFilter);
+
+  document.getElementById('modal-overlay').addEventListener('click', function (e) {
+    if (e.target === this) tutupModal();
+  });
+
+  loadBarcode();
+});
+
+
 </script>
 
 </body>
