@@ -506,6 +506,53 @@ tbody td {
 
 @keyframes spin { to { transform: rotate(360deg); } }
 
+/* Custom File Upload Button */
+.form-group input[type="file"] {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  height: 38px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+  font-family: var(--font);
+  font-size: 13px;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.form-group input[type="file"]::file-selector-button {
+  background: var(--accent);
+  color: white;
+  padding: 8px 18px;
+  border: none;
+  border-radius: var(--radius);
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-right: 8px;
+}
+
+.form-group input[type="file"]::file-selector-button:hover {
+  background: var(--accent-hover);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+  transform: translateY(-1px);
+}
+
+.form-group input[type="file"]:hover {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.form-group input[type="file"]:focus-within {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
 /* ——— RESPONSIVE ——— */
 @media (max-width: 768px) {
   .main-content { padding: 18px 16px; }
