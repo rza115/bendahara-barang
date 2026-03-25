@@ -292,13 +292,13 @@ function renderTable(data) {
   }
 
   tbody.innerHTML = data.map((row, i) => `
-    <tr>
+    <tr class="row-clickable" data-id="${row.id}" style="cursor:pointer" title="Klik untuk lihat detail">
       <td class="td-no">${i + 1}</td>
       <td>
         ${row.foto_url ? `<img src="${escapeHtml(row.foto_url)}" alt=""
           style="width:40px;height:40px;object-fit:cover;border-radius:4px;margin-right:8px;vertical-align:middle;">` : ''}
         <div class="nama-barang">${escapeHtml(row.nama_barang)}</div>
-        ${row.merk_type  ? `<div class="sub-info">${escapeHtml(row.merk_type)}</div>` : ''}
+        ${row.merk_type   ? `<div class="sub-info">${escapeHtml(row.merk_type)}</div>` : ''}
         ${row.kode_barang ? `<div class="kode-info">${escapeHtml(row.kode_barang)}</div>` : ''}
       </td>
       <td><span class="kib-badge kib-${row.kib.replace(' ', '-').toLowerCase()}">${escapeHtml(row.kib)}</span></td>
@@ -307,15 +307,19 @@ function renderTable(data) {
       <td>${row.kondisi ? `<span class="badge ${getKondisiBadge(row.kondisi)}">${escapeHtml(row.kondisi)}</span>` : '-'}</td>
       <td>${escapeHtml(row.lokasi || row.penggunaan || '-')}</td>
       <td class="td-action">
-        <a href="edit.html?id=${row.id}" class="btn-edit" title="Edit">✏️</a>
-        <button class="btn-hapus" data-id="${row.id}" data-nama="${escapeHtml(row.nama_barang)}" title="Hapus">🗑️</button>
+        <a href="detail.html?id=${row.id}" class="btn-edit" title="Detail"  onclick="event.stopPropagation()">🔍</a>
+        <a href="edit.html?id=${row.id}"   class="btn-edit" title="Edit"    onclick="event.stopPropagation()">✏️</a>
+        <button class="btn-hapus" data-id="${row.id}" data-nama="${escapeHtml(row.nama_barang)}"
+          title="Hapus" onclick="event.stopPropagation()">🗑️</button>
       </td>
     </tr>
   `).join('');
 
   tbody.onclick = e => {
     const btn = e.target.closest('.btn-hapus');
-    if (btn) hapusAset(btn.dataset.id, btn.dataset.nama);
+    if (btn) { hapusAset(btn.dataset.id, btn.dataset.nama); return; }
+    const row = e.target.closest('.row-clickable');
+    if (row) window.location.href = `detail.html?id=${row.dataset.id}`;
   };
 }
 
@@ -541,6 +545,162 @@ function initHargaFormat() {
   });
 }
 
+
+// ============================================
+// DETAIL PAGE
+// ============================================
+
+const DOK_LABELS = {
+  dok_spk_url:       'SPK / Surat Pesanan',
+  dok_penawaran_url: 'Surat Penawaran',
+  dok_baphp_url:     'BAPHP',
+  dok_bast_url:      'BAST',
+  dok_kuitansi_url:  'Kuitansi',
+};
+
+function renderDetail(data) {
+  $('detail-nama').textContent      = data.nama_barang || '—';
+  $('detail-kib-label').textContent = getKIBLabel(data.kib) || '—';
+  $('btn-edit').href                = `edit.html?id=${data.id}`;
+
+  // Foto
+  const fotoWrap = $('foto-wrap');
+  if (fotoWrap) {
+    fotoWrap.innerHTML = data.foto_url
+      ? `<img src="${escapeHtml(data.foto_url)}" alt="Foto Barang" class="foto-box">`
+      : `<div class="foto-placeholder"><span>📷</span>Tidak ada foto</div>`;
+  }
+
+  // Helper set nilai ke elemen
+  const set = (id, v, mono = false) => {
+    const el = $(id);
+    if (!el) return;
+    if (v == null || v === '') {
+      el.innerHTML = '<span class="detail-value empty">—</span>';
+    } else {
+      el.innerHTML = `<span class="detail-value${mono ? ' mono' : ''}">${escapeHtml(String(v))}</span>`;
+    }
+  };
+
+  // Data umum
+  set('d-kode_barang',   data.kode_barang,   true);
+  set('d-no_register',   data.no_register,   true);
+  set('d-id_barang',     data.id_barang,     true);
+  set('d-merk_type',     data.merk_type);
+  set('d-ukuran_cc',     data.ukuran_cc);
+  set('d-bahan',         data.bahan);
+  set('d-jumlah',        data.jumlah,        true);
+  set('d-status_barang', data.status_barang);
+  set('d-status_aset',   data.status_aset);
+  set('d-lokasi',        data.lokasi);
+  set('d-penggunaan',    data.penggunaan);
+  set('d-keterangan',    data.keterangan);
+
+  // KIB badge
+  const kibEl = $('d-kib');
+  if (kibEl) kibEl.innerHTML = data.kib
+    ? `<span class="kib-badge kib-${data.kib.replace(' ','-').toLowerCase()}">${escapeHtml(data.kib)}</span>`
+    : '<span class="detail-value empty">—</span>';
+
+  // Kondisi badge
+  const kondisiEl = $('d-kondisi');
+  if (kondisiEl) kondisiEl.innerHTML = data.kondisi
+    ? `<span class="badge ${getKondisiBadge(data.kondisi)}">${escapeHtml(data.kondisi)}</span>`
+    : '<span class="detail-value empty">—</span>';
+
+  // Perolehan
+  set('d-tahun_perolehan', data.tahun_perolehan, true);
+  set('d-harga',           data.harga != null ? formatRupiah(data.harga) : null, true);
+  set('d-cara_perolehan',  data.cara_perolehan);
+  set('d-sumber_dana',     data.sumber_dana);
+  set('d-tgl_buku',        data.tgl_buku);
+  set('d-no_bast',         data.no_bast, true);
+  set('d-tgl_bast',        data.tgl_bast);
+  set('d-id_penerimaan',   data.id_penerimaan, true);
+
+  // Tampilkan section KIB yang relevan
+  const kibSectionMap = {
+    'KIB A': 'section-kib-a', 'KIB B': 'section-kib-b',
+    'KIB C': 'section-kib-c', 'KIB E': 'section-kib-e',
+  };
+  Object.values(kibSectionMap).forEach(id => {
+    const el = $(id); if (el) el.style.display = 'none';
+  });
+  const activeSection = $(kibSectionMap[data.kib]);
+  if (activeSection) activeSection.style.display = 'block';
+
+  // KIB A
+  set('d-luas_tanah',            data.luas_tanah,            true);
+  set('d-tahun_perolehan_tanah', data.tahun_perolehan_tanah, true);
+  set('d-status_tanah',          data.status_tanah);
+  set('d-letak_alamat',          data.letak_alamat);
+  set('d-no_urut_sertifikat',    data.no_urut_sertifikat,    true);
+  set('d-no_sertifikat',         data.no_sertifikat,         true);
+  set('d-tgl_sertifikat',        data.tgl_sertifikat);
+  set('d-penggunaan_tanah',      data.penggunaan_tanah);
+
+  // KIB B
+  set('d-no_pabrik', data.no_pabrik, true);
+  set('d-no_rangka', data.no_rangka, true);
+  set('d-no_mesin',  data.no_mesin,  true);
+  set('d-no_polisi', data.no_polisi, true);
+  set('d-no_bpkb',   data.no_bpkb,   true);
+
+  // KIB C
+  set('d-kondisi_bangunan',        data.kondisi_bangunan);
+  set('d-luas_lantai',             data.luas_lantai,            true);
+  set('d-jumlah_lantai',           data.jumlah_lantai,          true);
+  set('d-konstruksi_bertingkat',   data.konstruksi_bertingkat);
+  set('d-konstruksi_beton',        data.konstruksi_beton);
+  set('d-letak_bangunan',          data.letak_bangunan);
+  set('d-no_imb',                  data.no_imb,                 true);
+  set('d-tgl_imb',                 data.tgl_imb);
+  set('d-status_tanah_gedung',     data.status_tanah_gedung);
+  set('d-no_kode_tanah',           data.no_kode_tanah,          true);
+  set('d-id_awal_tanah',           data.id_awal_tanah,          true);
+  set('d-status_sertifikat_tanah', data.status_sertifikat_tanah);
+
+  // KIB E
+  set('d-judul_koleksi', data.judul_koleksi);
+  set('d-spesifikasi',   data.spesifikasi);
+  set('d-penerbit',      data.penerbit);
+  set('d-asal_daerah',   data.asal_daerah);
+  set('d-bahan_aset',    data.bahan_aset);
+  set('d-jenis_aset',    data.jenis_aset);
+  set('d-ukuran_aset',   data.ukuran_aset);
+  set('d-tahun_cetak',   data.tahun_cetak, true);
+
+  // Dokumen pengadaan
+  const dokGrid    = $('dokumen-grid');
+  const dokSection = $('section-dokumen');
+  if (dokGrid && dokSection) {
+    const items = Object.entries(DOK_LABELS)
+      .filter(([key]) => data[key])
+      .map(([key, label]) => {
+        const url = data[key];
+        const ext = url.split('?')[0].split('.').pop().toLowerCase();
+        const isImage = ['jpg','jpeg','png','webp','gif'].includes(ext);
+        const fileName = decodeURIComponent(url.split('/').pop().split('?')[0]);
+        const preview = isImage
+          ? `<img src="${escapeHtml(url)}" alt="${escapeHtml(label)}" class="dok-img">`
+          : `<a href="${escapeHtml(url)}" target="_blank" rel="noopener" class="dok-link">
+               <span>📄</span><span>${escapeHtml(fileName)}</span>
+               <span style="font-size:11px;color:#64748b">↗ Buka</span>
+             </a>`;
+        return `<div class="detail-item" style="flex-direction:column;gap:6px">
+          <span class="detail-label">${escapeHtml(label)}</span>
+          ${preview}
+        </div>`;
+      });
+    if (items.length) {
+      dokGrid.innerHTML = items.join('');
+      dokSection.style.display = 'block';
+    }
+  }
+
+  $('detail-content').style.display = 'block';
+}
+
 // ============================================
 // INIT PER HALAMAN
 // ============================================
@@ -582,6 +742,20 @@ function initHargaFormat() {
       $('btn-simpan')?.addEventListener('click', () => simpanAset(true, id));
     } catch {
       showAlert('Data tidak ditemukan', 'error');
+    } finally {
+      showLoading(false);
+    }
+  }
+
+  if (page === 'detail') {
+    const id = new URLSearchParams(window.location.search).get('id');
+    if (!id) { window.location.href = 'index.html'; return; }
+    showLoading(true);
+    try {
+      const data = await loadAsetById(id);
+      renderDetail(data);
+    } catch {
+      $('detail-error').style.display = 'block';
     } finally {
       showLoading(false);
     }
