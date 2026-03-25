@@ -82,14 +82,12 @@ async function uploadDokumen(file, jenisDok) {
 
 function initDokumenUpload() {
   const dokInputs = [
-    { id: 'dok_spk', key: 'dok_spk_url' },
-    { id: 'dok_penawaran', key: 'dok_penawaran_url' },
-    { id: 'dok_baphp', key: 'dok_baphp_url' },
-    { id: 'dok_bast', key: 'dok_bast_url' },
-    { id: 'dok_kuitansi', key: 'dok_kuitansi_url' }
+        { id: 'dok_spk_file', key: 'dok_spk_url' },
+    { id: 'dok_penawaran_file', key: 'dok_penawaran_url' },
+        { id: 'dok_baphp_file', key: 'dok_baphp_url' },
+    { id: 'dok_bast_file', key: 'dok_bast_url' },
+    { id: 'dok_kuitansi_file', key: 'dok_kuitansi_url' }
   ];
-
-  dokInputs.forEach(({ id, key }) => {
     const input = document.getElementById(id);
     if (!input) return;
 
