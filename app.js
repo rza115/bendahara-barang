@@ -105,9 +105,7 @@ function initDokumenUpload() {
       
       // Simpan file untuk diupload nanti saat save
       _uploadedDokumen[key] = file;
-    });
-}
-
+          });
 
 
 // ============================================
