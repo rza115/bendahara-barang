@@ -340,38 +340,78 @@
       <!-- ↑ FIX: section Foto ditutup di sini, SEBELUM section Dokumen dimulai -->
 
       <!-- Dokumen Pengadaan -->
-      <!-- FIX: section ini sekarang sejajar (sibling), bukan nested di dalam Foto -->
       <div class="form-section">
         <div class="form-section-title">📎 Dokumen Pengadaan</div>
         <p style="font-size:12px;color:#64748b;margin-bottom:16px;padding:0 0 8px;border-bottom:1px solid #e2e8f0;">
           Upload dokumen pendukung pengadaan barang (PDF/JPG/PNG, maks. 5 MB per file). Opsional.
         </p>
         <div class="form-grid cols-1">
+
+          <!-- SPK -->
           <div class="form-group form-col-full">
             <label>1. SPK / Kontrak / Nota Pesanan</label>
+            <div id="dok_spk_existing" style="display:none;margin-bottom:8px;">
+              <p style="font-size:12px;color:#64748b;margin-bottom:4px;">Dokumen tersimpan:</p>
+              <div id="dok_spk_preview"></div>
+              <button type="button" onclick="hapusDokumen('dok_spk_url','dok_spk_existing')" style="margin-top:6px;color:#ef4444;background:none;border:none;cursor:pointer;font-size:13px;">✕ Hapus dokumen</button>
+            </div>
             <input type="file" id="dok_spk_file" accept=".pdf,.jpg,.jpeg,.png">
+            <div id="dok_spk_new_preview" style="display:none;margin-top:8px;"></div>
             <p style="font-size:12px;color:#94a3b8;margin-top:6px;">Format: PDF/JPG · Maks. 5 MB</p>
           </div>
+
+          <!-- Surat Penawaran -->
           <div class="form-group form-col-full">
             <label>2. Surat Penawaran Penyedia</label>
+            <div id="dok_penawaran_existing" style="display:none;margin-bottom:8px;">
+              <p style="font-size:12px;color:#64748b;margin-bottom:4px;">Dokumen tersimpan:</p>
+              <div id="dok_penawaran_preview"></div>
+              <button type="button" onclick="hapusDokumen('dok_penawaran_url','dok_penawaran_existing')" style="margin-top:6px;color:#ef4444;background:none;border:none;cursor:pointer;font-size:13px;">✕ Hapus dokumen</button>
+            </div>
             <input type="file" id="dok_penawaran_file" accept=".pdf,.jpg,.jpeg,.png">
+            <div id="dok_penawaran_new_preview" style="display:none;margin-top:8px;"></div>
             <p style="font-size:12px;color:#94a3b8;margin-top:6px;">Format: PDF/JPG · Maks. 5 MB</p>
           </div>
+
+          <!-- BAPHP -->
           <div class="form-group form-col-full">
             <label>3. BAPHP (Berita Acara Pemeriksaan/Penerimaan)</label>
+            <div id="dok_baphp_existing" style="display:none;margin-bottom:8px;">
+              <p style="font-size:12px;color:#64748b;margin-bottom:4px;">Dokumen tersimpan:</p>
+              <div id="dok_baphp_preview"></div>
+              <button type="button" onclick="hapusDokumen('dok_baphp_url','dok_baphp_existing')" style="margin-top:6px;color:#ef4444;background:none;border:none;cursor:pointer;font-size:13px;">✕ Hapus dokumen</button>
+            </div>
             <input type="file" id="dok_baphp_file" accept=".pdf,.jpg,.jpeg,.png">
+            <div id="dok_baphp_new_preview" style="display:none;margin-top:8px;"></div>
             <p style="font-size:12px;color:#94a3b8;margin-top:6px;">Format: PDF/JPG · Maks. 5 MB</p>
           </div>
+
+          <!-- BAST -->
           <div class="form-group form-col-full">
             <label>4. BAST (Berita Acara Serah Terima)</label>
+            <div id="dok_bast_existing" style="display:none;margin-bottom:8px;">
+              <p style="font-size:12px;color:#64748b;margin-bottom:4px;">Dokumen tersimpan:</p>
+              <div id="dok_bast_preview"></div>
+              <button type="button" onclick="hapusDokumen('dok_bast_url','dok_bast_existing')" style="margin-top:6px;color:#ef4444;background:none;border:none;cursor:pointer;font-size:13px;">✕ Hapus dokumen</button>
+            </div>
             <input type="file" id="dok_bast_file" accept=".pdf,.jpg,.jpeg,.png">
+            <div id="dok_bast_new_preview" style="display:none;margin-top:8px;"></div>
             <p style="font-size:12px;color:#94a3b8;margin-top:6px;">Format: PDF/JPG · Maks. 5 MB</p>
           </div>
+
+          <!-- Kuitansi -->
           <div class="form-group form-col-full">
             <label>5. Kuitansi / Faktur / Nota Pembelian</label>
+            <div id="dok_kuitansi_existing" style="display:none;margin-bottom:8px;">
+              <p style="font-size:12px;color:#64748b;margin-bottom:4px;">Dokumen tersimpan:</p>
+              <div id="dok_kuitansi_preview"></div>
+              <button type="button" onclick="hapusDokumen('dok_kuitansi_url','dok_kuitansi_existing')" style="margin-top:6px;color:#ef4444;background:none;border:none;cursor:pointer;font-size:13px;">✕ Hapus dokumen</button>
+            </div>
             <input type="file" id="dok_kuitansi_file" accept=".pdf,.jpg,.jpeg,.png">
+            <div id="dok_kuitansi_new_preview" style="display:none;margin-top:8px;"></div>
             <p style="font-size:12px;color:#94a3b8;margin-top:6px;">Format: PDF/JPG · Maks. 5 MB</p>
           </div>
+
         </div>
       </div>
 
