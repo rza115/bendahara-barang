@@ -107,7 +107,6 @@ function initDokumenUpload() {
       _uploadedDokumen[key] = file;
           });
         });
-  });
 }
 
 
