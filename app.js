@@ -275,6 +275,12 @@ function applyFilter() {
     clearTimeout(searchTimer);
     searchTimer = setTimeout(applyFilter, 400);
   });
+    
+  // Event listener untuk limit rows
+  const limitRowsSelect = document.getElementById('limit-rows');
+  if (limitRowsSelect) {
+    limitRowsSelect.addEventListener('change', applyFilter);
+  }
 }
 
 // ============================================
