@@ -82,18 +82,26 @@ async function uploadDokumen(file, jenisDok) {
 
 function initDokumenUpload() {
   const dokInputs = [
-    { id: 'dok_spk_file',      key: 'dok_spk_url' },
-    { id: 'dok_penawaran_file', key: 'dok_penawaran_url' },
-    { id: 'dok_baphp_file',    key: 'dok_baphp_url' },
-    { id: 'dok_bast_file',     key: 'dok_bast_url' },
-    { id: 'dok_kuitansi_file', key: 'dok_kuitansi_url' }
+    { id: 'dok_spk_file',      key: 'dok_spk_url',      previewId: 'dok_spk_new_preview' },
+    { id: 'dok_penawaran_file', key: 'dok_penawaran_url', previewId: 'dok_penawaran_new_preview' },
+    { id: 'dok_baphp_file',    key: 'dok_baphp_url',    previewId: 'dok_baphp_new_preview' },
+    { id: 'dok_bast_file',     key: 'dok_bast_url',     previewId: 'dok_bast_new_preview' },
+    { id: 'dok_kuitansi_file', key: 'dok_kuitansi_url', previewId: 'dok_kuitansi_new_preview' }
   ];
-  dokInputs.forEach(({ id, key }) => {
+  dokInputs.forEach(({ id, key, previewId }) => {
     const input = document.getElementById(id);
     if (!input) return;
 
     input.addEventListener('change', function () {
       const file = this.files[0];
+      const previewWrap = document.getElementById(previewId);
+
+      // Reset preview lama
+      if (previewWrap) {
+        previewWrap.innerHTML = '';
+        previewWrap.style.display = 'none';
+      }
+
       if (!file) return;
 
       // Validasi ukuran (5 MB)
@@ -105,8 +113,87 @@ function initDokumenUpload() {
 
       // Simpan file untuk diupload nanti saat save
       _uploadedDokumen[key] = file;
+
+      // Tampilkan preview file baru
+      if (previewWrap) {
+        const isImage = file.type.startsWith('image/');
+        if (isImage) {
+          const reader = new FileReader();
+          reader.onload = e => {
+            previewWrap.innerHTML = `
+              <img src="${e.target.result}" alt="Preview"
+                style="max-width:200px;max-height:200px;border-radius:8px;border:1px solid #e2e8f0;">
+              <p style="font-size:12px;color:#64748b;margin-top:4px;">📄 ${escapeHtml(file.name)}</p>`;
+            previewWrap.style.display = 'block';
+          };
+          reader.readAsDataURL(file);
+        } else {
+          // PDF atau file lain
+          previewWrap.innerHTML = `
+            <div style="display:inline-flex;align-items:center;gap:8px;padding:8px 12px;
+              background:#f1f5f9;border-radius:8px;border:1px solid #e2e8f0;">
+              <span style="font-size:20px;">📄</span>
+              <span style="font-size:13px;color:#334155;">${escapeHtml(file.name)}</span>
+            </div>`;
+          previewWrap.style.display = 'block';
+        }
+      }
     });
   });
+}
+
+// Tampilkan dokumen yang sudah tersimpan di database (untuk halaman edit)
+function initDokumenPreview(data) {
+  const dokFields = [
+    { key: 'dok_spk_url',      existingId: 'dok_spk_existing',      previewId: 'dok_spk_preview' },
+    { key: 'dok_penawaran_url', existingId: 'dok_penawaran_existing', previewId: 'dok_penawaran_preview' },
+    { key: 'dok_baphp_url',    existingId: 'dok_baphp_existing',    previewId: 'dok_baphp_preview' },
+    { key: 'dok_bast_url',     existingId: 'dok_bast_existing',     previewId: 'dok_bast_preview' },
+    { key: 'dok_kuitansi_url', existingId: 'dok_kuitansi_existing', previewId: 'dok_kuitansi_preview' },
+  ];
+
+  dokFields.forEach(({ key, existingId, previewId }) => {
+    const url = data[key];
+    if (!url) return;
+
+    const existingWrap = document.getElementById(existingId);
+    const previewEl   = document.getElementById(previewId);
+    if (!existingWrap || !previewEl) return;
+
+    // Simpan URL asli ke dataset agar bisa dihapus
+    existingWrap.dataset.url = url;
+
+    const ext = url.split('?')[0].split('.').pop().toLowerCase();
+    const isImage = ['jpg', 'jpeg', 'png', 'webp', 'gif'].includes(ext);
+
+    if (isImage) {
+      previewEl.innerHTML = `
+        <img src="${escapeHtml(url)}" alt="Dokumen"
+          style="max-width:200px;max-height:200px;border-radius:8px;border:1px solid #e2e8f0;">`;
+    } else {
+      // PDF atau file lain — tampilkan tombol buka
+      const fileName = decodeURIComponent(url.split('/').pop().split('?')[0]);
+      previewEl.innerHTML = `
+        <a href="${escapeHtml(url)}" target="_blank" rel="noopener"
+          style="display:inline-flex;align-items:center;gap:8px;padding:8px 14px;
+            background:#f1f5f9;border-radius:8px;border:1px solid #cbd5e1;
+            text-decoration:none;color:#1e40af;font-size:13px;">
+          <span style="font-size:18px;">📄</span>
+          <span>${escapeHtml(fileName)}</span>
+          <span style="font-size:11px;color:#64748b;">↗ Buka</span>
+        </a>`;
+    }
+
+    existingWrap.style.display = 'block';
+  });
+}
+
+// Hapus dokumen tersimpan (tandai null agar dihapus saat save)
+function hapusDokumen(key, existingId) {
+  const existingWrap = document.getElementById(existingId);
+  if (existingWrap) existingWrap.style.display = 'none';
+  // Tandai key ini untuk di-null-kan saat simpan
+  _uploadedDokumen[key] = null;
 }
 
 
@@ -462,9 +549,12 @@ async function simpanAset(isEdit = false, id = null) {
       data.foto_url = null;
     }
 
-    // Upload dokumen pengadaan
+    // Upload dokumen pengadaan / hapus yang di-null-kan
     for (const [key, file] of Object.entries(_uploadedDokumen)) {
-      if (file) {
+      if (file === null) {
+        // Pengguna menghapus dokumen — set null di database
+        data[key] = null;
+      } else if (file instanceof File) {
         try {
           const jenisDok = key.replace('_url', '');
           data[key] = await uploadDokumen(file, jenisDok);
@@ -561,6 +651,7 @@ function initHargaFormat() {
       fillForm(data);
       initHargaFormat();
       initFotoUpload(data.foto_url);
+      initDokumenPreview(data); // ← tampilkan dokumen tersimpan dari database
       initDokumenUpload();
       document.getElementById('kib')?.addEventListener('change', toggleKIBFields);
       document.getElementById('btn-simpan')?.addEventListener('click', () => simpanAset(true, id));
