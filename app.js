@@ -179,31 +179,6 @@ async function loadAset(filter = {}) {
   }
 }
 
-// Di dalam fungsi loadAset(), setelah mendapatkan data dari database
-// Tambahkan kode berikut sebelum loop yang menampilkan data:
-
-const limitSelect = document.getElementById('limit-rows');
-const limitValue = limitSelect ? limitSelect.value : 'all';
-let dataToDisplay = filteredAset; // atau variable array data yang ada
-
-if (limitValue !== 'all') {
-    const limit = parseInt(limitValue);
-    dataToDisplay = filteredAset.slice(0, limit);
-}
-
-// Lalu gunakan dataToDisplay untuk loop menampilkan ke tabel
-dataToDisplay.forEach((aset, index) => {
-    // kode untuk menampilkan data ke tabel
-});
-    renderTable(data);
-    updateSummary(data);
-  } catch (err) {
-    showAlert('Gagal memuat data: ' + err.message, 'error');
-  } finally {
-    showLoading(false);
-  }
-}
-
 function renderTable(data) {
   const tbody = document.getElementById('aset-tbody');
   if (!tbody) return;
@@ -300,14 +275,6 @@ function applyFilter() {
     clearTimeout(searchTimer);
     searchTimer = setTimeout(applyFilter, 400);
   });
-  
-  // Event listener untuk limit rows
-const limitRowsSelect = document.getElementById('limit-rows');
-if (limitRowsSelect) {
-    limitRowsSelect.addEventListener('change', function() {
-        loadAset(); // reload data dengan limit baru
-    });
-}
 }
 
 // ============================================
