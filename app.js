@@ -254,8 +254,18 @@ function getKondisiBadge(kondisi) {
   return map[kondisi] || 'badge-baik';
 }
 
-// FIX: Simpan filter aktif agar bisa dipakai ulang saat hapus
+// Simpan filter aktif agar bisa dipakai ulang saat hapus
 let activeFilter = {};
+
+// Peta sort option → kolom & arah untuk server-side ordering
+const SORT_MAP = {
+  'terbaru':        { column: 'tahun_perolehan', ascending: false },
+  'terlama':        { column: 'tahun_perolehan', ascending: true  },
+  'harga-tertinggi':{ column: 'harga',           ascending: false },
+  'harga-terendah': { column: 'harga',           ascending: true  },
+  'nama-az':        { column: 'nama_barang',     ascending: true  },
+  'nama-za':        { column: 'nama_barang',     ascending: false },
+};
 
 // ============================================
 // INDEX PAGE — DAFTAR ASET
@@ -265,40 +275,43 @@ async function loadAset(filter = {}) {
   activeFilter = filter;
   showLoading(true);
   try {
+    // ─── Query 1: data tampil (sort + limit server-side) ───────────
     let query = db.from('aset').select('*');
-    if (filter.kib) query = query.eq('kib', filter.kib);
-    if (filter.kondisi) query = query.eq('kondisi', filter.kondisi);
-    if (filter.search) query = query.ilike('nama_barang', `%${filter.search}%`);
 
-    if (!filter.sort) {
+    // Filter
+    if (filter.kib)     query = query.eq('kib', filter.kib);
+    if (filter.kondisi) query = query.eq('kondisi', filter.kondisi);
+    if (filter.search)  query = query.ilike('nama_barang', `%${filter.search}%`);
+
+    // Sort server-side
+    const sortOpt = SORT_MAP[filter.sort];
+    if (sortOpt) {
+      query = query.order(sortOpt.column, { ascending: sortOpt.ascending });
+    } else {
       query = query.order('kib').order('nama_barang');
     }
 
+    // Limit server-side — hanya tarik baris yang diperlukan
+    const limitVal = filter.limit && filter.limit !== 'all'
+      ? parseInt(filter.limit)
+      : null;
+    if (limitVal) query = query.limit(limitVal);
+
     const { data, error } = await query;
     if (error) throw error;
+    renderTable(data);
 
-    // Client-side sort
-    if (filter.sort && data) {
-      const sortMap = {
-        'terbaru':        (a, b) => (b.tahun_perolehan || 0) - (a.tahun_perolehan || 0),
-        'terlama':        (a, b) => (a.tahun_perolehan || 0) - (b.tahun_perolehan || 0),
-        'harga-tertinggi':(a, b) => (b.harga || 0) - (a.harga || 0),
-        'harga-terendah': (a, b) => (a.harga || 0) - (b.harga || 0),
-        'nama-az':        (a, b) => a.nama_barang.localeCompare(b.nama_barang, 'id'),
-        'nama-za':        (a, b) => b.nama_barang.localeCompare(a.nama_barang, 'id'),
-      };
-      if (sortMap[filter.sort]) data.sort(sortMap[filter.sort]);
-    }
+    // ─── Query 2: summary (tanpa limit/sort, hanya kolom yang dibutuhkan) ──
+    // Query terpisah agar summary selalu mencerminkan total data
+    // sesuai filter aktif, bukan hanya baris yang ditampilkan
+    let summaryQuery = db.from('aset').select('kib, harga');
+    if (filter.kib)     summaryQuery = summaryQuery.eq('kib', filter.kib);
+    if (filter.kondisi) summaryQuery = summaryQuery.eq('kondisi', filter.kondisi);
+    if (filter.search)  summaryQuery = summaryQuery.ilike('nama_barang', `%${filter.search}%`);
 
-    // Apply limit
-    let displayData = data;
-    if (filter.limit && filter.limit !== 'all' && data) {
-      const limit = parseInt(filter.limit);
-      displayData = data.slice(0, limit);
-    }
-
-    renderTable(displayData);
-    updateSummary(data); // Summary tetap menggunakan data lengkap
+    const { data: summaryData, error: summaryError } = await summaryQuery;
+    if (summaryError) throw summaryError;
+    updateSummary(summaryData);
 
   } catch (err) {
     showAlert('Gagal memuat data: ' + err.message, 'error');
