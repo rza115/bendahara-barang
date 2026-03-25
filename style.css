@@ -333,8 +333,10 @@ tbody td {
 .btn-primary {
   background: var(--accent);
   color: white;
+     font-weight: 600;
+     box-shadow: 0 2px 8px rgba(37,99,235,0.2);
 }
-.btn-primary:hover { background: var(--accent-hover); box-shadow: 0 4px 12px rgba(37,99,235,0.3); }
+.btn-primary:hover { background: var(--accent-hover); box-shadow: 0 6px 20px rgba(37,99,235,0.4); transform: translateY(-1px); }
 
 .btn-secondary {
   background: var(--bg);
