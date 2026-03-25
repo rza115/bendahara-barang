@@ -66,6 +66,50 @@ function initFotoUpload(existingUrl = null) {
   });
 }
 
+// DOKUMEN PENGADAAN - Upload ke Supabase Storage
+const _uploadedDokumen = {};
+
+async function uploadDokumen(file, jenisDok) {
+  const ext = file.name.split('.').pop();
+  const fileName = `${jenisDok}_${Date.now()}.${ext}`;
+  const { data, error } = await db.storage
+    .from('dokumen-pengadaan')
+    .upload(fileName, file, { upsert: true });
+  if (error) throw error;
+  const { data: urlData } = db.storage.from('dokumen-pengadaan').getPublicUrl(fileName);
+  return urlData.publicUrl;
+}
+
+function initDokumenUpload() {
+  const dokInputs = [
+    { id: 'dok_spk', key: 'dok_spk_url' },
+    { id: 'dok_penawaran', key: 'dok_penawaran_url' },
+    { id: 'dok_baphp', key: 'dok_baphp_url' },
+    { id: 'dok_bast', key: 'dok_bast_url' },
+    { id: 'dok_kuitansi', key: 'dok_kuitansi_url' }
+  ];
+
+  dokInputs.forEach(({ id, key }) => {
+    const input = document.getElementById(id);
+    if (!input) return;
+
+    input.addEventListener('change', function() {
+      const file = this.files[0];
+      if (!file) return;
+      
+      // Validasi ukuran (5 MB)
+      if (file.size > 5 * 1024 * 1024) {
+        showAlert('Ukuran file melebihi 5 MB!', 'error');
+        this.value = '';
+        return;
+      }
+      
+      // Simpan file untuk diupload nanti saat save
+      _uploadedDokumen[key] = file;
+    });
+  });
+}
+
 
 
 // ============================================
@@ -421,6 +465,20 @@ async function simpanAset(isEdit = false, id = null) {
       data.foto_url = null;
     }
 
+        // Upload dokumen pengadaan
+    for (const [key, file] of Object.entries(_uploadedDokumen)) {
+      if (file) {
+        try {
+          const jenisDok = key.replace('_url', '');
+          data[key] = await uploadDokumen(file, jenisDok);
+        } catch (err) {
+          showAlert('Gagal upload dokumen: ' + err.message, 'error');
+          showLoading(false);
+          return;
+        }
+      }
+    }
+
     let error;
     if (isEdit && id) {
       ({ error } = await db.from('aset').update(data).eq('id', id));
@@ -493,6 +551,7 @@ if (page === 'tambah') {
   document.getElementById('btn-simpan')?.addEventListener('click', () => simpanAset(false));
 }
 
+    initDokumenUpload(); // ← TAMBAHKAN INI
 // Page: edit
 if (page === 'edit') {
   const params = new URLSearchParams(window.location.search);
@@ -504,6 +563,7 @@ if (page === 'edit') {
     fillForm(data);
     initHargaFormat();
     initFotoUpload(data.foto_url); // ← TAMBAHKAN INI
+        initDokumenUpload(); // ← TAMBAHKAN INI
     document.getElementById('kib')?.addEventListener('change', toggleKIBFields);
     document.getElementById('btn-simpan')?.addEventListener('click', () => simpanAset(true, id));
   } catch (err) {
