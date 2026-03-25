@@ -40,6 +40,7 @@
 
     <div class="form-card">
 
+      <!-- Identitas Barang -->
       <div class="form-section">
         <div class="form-section-title">📋 Identitas Barang</div>
         <div class="form-grid">
@@ -48,8 +49,8 @@
             <select id="kib">
               <option value="">— Pilih KIB —</option>
               <option value="KIB A">KIB A — Tanah</option>
-              <option value="KIB B">KIB B — Peralatan & Mesin</option>
-              <option value="KIB C">KIB C — Gedung & Bangunan</option>
+              <option value="KIB B">KIB B — Peralatan &amp; Mesin</option>
+              <option value="KIB C">KIB C — Gedung &amp; Bangunan</option>
               <option value="KIB E">KIB E — Aset Tetap Lainnya</option>
             </select>
           </div>
@@ -84,6 +85,7 @@
         </div>
       </div>
 
+      <!-- Data Perolehan -->
       <div class="form-section">
         <div class="form-section-title">💰 Data Perolehan</div>
         <div class="form-grid">
@@ -131,6 +133,7 @@
         </div>
       </div>
 
+      <!-- Khusus KIB A — Tanah -->
       <div class="form-section" id="section-tanah" style="display:none">
         <div class="form-section-title">🏞️ Data Tanah (KIB A)</div>
         <div class="form-grid">
@@ -176,6 +179,7 @@
         </div>
       </div>
 
+      <!-- Khusus KIB B — Peralatan & Mesin -->
       <div class="form-section" id="section-kendaraan" style="display:none">
         <div class="form-section-title">🚗 Nomor Identitas (KIB B)</div>
         <div class="form-grid cols-3">
@@ -202,10 +206,10 @@
         </div>
       </div>
 
+      <!-- Khusus KIB C — Gedung & Bangunan -->
       <div class="form-section" id="section-gedung" style="display:none">
-        <div class="form-section-title">🏢 Data Gedung & Bangunan (KIB C)</div>
+        <div class="form-section-title">🏢 Data Gedung &amp; Bangunan (KIB C)</div>
         <div class="form-grid">
-
           <div class="form-group">
             <label>Kondisi Bangunan</label>
             <select id="kondisi_bangunan">
@@ -219,7 +223,6 @@
             <label>Luas Lantai (m²)</label>
             <input type="number" id="luas_lantai">
           </div>
-
           <div class="form-group">
             <label>Konstruksi — Bertingkat</label>
             <select id="konstruksi_bertingkat">
@@ -236,12 +239,10 @@
               <option value="Tidak">Tidak Beton</option>
             </select>
           </div>
-
           <div class="form-group form-col-full">
             <label>Letak / Alamat Bangunan</label>
             <input type="text" id="letak_bangunan">
           </div>
-
           <div class="form-group">
             <label>Tanggal Dokumen Gedung</label>
             <input type="date" id="tgl_imb">
@@ -250,7 +251,6 @@
             <label>No. Dokumen Gedung (IMB/PBG)</label>
             <input type="text" id="no_imb">
           </div>
-
           <div class="form-group">
             <label>Status Tanah / Penggunaan</label>
             <input type="text" id="status_tanah_gedung">
@@ -272,10 +272,10 @@
               <option>Dalam Proses</option>
             </select>
           </div>
-
         </div>
       </div>
 
+      <!-- Khusus KIB E — Aset Tetap Lainnya -->
       <div class="form-section" id="section-lainnya" style="display:none">
         <div class="form-section-title">📦 Data Aset Tetap Lainnya (KIB E)</div>
         <p style="font-size:12px;color:#64748b;margin-bottom:16px;padding:0 0 8px;border-bottom:1px solid #e2e8f0;">
@@ -317,62 +317,67 @@
         </div>
       </div>
 
-    <!-- Foto Barang -->
-    <div class="form-section">
-      <div class="form-section-title">📷 Foto Barang</div>
-      <div class="form-grid">
-        <div class="form-group form-col-full">
-          <label>Upload Foto Barang</label>
-          <div id="foto-existing-wrap" style="margin-bottom:10px;display:none">
-            <p style="font-size:12px;color:#64748b;margin-bottom:4px;">Foto saat ini:</p>
-            <img id="foto-existing" src="" alt="Foto barang" style="max-width:200px;max-height:200px;border-radius:8px;border:1px solid #e2e8f0;">
-            <button type="button" id="btn-hapus-foto" style="display:block;margin-top:6px;color:#ef4444;background:none;border:none;cursor:pointer;font-size:13px;">✕ Hapus foto</button>
+      <!-- Foto Barang -->
+      <!-- FIX: section ini sekarang ditutup dengan benar sebelum section Dokumen -->
+      <div class="form-section">
+        <div class="form-section-title">📷 Foto Barang</div>
+        <div class="form-grid">
+          <div class="form-group form-col-full">
+            <label>Upload Foto Barang</label>
+            <div id="foto-existing-wrap" style="margin-bottom:10px;display:none">
+              <p style="font-size:12px;color:#64748b;margin-bottom:4px;">Foto saat ini:</p>
+              <img id="foto-existing" src="" alt="Foto barang" style="max-width:200px;max-height:200px;border-radius:8px;border:1px solid #e2e8f0;">
+              <button type="button" id="btn-hapus-foto" style="display:block;margin-top:6px;color:#ef4444;background:none;border:none;cursor:pointer;font-size:13px;">✕ Hapus foto</button>
+            </div>
+            <input type="file" id="foto_file" accept="image/*">
+            <div id="foto-preview-wrap" style="margin-top:10px;display:none">
+              <img id="foto-preview" src="" alt="Preview" style="max-width:200px;max-height:200px;border-radius:8px;border:1px solid #e2e8f0;">
+            </div>
+            <p style="font-size:12px;color:#94a3b8;margin-top:6px;">Format: JPG/PNG/WEBP · Maks. 2 MB</p>
           </div>
-          <input type="file" id="foto_file" accept="image/*">
-          <div id="foto-preview-wrap" style="margin-top:10px;display:none">
-            <img id="foto-preview" src="" alt="Preview" style="max-width:200px;max-height:200px;border-radius:8px;border:1px solid #e2e8f0;">
+        </div>
+      </div>
+      <!-- ↑ FIX: section Foto ditutup di sini, SEBELUM section Dokumen dimulai -->
+
+      <!-- Dokumen Pengadaan -->
+      <!-- FIX: section ini sekarang sejajar (sibling), bukan nested di dalam Foto -->
+      <div class="form-section">
+        <div class="form-section-title">📎 Dokumen Pengadaan</div>
+        <p style="font-size:12px;color:#64748b;margin-bottom:16px;padding:0 0 8px;border-bottom:1px solid #e2e8f0;">
+          Upload dokumen pendukung pengadaan barang (PDF/JPG/PNG, maks. 5 MB per file). Opsional.
+        </p>
+        <div class="form-grid cols-1">
+          <div class="form-group form-col-full">
+            <label>1. SPK / Kontrak / Nota Pesanan</label>
+            <input type="file" id="dok_spk_file" accept=".pdf,.jpg,.jpeg,.png">
+            <p style="font-size:12px;color:#94a3b8;margin-top:6px;">Format: PDF/JPG · Maks. 5 MB</p>
           </div>
-          <p style="font-size:12px;color:#94a3b8;margin-top:6px;">Format: JPG/PNG/WEBP · Maks. 2 MB</p>
+          <div class="form-group form-col-full">
+            <label>2. Surat Penawaran Penyedia</label>
+            <input type="file" id="dok_penawaran_file" accept=".pdf,.jpg,.jpeg,.png">
+            <p style="font-size:12px;color:#94a3b8;margin-top:6px;">Format: PDF/JPG · Maks. 5 MB</p>
+          </div>
+          <div class="form-group form-col-full">
+            <label>3. BAPHP (Berita Acara Pemeriksaan/Penerimaan)</label>
+            <input type="file" id="dok_baphp_file" accept=".pdf,.jpg,.jpeg,.png">
+            <p style="font-size:12px;color:#94a3b8;margin-top:6px;">Format: PDF/JPG · Maks. 5 MB</p>
+          </div>
+          <div class="form-group form-col-full">
+            <label>4. BAST (Berita Acara Serah Terima)</label>
+            <input type="file" id="dok_bast_file" accept=".pdf,.jpg,.jpeg,.png">
+            <p style="font-size:12px;color:#94a3b8;margin-top:6px;">Format: PDF/JPG · Maks. 5 MB</p>
+          </div>
+          <div class="form-group form-col-full">
+            <label>5. Kuitansi / Faktur / Nota Pembelian</label>
+            <input type="file" id="dok_kuitansi_file" accept=".pdf,.jpg,.jpeg,.png">
+            <p style="font-size:12px;color:#94a3b8;margin-top:6px;">Format: PDF/JPG · Maks. 5 MB</p>
+          </div>
         </div>
       </div>
 
-          <!-- Dokumen Pengadaan -->
-    <div class="form-section">
-      <div class="form-section-title">📄 Dokumen Pengadaan</div>
-      <p style="font-size:12px;color:#64748b;margin-bottom:16px;padding:0 0 8px;border-bottom:1px solid #e2e8f0;">
-        Upload 5 dokumen: SPK/Kontrak, Surat Penawaran, BAPHP, BAST, Kuitansi/Nota
-      </p>
-      <div class="form-grid">
-        <div class="form-group form-col-full">
-          <label>1. SPK / Kontrak / Nota Pesanan</label>
-          <input type="file" id="dok_spk_file" accept=".pdf,image/*">
-          <p style="font-size:12px;color:#94a3b8;margin-top:6px;">Format: PDF/JPG · Maks. 5 MB</p>
-        </div>
-        <div class="form-group form-col-full">
-          <label>2. Surat Penawaran Penyedia</label>
-          <input type="file" id="dok_penawaran_file" accept=".pdf,image/*">
-          <p style="font-size:12px;color:#94a3b8;margin-top:6px;">Format: PDF/JPG · Maks. 5 MB</p>
-        </div>
-        <div class="form-group form-col-full">
-          <label>3. BAPHP (Berita Acara Pemeriksaan/Penerimaan)</label>
-          <input type="file" id="dok_baphp_file" accept=".pdf,image/*">
-          <p style="font-size:12px;color:#94a3b8;margin-top:6px;">Format: PDF/JPG · Maks. 5 MB</p>
-        </div>
-        <div class="form-group form-col-full">
-          <label>4. BAST (Berita Acara Serah Terima)</label>
-          <input type="file" id="dok_bast_file" accept=".pdf,image/*">
-          <p style="font-size:12px;color:#94a3b8;margin-top:6px;">Format: PDF/JPG · Maks. 5 MB</p>
-        </div>
-        <div class="form-group form-col-full">
-          <label>5. Kuitansi / Faktur / Nota Pembelian</label>
-          <input type="file" id="dok_kuitansi_file" accept=".pdf,image/*">
-          <p style="font-size:12px;color:#94a3b8;margin-top:6px;">Format: PDF/JPG · Maks. 5 MB</p>
-        </div>
-      </div>
-    </div>
-    </div>
+      <!-- Dokumen & Status -->
       <div class="form-section">
-        <div class="form-section-title">📄 Dokumen & Status</div>
+        <div class="form-section-title">📄 Dokumen &amp; Status</div>
         <div class="form-grid">
           <div class="form-group">
             <label>Tanggal Buku</label>
@@ -410,8 +415,9 @@
         </div>
       </div>
 
+      <!-- Lokasi & Keterangan -->
       <div class="form-section">
-        <div class="form-section-title">📍 Lokasi & Keterangan</div>
+        <div class="form-section-title">📍 Lokasi &amp; Keterangan</div>
         <div class="form-grid">
           <div class="form-group">
             <label>Lokasi Aset</label>
@@ -428,6 +434,7 @@
         </div>
       </div>
 
+      <!-- Actions -->
       <div class="form-actions">
         <button id="btn-simpan" class="btn btn-primary">💾 Simpan Perubahan</button>
         <a href="index.html" class="btn btn-secondary">Batal</a>
@@ -437,7 +444,7 @@
 
   </main>
 
-<!-- Supabase — harus paling pertama -->
+  <!-- Supabase — harus paling pertama -->
   <script src="supabase.js"></script>
   <script src="auth.js"></script>
   <script src="nav.js"></script>
