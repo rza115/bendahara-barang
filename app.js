@@ -137,32 +137,64 @@ async function loadAset(filter = {}) {
   showLoading(true);
   try {
     let query = db.from('aset').select('*');
-
     if (filter.kib) query = query.eq('kib', filter.kib);
     if (filter.kondisi) query = query.eq('kondisi', filter.kondisi);
     if (filter.search) query = query.ilike('nama_barang', `%${filter.search}%`);
-
-    // Default order
+    
     if (!filter.sort) {
       query = query.order('kib').order('nama_barang');
     }
-
+    
     const { data, error } = await query;
     if (error) throw error;
-
+    
     // Client-side sort
     if (filter.sort && data) {
       const sortMap = {
-        'terbaru':       (a, b) => (b.tahun_perolehan || 0) - (a.tahun_perolehan || 0),
-        'terlama':       (a, b) => (a.tahun_perolehan || 0) - (b.tahun_perolehan || 0),
+        'terbaru': (a, b) => (b.tahun_perolehan || 0) - (a.tahun_perolehan || 0),
+        'terlama': (a, b) => (a.tahun_perolehan || 0) - (b.tahun_perolehan || 0),
         'harga-tertinggi': (a, b) => (b.harga || 0) - (a.harga || 0),
-        'harga-terendah':  (a, b) => (a.harga || 0) - (b.harga || 0),
-        'nama-az':       (a, b) => a.nama_barang.localeCompare(b.nama_barang, 'id'),
-        'nama-za':       (a, b) => b.nama_barang.localeCompare(a.nama_barang, 'id'),
+        'harga-terendah': (a, b) => (a.harga || 0) - (b.harga || 0),
+        'nama-az': (a, b) => a.nama_barang.localeCompare(b.nama_barang, 'id'),
+        'nama-za': (a, b) => b.nama_barang.localeCompare(a.nama_barang, 'id'),
       };
       if (sortMap[filter.sort]) data.sort(sortMap[filter.sort]);
     }
+    
+    // ← TAMBAHKAN KODE LIMIT DI SINI (setelah sort, sebelum renderTable)
+    // Apply limit
+    let displayData = data;
+    if (filter.limit && filter.limit !== 'all' && data) {
+      const limit = parseInt(filter.limit);
+      displayData = data.slice(0, limit);
+    }
+    
+    renderTable(displayData);  // ← Ganti dari renderTable(data) ke renderTable(displayData)
+    updateSummary(data);  // ← Summary tetap menggunakan data lengkap
+    
+  } catch (err) {
+    showAlert('Gagal memuat data: ' + err.message, 'error');
+  } finally {
+    showLoading(false);
+  }
+}
 
+// Di dalam fungsi loadAset(), setelah mendapatkan data dari database
+// Tambahkan kode berikut sebelum loop yang menampilkan data:
+
+const limitSelect = document.getElementById('limit-rows');
+const limitValue = limitSelect ? limitSelect.value : 'all';
+let dataToDisplay = filteredAset; // atau variable array data yang ada
+
+if (limitValue !== 'all') {
+    const limit = parseInt(limitValue);
+    dataToDisplay = filteredAset.slice(0, limit);
+}
+
+// Lalu gunakan dataToDisplay untuk loop menampilkan ke tabel
+dataToDisplay.forEach((aset, index) => {
+    // kode untuk menampilkan data ke tabel
+});
     renderTable(data);
     updateSummary(data);
   } catch (err) {
@@ -248,14 +280,16 @@ function initFilter() {
   const searchInput = document.getElementById('search-input');
   const sortBy = document.getElementById('sort-by');
 
-  function applyFilter() {
-    loadAset({
-      kib: filterKIB?.value || '',
-      kondisi: filterKondisi?.value || '',
-      search: searchInput?.value || '',
-      sort: sortBy?.value || ''
-    });
-  }
+function applyFilter() {
+  const limitRowsSelect = document.getElementById('limit-rows');
+  loadAset({
+    kib: filterKIB?.value || '',
+    kondisi: filterKondisi?.value || '',
+    search: searchInput?.value || '',
+    sort: sortBy?.value || '',
+    limit: limitRowsSelect?.value || 'all'  // ← TAMBAHKAN INI
+  });
+}
 
   filterKIB?.addEventListener('change', applyFilter);
   filterKondisi?.addEventListener('change', applyFilter);
@@ -266,6 +300,14 @@ function initFilter() {
     clearTimeout(searchTimer);
     searchTimer = setTimeout(applyFilter, 400);
   });
+  
+  // Event listener untuk limit rows
+const limitRowsSelect = document.getElementById('limit-rows');
+if (limitRowsSelect) {
+    limitRowsSelect.addEventListener('change', function() {
+        loadAset(); // reload data dengan limit baru
+    });
+}
 }
 
 // ============================================
