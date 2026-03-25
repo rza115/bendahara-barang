@@ -82,31 +82,31 @@ async function uploadDokumen(file, jenisDok) {
 
 function initDokumenUpload() {
   const dokInputs = [
-        { id: 'dok_spk_file', key: 'dok_spk_url' },
+    { id: 'dok_spk_file',      key: 'dok_spk_url' },
     { id: 'dok_penawaran_file', key: 'dok_penawaran_url' },
-        { id: 'dok_baphp_file', key: 'dok_baphp_url' },
-    { id: 'dok_bast_file', key: 'dok_bast_url' },
+    { id: 'dok_baphp_file',    key: 'dok_baphp_url' },
+    { id: 'dok_bast_file',     key: 'dok_bast_url' },
     { id: 'dok_kuitansi_file', key: 'dok_kuitansi_url' }
   ];
   dokInputs.forEach(({ id, key }) => {
     const input = document.getElementById(id);
     if (!input) return;
 
-    input.addEventListener('change', function() {
+    input.addEventListener('change', function () {
       const file = this.files[0];
       if (!file) return;
-      
+
       // Validasi ukuran (5 MB)
       if (file.size > 5 * 1024 * 1024) {
         showAlert('Ukuran file melebihi 5 MB!', 'error');
         this.value = '';
         return;
       }
-      
+
       // Simpan file untuk diupload nanti saat save
       _uploadedDokumen[key] = file;
-          });
-        });
+    });
+  });
 }
 
 
@@ -182,38 +182,37 @@ async function loadAset(filter = {}) {
     if (filter.kib) query = query.eq('kib', filter.kib);
     if (filter.kondisi) query = query.eq('kondisi', filter.kondisi);
     if (filter.search) query = query.ilike('nama_barang', `%${filter.search}%`);
-    
+
     if (!filter.sort) {
       query = query.order('kib').order('nama_barang');
     }
-    
+
     const { data, error } = await query;
     if (error) throw error;
-    
+
     // Client-side sort
     if (filter.sort && data) {
       const sortMap = {
-        'terbaru': (a, b) => (b.tahun_perolehan || 0) - (a.tahun_perolehan || 0),
-        'terlama': (a, b) => (a.tahun_perolehan || 0) - (b.tahun_perolehan || 0),
-        'harga-tertinggi': (a, b) => (b.harga || 0) - (a.harga || 0),
+        'terbaru':        (a, b) => (b.tahun_perolehan || 0) - (a.tahun_perolehan || 0),
+        'terlama':        (a, b) => (a.tahun_perolehan || 0) - (b.tahun_perolehan || 0),
+        'harga-tertinggi':(a, b) => (b.harga || 0) - (a.harga || 0),
         'harga-terendah': (a, b) => (a.harga || 0) - (b.harga || 0),
-        'nama-az': (a, b) => a.nama_barang.localeCompare(b.nama_barang, 'id'),
-        'nama-za': (a, b) => b.nama_barang.localeCompare(a.nama_barang, 'id'),
+        'nama-az':        (a, b) => a.nama_barang.localeCompare(b.nama_barang, 'id'),
+        'nama-za':        (a, b) => b.nama_barang.localeCompare(a.nama_barang, 'id'),
       };
       if (sortMap[filter.sort]) data.sort(sortMap[filter.sort]);
     }
-    
-    // ← TAMBAHKAN KODE LIMIT DI SINI (setelah sort, sebelum renderTable)
+
     // Apply limit
     let displayData = data;
     if (filter.limit && filter.limit !== 'all' && data) {
       const limit = parseInt(filter.limit);
       displayData = data.slice(0, limit);
     }
-    
-    renderTable(displayData);  // ← Ganti dari renderTable(data) ke renderTable(displayData)
-    updateSummary(data);  // ← Summary tetap menggunakan data lengkap
-    
+
+    renderTable(displayData);
+    updateSummary(data); // Summary tetap menggunakan data lengkap
+
   } catch (err) {
     showAlert('Gagal memuat data: ' + err.message, 'error');
   } finally {
@@ -266,7 +265,7 @@ function updateSummary(data) {
   data.forEach(r => { if (perKIB[r.kib] !== undefined) perKIB[r.kib]++; });
 
   const el = id => document.getElementById(id);
-  if (el('total-aset')) el('total-aset').textContent = total;
+  if (el('total-aset'))  el('total-aset').textContent  = total;
   if (el('total-nilai')) el('total-nilai').textContent = formatRupiah(totalNilai);
   if (el('total-kib-a')) el('total-kib-a').textContent = perKIB['KIB A'];
   if (el('total-kib-b')) el('total-kib-b').textContent = perKIB['KIB B'];
@@ -292,21 +291,21 @@ async function hapusAset(id, nama) {
 
 // Filter & Search
 function initFilter() {
-  const filterKIB = document.getElementById('filter-kib');
+  const filterKIB    = document.getElementById('filter-kib');
   const filterKondisi = document.getElementById('filter-kondisi');
-  const searchInput = document.getElementById('search-input');
-  const sortBy = document.getElementById('sort-by');
+  const searchInput  = document.getElementById('search-input');
+  const sortBy       = document.getElementById('sort-by');
 
-function applyFilter() {
-  const limitRowsSelect = document.getElementById('limit-rows');
-  loadAset({
-    kib: filterKIB?.value || '',
-    kondisi: filterKondisi?.value || '',
-    search: searchInput?.value || '',
-    sort: sortBy?.value || '',
-    limit: limitRowsSelect?.value || 'all'  // ← TAMBAHKAN INI
-  });
-}
+  function applyFilter() {
+    const limitRowsSelect = document.getElementById('limit-rows');
+    loadAset({
+      kib:     filterKIB?.value    || '',
+      kondisi: filterKondisi?.value || '',
+      search:  searchInput?.value  || '',
+      sort:    sortBy?.value       || '',
+      limit:   limitRowsSelect?.value || 'all'
+    });
+  }
 
   filterKIB?.addEventListener('change', applyFilter);
   filterKondisi?.addEventListener('change', applyFilter);
@@ -317,7 +316,7 @@ function applyFilter() {
     clearTimeout(searchTimer);
     searchTimer = setTimeout(applyFilter, 400);
   });
-    
+
   // Event listener untuk limit rows
   const limitRowsSelect = document.getElementById('limit-rows');
   if (limitRowsSelect) {
@@ -406,22 +405,22 @@ function getFormData() {
   });
 
   // Angka
-  const hargaEl = document.getElementById('harga');
-  const jumlahEl = document.getElementById('jumlah');
-  const tahunEl = document.getElementById('tahun_perolehan');
-  const luasEl = document.getElementById('luas_tanah');
-  const luasLantaiEl = document.getElementById('luas_lantai');
-  const jumlahLantaiEl = document.getElementById('jumlah_lantai');
-  const tahunTanahEl = document.getElementById('tahun_perolehan_tanah');
-  const tahunCetakEl = document.getElementById('tahun_cetak');
-  if (hargaEl) result.harga = parseInt(hargaEl.value.replace(/\D/g, '')) || 0;
-  if (jumlahEl) result.jumlah = parseInt(jumlahEl.value) || 1;
-  if (tahunEl) result.tahun_perolehan = parseInt(tahunEl.value) || null;
-  if (luasEl) result.luas_tanah = parseFloat(luasEl.value) || null;
-  if (luasLantaiEl) result.luas_lantai = parseFloat(luasLantaiEl.value) || null;
-  if (jumlahLantaiEl) result.jumlah_lantai = parseInt(jumlahLantaiEl.value) || null;
-  if (tahunTanahEl) result.tahun_perolehan_tanah = parseInt(tahunTanahEl.value) || null;
-  if (tahunCetakEl) result.tahun_cetak = parseInt(tahunCetakEl.value) || null;
+  const hargaEl       = document.getElementById('harga');
+  const jumlahEl      = document.getElementById('jumlah');
+  const tahunEl       = document.getElementById('tahun_perolehan');
+  const luasEl        = document.getElementById('luas_tanah');
+  const luasLantaiEl  = document.getElementById('luas_lantai');
+  const jumlahLantaiEl= document.getElementById('jumlah_lantai');
+  const tahunTanahEl  = document.getElementById('tahun_perolehan_tanah');
+  const tahunCetakEl  = document.getElementById('tahun_cetak');
+  if (hargaEl)        result.harga               = parseInt(hargaEl.value.replace(/\D/g, '')) || 0;
+  if (jumlahEl)       result.jumlah              = parseInt(jumlahEl.value) || 1;
+  if (tahunEl)        result.tahun_perolehan     = parseInt(tahunEl.value) || null;
+  if (luasEl)         result.luas_tanah          = parseFloat(luasEl.value) || null;
+  if (luasLantaiEl)   result.luas_lantai         = parseFloat(luasLantaiEl.value) || null;
+  if (jumlahLantaiEl) result.jumlah_lantai       = parseInt(jumlahLantaiEl.value) || null;
+  if (tahunTanahEl)   result.tahun_perolehan_tanah = parseInt(tahunTanahEl.value) || null;
+  if (tahunCetakEl)   result.tahun_cetak         = parseInt(tahunCetakEl.value) || null;
 
   // Tanggal
   ['tgl_buku', 'tgl_bast', 'tgl_imb', 'tgl_sertifikat'].forEach(f => {
@@ -434,7 +433,7 @@ function getFormData() {
 
 async function simpanAset(isEdit = false, id = null) {
   const data = getFormData();
-  
+
   if (!data.nama_barang) {
     showAlert('Nama barang wajib diisi!', 'error');
     return;
@@ -447,8 +446,8 @@ async function simpanAset(isEdit = false, id = null) {
   showLoading(true);
   try {
     const fotoInput = document.getElementById('foto_file');
-    const fotoFile = fotoInput?.files?.[0];
-    
+    const fotoFile  = fotoInput?.files?.[0];
+
     if (fotoFile) {
       try {
         data.foto_url = await uploadFoto(fotoFile);
@@ -463,7 +462,7 @@ async function simpanAset(isEdit = false, id = null) {
       data.foto_url = null;
     }
 
-        // Upload dokumen pengadaan
+    // Upload dokumen pengadaan
     for (const [key, file] of Object.entries(_uploadedDokumen)) {
       if (file) {
         try {
@@ -540,34 +539,35 @@ function initHargaFormat() {
     console.log('[app.js] loadAset() done');
   }
 
-// Page: tambah
-if (page === 'tambah') {
-  document.getElementById('kib')?.addEventListener('change', toggleKIBFields);
-  initHargaFormat();
-  initFotoUpload(); // ← TAMBAHKAN INI
-  toggleKIBFields();
-  document.getElementById('btn-simpan')?.addEventListener('click', () => simpanAset(false));
-}
-
-    initDokumenUpload(); // ← TAMBAHKAN INI
-// Page: edit
-if (page === 'edit') {
-  const params = new URLSearchParams(window.location.search);
-  const id = params.get('id');
-  if (!id) { window.location.href = 'index.html'; return; }
-  showLoading(true);
-  try {
-    const data = await loadAsetById(id);
-    fillForm(data);
-    initHargaFormat();
-    initFotoUpload(data.foto_url); // ← TAMBAHKAN INI
-        initDokumenUpload(); // ← TAMBAHKAN INI
+  // Page: tambah
+  // FIX: initDokumenUpload() dipindah ke dalam blok ini (sebelumnya ada di luar)
+  if (page === 'tambah') {
     document.getElementById('kib')?.addEventListener('change', toggleKIBFields);
-    document.getElementById('btn-simpan')?.addEventListener('click', () => simpanAset(true, id));
-  } catch (err) {
-    showAlert('Data tidak ditemukan', 'error');
-  } finally {
-    showLoading(false);
+    initHargaFormat();
+    initFotoUpload();
+    initDokumenUpload(); // ← FIXED: sekarang berada di dalam blok page === 'tambah'
+    toggleKIBFields();
+    document.getElementById('btn-simpan')?.addEventListener('click', () => simpanAset(false));
   }
-}
+
+  // Page: edit
+  if (page === 'edit') {
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get('id');
+    if (!id) { window.location.href = 'index.html'; return; }
+    showLoading(true);
+    try {
+      const data = await loadAsetById(id);
+      fillForm(data);
+      initHargaFormat();
+      initFotoUpload(data.foto_url);
+      initDokumenUpload();
+      document.getElementById('kib')?.addEventListener('change', toggleKIBFields);
+      document.getElementById('btn-simpan')?.addEventListener('click', () => simpanAset(true, id));
+    } catch (err) {
+      showAlert('Data tidak ditemukan', 'error');
+    } finally {
+      showLoading(false);
+    }
+  }
 })();
