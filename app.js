@@ -5,6 +5,69 @@
 // JANGAN inisialisasi db di sini — tunggu auth guard selesai dulu
 let db = null;
 
+// FOTO BARANG - Upload ke Supabase Storage
+let _fotoHapus = false;
+
+async function uploadFoto(file) {
+  const ext = file.name.split('.').pop();
+  const fileName = `barang_${Date.now()}.${ext}`;
+  const { data, error } = await db.storage
+    .from('foto-barang')
+    .upload(fileName, file, { upsert: true });
+  if (error) throw error;
+  const { data: urlData } = db.storage.from('foto-barang').getPublicUrl(fileName);
+  return urlData.publicUrl;
+}
+
+async function hapusFotoStorage(url) {
+  if (!url) return;
+  try {
+    const path = url.split('/foto-barang/')[1];
+    if (path) await db.storage.from('foto-barang').remove([path]);
+  } catch (_) {}
+}
+
+function initFotoUpload(existingUrl = null) {
+  const fileInput = document.getElementById('foto_file');
+  const previewWrap = document.getElementById('foto-preview-wrap');
+  const previewImg = document.getElementById('foto-preview');
+  const existingWrap = document.getElementById('foto-existing-wrap');
+  const existingImg = document.getElementById('foto-existing');
+  const btnHapus = document.getElementById('btn-hapus-foto');
+  _fotoHapus = false;
+
+  if (existingUrl && existingImg) {
+    existingImg.src = existingUrl;
+    if (existingWrap) existingWrap.style.display = 'block';
+  }
+
+  fileInput?.addEventListener('change', function () {
+    const file = this.files[0];
+    if (!file) return;
+    if (file.size > 2 * 1024 * 1024) {
+      showAlert('Ukuran foto melebihi 2 MB!', 'error');
+      this.value = '';
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = e => {
+      if (previewImg) previewImg.src = e.target.result;
+      if (previewWrap) previewWrap.style.display = 'block';
+      if (existingWrap) existingWrap.style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+  });
+
+  btnHapus?.addEventListener('click', function () {
+    _fotoHapus = true;
+    if (existingWrap) existingWrap.style.display = 'none';
+    if (previewWrap) previewWrap.style.display = 'none';
+    if (fileInput) fileInput.value = '';
+  });
+}
+
+
+
 // ============================================
 // UTILITY
 // ============================================
@@ -112,19 +175,18 @@ async function loadAset(filter = {}) {
 function renderTable(data) {
   const tbody = document.getElementById('aset-tbody');
   if (!tbody) return;
-
   if (!data || data.length === 0) {
     tbody.innerHTML = `<tr><td colspan="8" class="empty-state">
       <div>📭</div>
       <p>Belum ada data aset. <a href="tambah.html">Tambah aset pertama</a></p>
-    </td></tr>`;
+      </td></tr>`;
     return;
   }
-
   tbody.innerHTML = data.map((row, i) => `
     <tr>
       <td class="td-no">${i + 1}</td>
       <td>
+        ${row.foto_url ? `<img src="${escapeHtml(row.foto_url)}" alt="" style="width:40px;height:40px;object-fit:cover;border-radius:4px;margin-right:8px;vertical-align:middle;">` : ''}
         <div class="nama-barang">${escapeHtml(row.nama_barang)}</div>
         ${row.merk_type ? `<div class="sub-info">${escapeHtml(row.merk_type)}</div>` : ''}
         ${row.kode_barang ? `<div class="kode-info">${escapeHtml(row.kode_barang)}</div>` : ''}
@@ -136,16 +198,10 @@ function renderTable(data) {
       <td>${escapeHtml(row.lokasi || row.penggunaan || '-')}</td>
       <td class="td-action">
         <a href="edit.html?id=${row.id}" class="btn-edit" title="Edit">✏️</a>
-        <button
-          class="btn-hapus"
-          data-id="${row.id}"
-          data-nama="${escapeHtml(row.nama_barang)}"
-          title="Hapus">🗑️</button>
+        <button class="btn-hapus" data-id="${row.id}" data-nama="${escapeHtml(row.nama_barang)}" title="Hapus">🗑️</button>
       </td>
     </tr>
   `).join('');
-
-  // Event delegation — aman dari XSS, tidak peduli karakter apapun di nama
   tbody.onclick = (e) => {
     const btn = e.target.closest('.btn-hapus');
     if (!btn) return;
@@ -321,7 +377,7 @@ function getFormData() {
 
 async function simpanAset(isEdit = false, id = null) {
   const data = getFormData();
-
+  
   if (!data.nama_barang) {
     showAlert('Nama barang wajib diisi!', 'error');
     return;
@@ -333,6 +389,23 @@ async function simpanAset(isEdit = false, id = null) {
 
   showLoading(true);
   try {
+    const fotoInput = document.getElementById('foto_file');
+    const fotoFile = fotoInput?.files?.[0];
+    
+    if (fotoFile) {
+      try {
+        data.foto_url = await uploadFoto(fotoFile);
+      } catch (err) {
+        showAlert('Gagal upload foto: ' + err.message, 'error');
+        showLoading(false);
+        return;
+      }
+    } else if (isEdit && _fotoHapus) {
+      const existingImg = document.getElementById('foto-existing');
+      if (existingImg?.src) await hapusFotoStorage(existingImg.src);
+      data.foto_url = null;
+    }
+
     let error;
     if (isEdit && id) {
       ({ error } = await db.from('aset').update(data).eq('id', id));
@@ -396,29 +469,32 @@ function initHargaFormat() {
     console.log('[app.js] loadAset() done');
   }
 
-  if (page === 'tambah') {
-    document.getElementById('kib')?.addEventListener('change', toggleKIBFields);
+// Page: tambah
+if (page === 'tambah') {
+  document.getElementById('kib')?.addEventListener('change', toggleKIBFields);
+  initHargaFormat();
+  initFotoUpload(); // ← TAMBAHKAN INI
+  toggleKIBFields();
+  document.getElementById('btn-simpan')?.addEventListener('click', () => simpanAset(false));
+}
+
+// Page: edit
+if (page === 'edit') {
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get('id');
+  if (!id) { window.location.href = 'index.html'; return; }
+  showLoading(true);
+  try {
+    const data = await loadAsetById(id);
+    fillForm(data);
     initHargaFormat();
-    toggleKIBFields();
-    document.getElementById('btn-simpan')?.addEventListener('click', () => simpanAset(false));
+    initFotoUpload(data.foto_url); // ← TAMBAHKAN INI
+    document.getElementById('kib')?.addEventListener('change', toggleKIBFields);
+    document.getElementById('btn-simpan')?.addEventListener('click', () => simpanAset(true, id));
+  } catch (err) {
+    showAlert('Data tidak ditemukan', 'error');
+  } finally {
+    showLoading(false);
   }
-
-  if (page === 'edit') {
-    const params = new URLSearchParams(window.location.search);
-    const id = params.get('id');
-    if (!id) { window.location.href = 'index.html'; return; }
-
-    showLoading(true);
-    try {
-      const data = await loadAsetById(id);
-      fillForm(data);
-      initHargaFormat();
-      document.getElementById('kib')?.addEventListener('change', toggleKIBFields);
-      document.getElementById('btn-simpan')?.addEventListener('click', () => simpanAset(true, id));
-    } catch (err) {
-      showAlert('Data tidak ditemukan', 'error');
-    } finally {
-      showLoading(false);
-    }
-  }
+}
 })();
