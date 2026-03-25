@@ -88,6 +88,7 @@ function initDokumenUpload() {
     { id: 'dok_bast_file', key: 'dok_bast_url' },
     { id: 'dok_kuitansi_file', key: 'dok_kuitansi_url' }
   ];
+  dokInputs.forEach(({ id, key }) => {
     const input = document.getElementById(id);
     if (!input) return;
 
@@ -105,7 +106,6 @@ function initDokumenUpload() {
       // Simpan file untuk diupload nanti saat save
       _uploadedDokumen[key] = file;
     });
-  });
 }
 
 
