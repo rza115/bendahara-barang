@@ -738,15 +738,21 @@ async function initPemindahtangananPage() {
   let allPJ = [];
   let allAset = [];
 
-  async function loadMasterData() {
-    const [resPJ, resAset] = await Promise.all([
-      db.from('penanggung_jawab').select('id, nama, jabatan').order('nama'),
-      db.from('aset').select('id, nama_barang, kode_barang').order('nama_barang'),
-    ]);
-    allPJ   = resPJ.data  || [];
-    allAset = resAset.data || [];
-  }
-
+    async function loadMasterData() {
+      try {
+        const [resPJ, resAset] = await Promise.all([
+          db.from('penanggung_jawab').select('id, nama, jabatan').eq('aktif', true).order('nama'),
+          db.from('aset').select('id, nama_barang, kode_barang').order('nama_barang'),
+        ]);
+        if (resPJ.error) throw new Error('Gagal load PJ: ' + resPJ.error.message);
+        if (resAset.error) throw new Error('Gagal load aset: ' + resAset.error.message);
+        allPJ    = resPJ.data  || [];
+        allAset  = resAset.data || [];
+      } catch (err) {
+        console.error('[loadMasterData]', err);
+        showAlert('Gagal memuat data master: ' + err.message, 'error');
+      }
+    }
   function getNamaPJ(id) {
     if (!id) return '— Tidak ada —';
     const pj = allPJ.find(p => p.id === id);
