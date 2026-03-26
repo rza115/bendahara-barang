@@ -730,6 +730,220 @@ async function loadPenanggungJawabDropdown(selectedId = null) {
 // INIT PER HALAMAN
 // ============================================
 
+// ============================================
+// PEMINDAHTANGANAN
+// ============================================
+async function initPemindahtangananPage() {
+  // Cache semua PJ untuk lookup nama
+  let allPJ = [];
+  let allAset = [];
+
+  async function loadMasterData() {
+    const [resPJ, resAset] = await Promise.all([
+      db.from('penanggung_jawab').select('id, nama, jabatan').order('nama'),
+      db.from('aset').select('id, nama_barang, kode_barang').order('nama_barang'),
+    ]);
+    allPJ   = resPJ.data  || [];
+    allAset = resAset.data || [];
+  }
+
+  function getNamaPJ(id) {
+    if (!id) return '— Tidak ada —';
+    const pj = allPJ.find(p => p.id === id);
+    return pj ? pj.nama + (pj.jabatan ? ' — ' + pj.jabatan : '') : id;
+  }
+
+  function getNamaAset(id) {
+    const a = allAset.find(a => a.id === id);
+    return a ? a.nama_barang + (a.kode_barang ? ' (' + a.kode_barang + ')' : '') : id;
+  }
+
+  function populateDropdowns() {
+    // Dropdown barang di form
+    const selBarang = $('pt-barang-id');
+    const filterBarang = $('filter-pt-barang');
+    allAset.forEach(a => {
+      const label = a.nama_barang + (a.kode_barang ? ' (' + a.kode_barang + ')' : '');
+      [selBarang, filterBarang].forEach(sel => {
+        if (!sel) return;
+        const opt = document.createElement('option');
+        opt.value = a.id;
+        opt.textContent = label;
+        sel.appendChild(opt);
+      });
+    });
+
+    // Dropdown PJ baru di form
+    const selKePJ = $('pt-ke-pj-id');
+    const filterPJ = $('filter-pt-pj');
+    allPJ.forEach(pj => {
+      const label = pj.nama + (pj.jabatan ? ' — ' + pj.jabatan : '');
+      [selKePJ, filterPJ].forEach(sel => {
+        if (!sel) return;
+        const opt = document.createElement('option');
+        opt.value = pj.id;
+        opt.textContent = label;
+        sel.appendChild(opt);
+      });
+    });
+  }
+
+  async function loadRiwayat() {
+    showLoading(true);
+    try {
+      let q = db.from('pemindahtanganan').select('*').order('tanggal', { ascending: false });
+      const fBarang = $('filter-pt-barang')?.value;
+      const fPJ     = $('filter-pt-pj')?.value;
+      if (fBarang) q = q.eq('barang_id', fBarang);
+      if (fPJ)     q = q.or(`dari_pj_id.eq.${fPJ},ke_pj_id.eq.${fPJ}`);
+      const { data, error } = await q;
+      if (error) throw error;
+      renderRiwayat(data || []);
+    } catch (err) {
+      showAlert('Gagal memuat riwayat: ' + err.message, 'error');
+    } finally {
+      showLoading(false);
+    }
+  }
+
+  function renderRiwayat(data) {
+    const tbody = $('pt-tbody');
+    if (!tbody) return;
+    if (!data.length) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;color:#94a3b8">📢 Belum ada data pemindahtanganan.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = data.map((row, i) => `
+      <tr style="border-bottom:1px solid #f1f5f9">
+        <td style="padding:10px 12px;font-size:13px">${i + 1}</td>
+        <td style="padding:10px 12px;font-size:13px;font-weight:500">${escapeHtml(getNamaAset(row.barang_id))}</td>
+        <td style="padding:10px 12px;font-size:13px;color:#64748b">${escapeHtml(getNamaPJ(row.dari_pj_id))}</td>
+        <td style="padding:10px 12px;font-size:13px;color:#166534;font-weight:500">${escapeHtml(getNamaPJ(row.ke_pj_id))}</td>
+        <td style="padding:10px 12px;font-size:13px">${row.tanggal || '—'}</td>
+        <td style="padding:10px 12px;font-size:12px;color:#64748b;font-family:monospace">${escapeHtml(row.no_dokumen || '—')}</td>
+        <td style="padding:10px 12px">
+          ${row.dokumen_url ? `<a href="${escapeHtml(row.dokumen_url)}" target="_blank" rel="noopener"
+            style="font-size:12px;color:#1d4ed8">📄 Dok</a>&nbsp;` : ''}
+          <button onclick="hapusPT('${row.id}')"
+            style="padding:3px 8px;font-size:12px;background:#fef2f2;border:1px solid #fecaca;
+            border-radius:6px;cursor:pointer;color:#dc2626">🗑️ Hapus</button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  async function simpanPT() {
+    const barangId = $('pt-barang-id')?.value;
+    const dariPjId = $('pt-dari-pj-id')?.value || null;
+    const kePjId   = $('pt-ke-pj-id')?.value;
+    const tanggal  = $('pt-tanggal')?.value;
+    if (!barangId) { showAlert('Pilih barang terlebih dahulu!', 'error'); return; }
+    if (!kePjId)   { showAlert('Pilih penanggung jawab baru!', 'error'); return; }
+    if (!tanggal)  { showAlert('Tanggal wajib diisi!', 'error'); return; }
+    if (dariPjId && dariPjId === kePjId) {
+      showAlert('Penanggung jawab baru harus berbeda dengan yang lama!', 'error'); return;
+    }
+    showLoading(true);
+    try {
+      // Upload dokumen jika ada
+      let dokumenUrl = null;
+      const dokFile = $('pt-dokumen-file')?.files?.[0];
+      if (dokFile) {
+        if (dokFile.size > 5 * 1024 * 1024) {
+          showAlert('Ukuran file melebihi 5 MB!', 'error'); return;
+        }
+        dokumenUrl = await uploadDokumen(dokFile, 'pemindahtanganan');
+      }
+      // Insert riwayat
+      const payload = {
+        barang_id:   barangId,
+        dari_pj_id:  dariPjId || null,
+        ke_pj_id:    kePjId,
+        tanggal,
+        no_dokumen:  $('pt-no-dokumen')?.value.trim() || null,
+        keterangan:  $('pt-keterangan')?.value.trim() || null,
+        dokumen_url: dokumenUrl,
+      };
+      const { error: errInsert } = await db.from('pemindahtanganan').insert(payload);
+      if (errInsert) throw errInsert;
+      // Update penanggung_jawab_id di tabel aset
+      const { error: errUpdate } = await db.from('aset')
+        .update({ penanggung_jawab_id: kePjId })
+        .eq('id', barangId);
+      if (errUpdate) throw errUpdate;
+      showAlert('Pemindahtanganan berhasil dicatat! Penanggung jawab barang diperbarui.');
+      resetFormPT();
+      await loadRiwayat();
+    } catch (err) {
+      showAlert('Gagal menyimpan: ' + err.message, 'error');
+    } finally {
+      showLoading(false);
+    }
+  }
+
+  window.hapusPT = async (id) => {
+    if (!confirm('Yakin hapus riwayat pemindahtanganan ini?\n\nCatatan: penanggung jawab barang TIDAK akan dikembalikan ke PJ lama.')) return;
+    showLoading(true);
+    try {
+      const { error } = await db.from('pemindahtanganan').delete().eq('id', id);
+      if (error) throw error;
+      showAlert('Riwayat berhasil dihapus.');
+      await loadRiwayat();
+    } catch (err) {
+      showAlert('Gagal menghapus: ' + err.message, 'error');
+    } finally {
+      showLoading(false);
+    }
+  };
+
+  function resetFormPT() {
+    ['pt-barang-id','pt-ke-pj-id','pt-tanggal','pt-no-dokumen'].forEach(id => {
+      const el = $(id); if (el) el.value = '';
+    });
+    const ket = $('pt-keterangan'); if (ket) ket.value = '';
+    const pjDisplay = $('pt-pj-lama-display'); if (pjDisplay) pjDisplay.value = '';
+    const pjHidden = $('pt-dari-pj-id'); if (pjHidden) pjHidden.value = '';
+    const dokFile = $('pt-dokumen-file'); if (dokFile) dokFile.value = '';
+  }
+
+  // Ketika barang dipilih: tampilkan PJ lama otomatis
+  $('pt-barang-id')?.addEventListener('change', async function () {
+    const barangId = this.value;
+    if (!barangId) {
+      if ($('pt-pj-lama-display')) $('pt-pj-lama-display').value = '';
+      if ($('pt-dari-pj-id')) $('pt-dari-pj-id').value = '';
+      return;
+    }
+    try {
+      const { data } = await db.from('aset')
+        .select('penanggung_jawab_id, nama_penanggung_jawab')
+        .eq('id', barangId).single();
+      const pjId = data?.penanggung_jawab_id;
+      if ($('pt-dari-pj-id')) $('pt-dari-pj-id').value = pjId || '';
+      if ($('pt-pj-lama-display')) {
+        $('pt-pj-lama-display').value = pjId ? getNamaPJ(pjId) : (data?.nama_penanggung_jawab || '— Belum ada PJ —');
+      }
+    } catch (_) {}
+  });
+
+  // Filter listener
+  $('filter-pt-barang')?.addEventListener('change', loadRiwayat);
+  $('filter-pt-pj')?.addEventListener('change', loadRiwayat);
+  $('btn-simpan-pt')?.addEventListener('click', simpanPT);
+  $('btn-batal-pt')?.addEventListener('click', resetFormPT);
+
+  // Set default tanggal hari ini
+  const tgl = $('pt-tanggal');
+  if (tgl) tgl.value = new Date().toISOString().split('T')[0];
+
+  // Init
+  showLoading(true);
+  await loadMasterData();
+  populateDropdowns();
+  await loadRiwayat();
+  showLoading(false);
+}
+
 (async () => {
   const ready = await window._appReady;
   if (!ready) return;
@@ -785,5 +999,9 @@ async function loadPenanggungJawabDropdown(selectedId = null) {
     } finally {
       showLoading(false);
     }
+    
+  if (page === 'pemindahtanganan') {
+    await initPemindahtangananPage();
+  }
   }
 })();
