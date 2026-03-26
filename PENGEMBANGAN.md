@@ -1,7 +1,7 @@
 # RENCANA PENGEMBANGAN — Aplikasi Bendahara Barang
 
 > Dokumen ini mencatat alur, logika, dan prioritas fitur yang akan dikembangkan.
-> Diperbarui: Maret 2026
+> Diperbarui: 26 Maret 2026
 
 ---
 
@@ -16,7 +16,7 @@
 | Peminjaman barang | ✅ Selesai |
 | Pengguna barang | ✅ Selesai |
 | Pemindahtanganan barang | 🔲 Belum |
-| Penanggung jawab barang | 🔲 Belum |
+| Penanggung jawab barang | ✅ Selesai |
 | Roles operator | 🔲 Belum |
 | Roles bendahara pembantu | 🔲 Belum |
 | Export laporan ke Excel | 🔲 Belum |
@@ -24,6 +24,16 @@
 
 ---
 
+
+## PROGRESS LOG
+
+| Tanggal | Perubahan |
+|---|---|
+| 26 Maret 2026 | ✅ FASE 1A — Migrasi database: tabel `penanggung_jawab` dibuat (nama, NIP, jabatan, unit_kerja, no_hp, aktif) |
+| 26 Maret 2026 | ✅ FASE 1B — Halaman `penanggung-jawab.html` dibuat (CRUD penanggung jawab) |
+| 26 Maret 2026 | ✅ FASE 1B — Dropdown penanggung jawab di `tambah.html` dan `edit.html` terintegrasi ke database |
+| 26 Maret 2026 | ✅ FASE 1B — Link navigasi `PJ Barang` ditambahkan di `nav.js` |
+| 26 Maret 2026 | ✅ Kolom `penanggung_jawab_id` dan `nama_penanggung_jawab` ditambahkan ke form dan `getFormData()` di `app.js` |
 ## FASE 1 — Manajemen Data Barang (Prioritas Tinggi)
 
 ### 1.1 Penanggung Jawab Barang
