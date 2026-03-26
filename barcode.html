@@ -575,9 +575,9 @@
     function getKodeValue(aset) {
       const opt = document.getElementById('opt-data-kode').value;
       const base = window.location.origin + window.location.pathname.replace('barcode.html', '');
-      if (opt === 'kode') return `${base}detail.html?kode=${encodeURIComponent(aset.kode_barang || aset.id)}`;
-      if (opt === 'lengkap') return `${base}detail.html?id=${aset.id_barang || aset.id}&nama=${encodeURIComponent(aset.nama_barang)}`;
-      return `${base}detail.html?id=${aset.id_barang || aset.id}`;
+      if (opt === 'kode') return `${base}view.html?kode=${encodeURIComponent(aset.kode_barang || aset.id)}`;
+      if (opt === 'lengkap') return `${base}view.html?id=${aset.id_barang || aset.id}&nama=${encodeURIComponent(aset.nama_barang)}`;
+      return `${base}view.html?id=${aset.id_barang || aset.id}`;
     }
 
     function buatQR(container, value) {
