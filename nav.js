@@ -6,6 +6,7 @@
     { href: 'barcode.html',         icon: '🏷️', label: 'Barcode' },
     { href: 'peminjaman.html',      icon: '🤝', label: 'Peminjaman' },
     { href: 'pengguna-barang.html', icon: '👤', label: 'Pengguna' },
+        { href: 'penanggung-jawab.html', icon: '🧑‍💼', label: 'PJ Barang' },
   ];
 
   const currentPage = window.location.pathname.split('/').pop() || 'index.html';
