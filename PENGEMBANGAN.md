@@ -20,6 +20,7 @@
 | Roles operator | 🔲 Belum |
 | Roles bendahara pembantu | 🔲 Belum |
 | Export laporan ke Excel | 🔲 Belum |
+| Cetak label barang (barcode) | 🔲 Belum |
 
 ---
 
@@ -208,3 +209,82 @@ FASE 3   →  Tambah fitur export Excel
 - **Frontend:** Vanilla HTML/CSS/JS — tidak ada framework, semua perubahan langsung di file HTML
 - **Barcode:** JsBarcode sudah terintegrasi, tidak perlu diubah
 - **RLS (Row Level Security):** Aktifkan di Supabase untuk memastikan operator/bendahara pembantu tidak bisa bypass akses lewat API langsung
+
+
+---
+
+## FASE 1D — Cetak Label Barang di barcode.html (Prioritas Tinggi)
+
+**Tujuan:** Bendahara dapat mencetak label fisik berisi barcode dan informasi barang untuk ditempel langsung di aset, memudahkan identifikasi dan inventarisasi lapangan.
+
+**Alur logika:**
+1. Di halaman `barcode.html`, setelah barcode ditampilkan, tambahkan tombol **"Cetak Label"**
+2. Klik tombol membuka tampilan print-preview khusus label yang berisi:
+   - Barcode/QR code barang
+   - Nama barang
+   - Kode barang / nomor inventaris
+   - Ruangan / lokasi barang
+   - Nama instansi/unit kerja
+3. Ukuran label bisa dipilih pengguna:
+   - **Label kecil** (5 × 3 cm) — hanya barcode + kode barang
+   - **Label sedang** (8 × 4 cm) — barcode + nama + kode
+   - **Label penuh** (10 × 6 cm) — semua informasi
+4. Gunakan `window.print()` dengan CSS `@media print` khusus untuk layout label
+5. Semua elemen halaman lain disembunyikan saat print, hanya label yang tampil
+6. Tambahkan opsi **"Cetak Semua Barang"** — generate satu halaman berisi banyak label (misal 8 label per halaman A4) untuk cetak massal
+
+**Contoh implementasi CSS print:**
+```css
+@media print {
+  body * { visibility: hidden; }
+  #area-label, #area-label * { visibility: visible; }
+  #area-label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 8cm;
+    height: 4cm;
+    border: 1px solid #000;
+    padding: 4px;
+    font-size: 10pt;
+  }
+}
+```
+
+**Contoh implementasi HTML label:**
+```html
+<div id="area-label">
+  <p class="instansi">PEMERINTAH KABUPATEN BOGOR</p>
+  <svg id="barcode-label"></svg>
+  <p class="nama-barang">Laptop Lenovo ThinkPad</p>
+  <p class="kode-barang">Kode: INV-2024-001</p>
+  <p class="lokasi">Ruang: Subbag Umum</p>
+</div>
+<button onclick="window.print()">Cetak Label</button>
+```
+
+**Contoh cetak massal (banyak label per halaman):**
+```js
+// Ambil semua barang dari Supabase, generate grid label
+async function cetakSemuaLabel() {
+  const { data } = await supabase.from('barang').select('*');
+  const container = document.getElementById('area-cetak-massal');
+  container.innerHTML = '';
+  data.forEach(barang => {
+    const label = buatLabel(barang); // return elemen HTML label
+    container.appendChild(label);
+  });
+  window.print();
+}
+```
+
+**File yang diubah:** `barcode.html`
+
+**Dependensi:** JsBarcode sudah tersedia (`JsBarcode.all.min.js`), tidak perlu library tambahan
+
+**Urutan langkah pengerjaan:**
+1. Buat div `#area-label` di `barcode.html` dengan layout label
+2. Tambahkan CSS `@media print` untuk menyembunyikan elemen selain label
+3. Tambahkan tombol "Cetak Label" yang memicu `window.print()`
+4. Tambahkan pilihan ukuran label (radio button / dropdown)
+5. Buat fungsi cetak massal dengan layout grid CSS untuk layout multi-label per halaman A4
