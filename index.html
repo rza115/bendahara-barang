@@ -13,281 +13,117 @@
     <div class="loading-spinner"></div>
   </div>
 
-  <!-- Backdrop mobile -->
-  <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+  <div class="alert" id="alert-box"></div>
 
-  <!-- App Layout -->
-  <div class="app-layout" id="app-layout">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div>
+      <h1>📦 Kartu Inventaris Barang</h1>
+      <p>Daftar seluruh aset tetap per 31 Desember 2025</p>
+    </div>
+    <a href="tambah.html" class="btn btn-primary">➕ Tambah Aset</a>
+  </div>
 
-    <!-- Sidebar -->
-    <aside class="sidebar">
-      <!-- Logo -->
-      <div class="sidebar-logo">
-        <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect width="28" height="28" rx="7" fill="#6366F1"/>
-          <path d="M7 9h14M7 14h10M7 19h12" stroke="white" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-        <span class="sidebar-logo-text">SiAset</span>
-      </div>
+  <!-- Stats -->
+  <div class="stats-grid">
+    <div class="stat-card accent">
+      <div class="stat-icon">📦</div>
+      <div class="stat-value" id="total-aset">—</div>
+      <div class="stat-label">Total Aset</div>
+    </div>
+    <div class="stat-card gold">
+      <div class="stat-icon">💰</div>
+      <div class="stat-value" id="total-nilai" style="font-size:14px">—</div>
+      <div class="stat-label">Total Nilai</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">🏞️</div>
+      <div class="stat-value" id="total-kib-a">—</div>
+      <div class="stat-label">KIB A — Tanah</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">⚙️</div>
+      <div class="stat-value" id="total-kib-b">—</div>
+      <div class="stat-label">KIB B — Peralatan</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">🏢</div>
+      <div class="stat-value" id="total-kib-c">—</div>
+      <div class="stat-label">KIB C — Gedung</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">📦</div>
+      <div class="stat-value" id="total-kib-e">—</div>
+      <div class="stat-label">KIB E — Lainnya</div>
+    </div>
+  </div>
 
-      <!-- Nav -->
-      <nav class="sidebar-nav">
-        <div class="sidebar-section">
-          <span class="sidebar-section-label">Menu Utama</span>
+  <!-- Filter Bar -->
+  <div class="filter-bar">
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="search-input" placeholder="Cari nama barang...">
+    </div>
+    <select id="filter-kib" style="width:auto">
+      <option value="">Semua KIB</option>
+      <option value="KIB A">KIB A — Tanah</option>
+      <option value="KIB B">KIB B — Peralatan &amp; Mesin</option>
+      <option value="KIB C">KIB C — Gedung &amp; Bangunan</option>
+      <option value="KIB E">KIB E — Aset Tetap Lainnya</option>
+    </select>
+    <select id="filter-kondisi" style="width:auto">
+      <option value="">Semua Kondisi</option>
+      <option value="Baik">Baik</option>
+      <option value="Rusak Ringan">Rusak Ringan</option>
+      <option value="Rusak Berat">Rusak Berat</option>
+    </select>
+    <select id="sort-by" style="width:auto">
+      <option value="">Urutkan</option>
+      <option value="terbaru">Tahun Terbaru</option>
+      <option value="terlama">Tahun Terlama</option>
+      <option value="harga-tertinggi">Harga Tertinggi</option>
+      <option value="harga-terendah">Harga Terendah</option>
+      <option value="nama-az">Nama A–Z</option>
+      <option value="nama-za">Nama Z–A</option>
+    </select>
+    <select id="limit-rows" style="width:auto">
+      <option value="100">100 Data</option>
+      <option value="200">200 Data</option>
+      <option value="500">500 Data</option>
+      <option value="all" selected>Semua Data</option>
+    </select>
+  </div>
 
-          <a href="index.html" class="sidebar-item active" title="Inventaris">
-            <span class="sidebar-item-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
-              </svg>
-            </span>
-            <span class="sidebar-item-label">Inventaris</span>
-            <span class="sidebar-item-dot"></span>
-          </a>
-
-          <a href="tambah.html" class="sidebar-item" title="Tambah Aset">
-            <span class="sidebar-item-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 5v14M5 12h14"/>
-              </svg>
-            </span>
-            <span class="sidebar-item-label">Tambah Aset</span>
-          </a>
-
-          <a href="laporan.html" class="sidebar-item" title="Laporan">
-            <span class="sidebar-item-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
-              </svg>
-            </span>
-            <span class="sidebar-item-label">Laporan</span>
-          </a>
-        </div>
-
-        <div class="sidebar-divider"></div>
-
-        <div class="sidebar-section">
-          <span class="sidebar-section-label">Kelola</span>
-
-          <a href="kelola-kib-a.html" class="sidebar-item sidebar-sub-item" title="KIB A — Tanah">
-            <span class="sidebar-item-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3 21h18M3 21V7l9-4 9 4v14"/>
-              </svg>
-            </span>
-            <span class="sidebar-item-label">KIB A — Tanah</span>
-          </a>
-
-          <a href="kelola-kib-b.html" class="sidebar-item sidebar-sub-item" title="KIB B — Peralatan">
-            <span class="sidebar-item-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/>
-              </svg>
-            </span>
-            <span class="sidebar-item-label">KIB B — Peralatan</span>
-          </a>
-
-          <a href="kelola-kib-c.html" class="sidebar-item sidebar-sub-item" title="KIB C — Gedung">
-            <span class="sidebar-item-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>
-              </svg>
-            </span>
-            <span class="sidebar-item-label">KIB C — Gedung</span>
-          </a>
-
-          <a href="kelola-kib-e.html" class="sidebar-item sidebar-sub-item" title="KIB E — Lainnya">
-            <span class="sidebar-item-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-              </svg>
-            </span>
-            <span class="sidebar-item-label">KIB E — Lainnya</span>
-          </a>
-        </div>
-      </nav>
-
-      <!-- Footer / User -->
-      <div class="sidebar-footer">
-        <div class="sidebar-user-info">
-          <div class="sidebar-avatar">AD</div>
-          <div class="sidebar-user-text">
-            <span class="sidebar-user-name">Admin</span>
-            <span class="sidebar-user-role">Administrator</span>
-          </div>
-        </div>
-      </div>
-    </aside>
-
-    <!-- Main area -->
-    <div class="sidebar-main">
-
-      <!-- Topbar -->
-      <header class="topbar">
-        <button class="topbar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
-            <path d="M2 4h12M2 8h12M2 12h12"/>
-          </svg>
-        </button>
-        <div class="topbar-breadcrumb">
-          <span class="topbar-app">SiAset</span>
-          <span class="topbar-sep">/</span>
-          <span class="topbar-page">Inventaris Barang</span>
-        </div>
-        <div class="topbar-right">
-          <div class="topbar-user">
-            <div class="topbar-avatar">AD</div>
-            <span class="topbar-username">Admin</span>
-          </div>
-          <button class="topbar-logout" onclick="handleLogout()">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
-            </svg>
-            Keluar
-          </button>
-        </div>
-      </header>
-
-      <!-- Page Content -->
-      <main class="main-content">
-
-        <div class="alert" id="alert-box"></div>
-
-        <!-- Page Header -->
-        <div class="page-header">
-          <div>
-            <h1>📦 Kartu Inventaris Barang</h1>
-            <p>Daftar seluruh aset tetap per 31 Desember 2025</p>
-          </div>
-          <a href="tambah.html" class="btn btn-primary">➕ Tambah Aset</a>
-        </div>
-
-        <!-- Stats -->
-        <div class="stats-grid">
-          <div class="stat-card accent">
-            <div class="stat-icon">📦</div>
-            <div class="stat-value" id="total-aset">—</div>
-            <div class="stat-label">Total Aset</div>
-          </div>
-          <div class="stat-card gold">
-            <div class="stat-icon">💰</div>
-            <div class="stat-value" id="total-nilai" style="font-size:14px">—</div>
-            <div class="stat-label">Total Nilai</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-icon">🏞️</div>
-            <div class="stat-value" id="total-kib-a">—</div>
-            <div class="stat-label">KIB A — Tanah</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-icon">⚙️</div>
-            <div class="stat-value" id="total-kib-b">—</div>
-            <div class="stat-label">KIB B — Peralatan</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-icon">🏢</div>
-            <div class="stat-value" id="total-kib-c">—</div>
-            <div class="stat-label">KIB C — Gedung</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-icon">📦</div>
-            <div class="stat-value" id="total-kib-e">—</div>
-            <div class="stat-label">KIB E — Lainnya</div>
-          </div>
-        </div>
-
-        <!-- Filter Bar -->
-        <div class="filter-bar">
-          <div class="search-wrap">
-            <span class="search-icon">🔍</span>
-            <input type="text" id="search-input" placeholder="Cari nama barang...">
-          </div>
-          <select id="filter-kib" style="width:auto">
-            <option value="">Semua KIB</option>
-            <option value="KIB A">KIB A — Tanah</option>
-            <option value="KIB B">KIB B — Peralatan &amp; Mesin</option>
-            <option value="KIB C">KIB C — Gedung &amp; Bangunan</option>
-            <option value="KIB E">KIB E — Aset Tetap Lainnya</option>
-          </select>
-          <select id="filter-kondisi" style="width:auto">
-            <option value="">Semua Kondisi</option>
-            <option value="Baik">Baik</option>
-            <option value="Rusak Ringan">Rusak Ringan</option>
-            <option value="Rusak Berat">Rusak Berat</option>
-          </select>
-          <select id="sort-by" style="width:auto">
-            <option value="">Urutkan</option>
-            <option value="terbaru">Tahun Terbaru</option>
-            <option value="terlama">Tahun Terlama</option>
-            <option value="harga-tertinggi">Harga Tertinggi</option>
-            <option value="harga-terendah">Harga Terendah</option>
-            <option value="nama-az">Nama A–Z</option>
-            <option value="nama-za">Nama Z–A</option>
-          </select>
-          <select id="limit-rows" style="width:auto">
-            <option value="100">100 Data</option>
-            <option value="200">200 Data</option>
-            <option value="500">500 Data</option>
-            <option value="all" selected>Semua Data</option>
-          </select>
-        </div>
-
-        <!-- Table -->
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>No</th>
-                <th>Nama Barang</th>
-                <th>KIB</th>
-                <th>Tahun</th>
-                <th>Harga</th>
-                <th>Kondisi</th>
-                <th>Lokasi/Penggunaan</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody id="aset-tbody">
-              <tr>
-                <td colspan="8" class="empty-state">
-                  <div>⏳</div>
-                  <p>Memuat data...</p>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-      </main>
-    </div><!-- end .sidebar-main -->
-  </div><!-- end .app-layout -->
+  <!-- Table -->
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>Nama Barang</th>
+          <th>KIB</th>
+          <th>Tahun</th>
+          <th>Harga</th>
+          <th>Kondisi</th>
+          <th>Lokasi/Penggunaan</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="aset-tbody">
+        <tr>
+          <td colspan="8" class="empty-state">
+            <div>⏳</div>
+            <p>Memuat data...</p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
   <script src="supabase.js"></script>
   <script src="auth.js"></script>
   <script src="nav.js"></script>
   <script src="app.js"></script>
-
-  <!-- Sidebar toggle script (bisa dipindah ke nav.js) -->
-  <script>
-    const layout   = document.getElementById('app-layout');
-    const toggle   = document.getElementById('sidebar-toggle');
-    const backdrop = document.getElementById('sidebar-backdrop');
-
-    toggle.addEventListener('click', () => {
-      const isMobile = window.innerWidth <= 768;
-      if (isMobile) {
-        layout.classList.toggle('sidebar-open');
-        backdrop.classList.toggle('active');
-      } else {
-        layout.classList.toggle('sidebar-collapsed');
-      }
-    });
-
-    backdrop.addEventListener('click', () => {
-      layout.classList.remove('sidebar-open');
-      backdrop.classList.remove('active');
-    });
-  </script>
 
 </body>
 </html>
