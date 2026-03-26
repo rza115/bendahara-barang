@@ -597,7 +597,6 @@ if (isEdit && id) {
   const { error } = await db.from('aset').update(data).eq('id', id);
   if (error) throw error;
   await uploadDokumenPJ(id);
-}
 } else {
   const { data: inserted, error } = await db.from('aset').insert(data).select('id').single();
   if (error) throw error;
