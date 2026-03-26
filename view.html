@@ -12,32 +12,36 @@
   <script src="auth.js"></script>
   <script>
   (async () => {
-    const ready = await window._appReady;
     const db = window._authClient;
     const params = new URLSearchParams(location.search);
     const id = params.get('id');
     const kode = params.get('kode');
     const app = document.getElementById('app');
 
-    let query = db.from('aset').select('*');
-    if (id) query = query.eq('id_barang', id);
-    else if (kode) query = query.eq('kode_barang', kode);
-    else { app.innerHTML = '<p>Parameter tidak ditemukan.</p>'; return; }
+    if (!id && !kode) {
+      app.innerHTML = '<p>Parameter tidak ditemukan.</p>';
+      return;
+    }
 
-    const { data, error } = await query.single();
-    if (error || !data) { app.innerHTML = '<p>Aset tidak ditemukan.</p>'; return; }
+    // Ambil semua data publik via RPC
+    const { data: list, error } = await db.rpc('get_aset_public');
+    if (error || !list) { app.innerHTML = '<p>Gagal memuat data.</p>'; return; }
+
+    const data = list.find(a =>
+      (id && String(a.id) === String(id)) ||
+      (kode && a.kode_barang === kode)
+    );
+
+    if (!data) { app.innerHTML = '<p>Aset tidak ditemukan.</p>'; return; }
 
     app.innerHTML = `
       <h2 style="margin-bottom:16px">🏷️ ${data.nama_barang}</h2>
       <table style="width:100%;border-collapse:collapse;font-size:14px">
         ${[
-          ['KIB', data.kib],
           ['Kode Barang', data.kode_barang],
-          ['ID Barang', data.id_barang],
           ['Tahun Perolehan', data.tahun_perolehan],
           ['Kondisi', data.kondisi],
           ['Lokasi', data.lokasi],
-          ['Harga', data.harga_perolehan ? 'Rp ' + Number(data.harga_perolehan).toLocaleString('id') : '—'],
         ].map(([k,v]) => `
           <tr style="border-bottom:1px solid #e2e8f0">
             <td style="padding:8px;font-weight:600;color:#475569;width:45%">${k}</td>
