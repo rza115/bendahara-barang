@@ -396,7 +396,7 @@ function fillForm(data) {
     'kib', 'kode_barang', 'id_barang', 'no_register', 'nama_barang',
     'merk_type', 'ukuran_cc', 'bahan', 'tahun_perolehan', 'cara_perolehan',
     'sumber_dana', 'jumlah', 'kondisi', 'status_barang', 'status_aset',
-    'tgl_buku', 'no_bast', 'tgl_bast', 'id_penerimaan',
+    'tgl_buku', 'no_bast', 'tgl_bast', 'id_penerimaan',     'nama_penanggung_jawab', 'penanggung_jawab_id',
     'lokasi', 'penggunaan', 'keterangan',
     // KIB A
     'luas_tanah', 'tahun_perolehan_tanah', 'letak_alamat', 'status_tanah',
@@ -439,7 +439,7 @@ function getFormData() {
     'kib', 'kode_barang', 'id_barang', 'no_register', 'nama_barang',
     'merk_type', 'ukuran_cc', 'bahan', 'cara_perolehan', 'sumber_dana',
     'kondisi', 'status_barang', 'status_aset', 'lokasi', 'penggunaan', 'keterangan',
-    'no_bast', 'id_penerimaan',
+    'no_bast', 'id_penerimaan',     'nama_penanggung_jawab', 'penanggung_jawab_id',
     // KIB A
     'letak_alamat', 'status_tanah', 'no_urut_sertifikat', 'tgl_sertifikat',
     'no_sertifikat', 'penggunaan_tanah',
