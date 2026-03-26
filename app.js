@@ -689,7 +689,8 @@ function renderDetail(data) {
              </a>`;
         return `<div class="detail-item" style="flex-direction:column;gap:6px">
           <span class="detail-label">${escapeHtml(label)}</span>
-          ${preview}
+   if (page === 'tambah') {
+    await loadPenanggungJawabDropdown();       ${preview}
         </div>`;
       });
     if (items.length) {
@@ -701,6 +702,30 @@ function renderDetail(data) {
   // Penanggung Jawab   if (data.penanggung_jawab_id) {     // Fetch nama penanggung jawab     db.from('penanggung_jawab').select('nama, jabatan').eq('id', data.penanggung_jawab_id).single()       .then(({ data: pj }) => {         if (pj) {           set('d-penanggung_jawab', pj.nama);           set('d-pj-jabatan', pj.jabatan);         }       }).catch(() => {});   } else if (data.nama_penanggung_jawab) {     set('d-penanggung_jawab', data.nama_penanggung_jawab);   }   $('detail-content').style.display = 'block';
 }
 
+// ============================================
+// PENANGGUNG JAWAB DROPDOWN
+// ============================================
+async function loadPenanggungJawabDropdown(selectedId = null) {
+  const sel = $('penanggung_jawab_id');
+  if (!sel) return;
+  try {
+    const { data, error } = await db.from('penanggung_jawab')
+      .select('id, nama, jabatan, unit')
+      .eq('aktif', true)
+      .order('nama', { ascending: true });
+    if (error) throw error;
+    sel.innerHTML = '<option value="">— Pilih Penanggung Jawab —</option>';
+    (data || []).forEach(pj => {
+      const opt = document.createElement('option');
+      opt.value = pj.id;
+      opt.textContent = pj.nama + (pj.jabatan ? ' — ' + pj.jabatan : '');
+      if (String(pj.id) === String(selectedId)) opt.selected = true;
+      sel.appendChild(opt);
+    });
+  } catch (err) {
+    console.warn('loadPenanggungJawabDropdown error:', err.message);
+  }
+}
 // ============================================
 // INIT PER HALAMAN
 // ============================================
@@ -719,6 +744,7 @@ function renderDetail(data) {
   }
 
   if (page === 'tambah') {
+        await loadPenanggungJawabDropdown();
     $('kib')?.addEventListener('change', toggleKIBFields);
     initHargaFormat();
     initFotoUpload();
@@ -734,6 +760,7 @@ function renderDetail(data) {
     try {
       const data = await loadAsetById(id);
       fillForm(data);
+          await loadPenanggungJawabDropdown($('penanggung_jawab_id')?.value);
       initHargaFormat();
       initFotoUpload(data.foto_url);
       initDokumenPreview(data);
