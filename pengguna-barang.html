@@ -268,16 +268,27 @@
   </div>
 </div>
 
-<!-- Script -->
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
 <script src="auth.js"></script>
 <script src="nav.js"></script>
 <script src="app.js"></script>
 <script>
+(async () => {
+  const ready = await window._appReady;
+  if (!ready) return;
+  const db = window._authClient;
+
   let semuaPengguna = [];
   let idPenggunaSaatIni = null;
   let fileDipilih = null;
+
+  // ── UTILS ──────────────────────────────────────────────
+  function escH(s) { return s ? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') : ''; }
+  function formatTgl(d) {
+    if (!d) return '-';
+    return new Date(d).toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' });
+  }
+  function tutupModal(id) { document.getElementById(id).classList.remove('show'); }
 
   // ── LOAD DATA ──────────────────────────────────────────
   async function loadPengguna(filter = {}) {
@@ -300,7 +311,6 @@
       if (error) throw error;
 
       let hasil = data || [];
-
       if (filter.search) {
         const q = filter.search.toLowerCase();
         hasil = hasil.filter(r =>
@@ -324,13 +334,12 @@
       tbody.innerHTML = `<tr><td colspan="8" class="empty-td">📭 Belum ada data pengguna.</td></tr>`;
       return;
     }
-
+    const statusMap = {
+      'aktif':       '<span class="status-badge status-aktif">✅ Aktif</span>',
+      'tidak aktif': '<span class="status-badge status-tidak-aktif">⏸️ Tidak Aktif</span>',
+      'pensiun':     '<span class="status-badge status-pensiun">🏆 Pensiun</span>',
+    };
     tbody.innerHTML = data.map((r, i) => {
-      const statusMap = {
-        'aktif': '<span class="status-badge status-aktif">✅ Aktif</span>',
-        'tidak aktif': '<span class="status-badge status-tidak-aktif">⏸️ Tidak Aktif</span>',
-        'pensiun': '<span class="status-badge status-pensiun">🏆 Pensiun</span>',
-      };
       const dokumenCount = (r.dokumen_pengguna || []).length;
       return `
         <tr>
@@ -345,7 +354,7 @@
           </td>
           <td>${formatTgl(r.tgl_serah_barang)}</td>
           <td>${formatTgl(r.tgl_mulai_pengguna)} — ${r.masa_jabatan_akhir ? formatTgl(r.masa_jabatan_akhir) : 'Sekarang'}</td>
-          <td>${statusMap[r.status_pengguna] || r.status_pengguna}</td>
+          <td>${statusMap[r.status_pengguna] || escH(r.status_pengguna)}</td>
           <td>
             <button class="btn-edit-p" onclick="bukaUploadDokumen('${r.id}','${escH(r.nama_pengguna)}')" title="Upload dokumen">
               📄 ${dokumenCount > 0 ? '(' + dokumenCount + ')' : 'Upload'}
@@ -359,101 +368,96 @@
     }).join('');
   }
 
-  // ── LOAD DROPDOWN ASET ─────────────────────────────────
+  // ── DROPDOWN ASET ──────────────────────────────────────
   async function loadDropdownAset() {
     const { data } = await db.from('aset').select('id,nama_barang,kib').order('nama_barang');
     const sel = document.getElementById('p-aset-id');
-    if (data) {
-      data.forEach(a => {
-        const opt = document.createElement('option');
-        opt.value = a.id;
-        opt.textContent = `${a.nama_barang} [${a.kib}]`;
-        sel.appendChild(opt);
-      });
-    }
+    (data || []).forEach(a => {
+      const opt = document.createElement('option');
+      opt.value = a.id;
+      opt.textContent = `${a.nama_barang} [${a.kib}]`;
+      sel.appendChild(opt);
+    });
   }
 
   // ── MODAL PENGGUNA ──────────────────────────────────────
-  function bukaTambahPengguna() {
+  window.bukaTambahPengguna = function() {
     idPenggunaSaatIni = null;
     document.getElementById('modal-title').textContent = '➕ Tambah Pengguna Barang';
+    ['p-nip','p-jabatan','p-catatan'].forEach(id => document.getElementById(id).value = '');
     document.getElementById('p-aset-id').value = '';
     document.getElementById('p-nama').value = '';
-    document.getElementById('p-nip').value = '';
-    document.getElementById('p-jabatan').value = '';
     document.getElementById('p-tgl-mulai').value = new Date().toISOString().split('T')[0];
     document.getElementById('p-tgl-serah').value = new Date().toISOString().split('T')[0];
     document.getElementById('p-masa-akhir').value = '';
     document.getElementById('p-status').value = 'aktif';
-    document.getElementById('p-catatan').value = '';
     document.getElementById('modal-pengguna').classList.add('show');
-  }
+  };
 
-  function bukaEditPengguna(id) {
+  window.bukaEditPengguna = function(id) {
     const r = semuaPengguna.find(x => x.id === id);
     if (!r) return;
     idPenggunaSaatIni = id;
     document.getElementById('modal-title').textContent = '✏️ Edit Pengguna Barang';
-    document.getElementById('p-aset-id').value = r.aset_id;
-    document.getElementById('p-nama').value = r.nama_pengguna;
-    document.getElementById('p-nip').value = r.nip;
-    document.getElementById('p-jabatan').value = r.jabatan_unit;
-    document.getElementById('p-tgl-mulai').value = r.tgl_mulai_pengguna;
-    document.getElementById('p-tgl-serah').value = r.tgl_serah_barang;
+    document.getElementById('p-aset-id').value   = r.aset_id;
+    document.getElementById('p-nama').value       = r.nama_pengguna;
+    document.getElementById('p-nip').value        = r.nip || '';
+    document.getElementById('p-jabatan').value    = r.jabatan_unit || '';
+    document.getElementById('p-tgl-mulai').value  = r.tgl_mulai_pengguna || '';
+    document.getElementById('p-tgl-serah').value  = r.tgl_serah_barang || '';
     document.getElementById('p-masa-akhir').value = r.masa_jabatan_akhir || '';
-    document.getElementById('p-status').value = r.status_pengguna;
-    document.getElementById('p-catatan').value = r.catatan || '';
+    document.getElementById('p-status').value     = r.status_pengguna || 'aktif';
+    document.getElementById('p-catatan').value    = r.catatan || '';
     document.getElementById('modal-pengguna').classList.add('show');
-  }
+  };
 
-  async function simpanPengguna() {
-    const asetId = document.getElementById('p-aset-id').value;
-    const nama = document.getElementById('p-nama').value.trim();
-    const nip = document.getElementById('p-nip').value.trim();
+  window.simpanPengguna = async function() {
+    const asetId  = document.getElementById('p-aset-id').value;
+    const nama    = document.getElementById('p-nama').value.trim();
+    const nip     = document.getElementById('p-nip').value.trim();
     const jabatan = document.getElementById('p-jabatan').value.trim();
     const tglMulai = document.getElementById('p-tgl-mulai').value;
     const tglSerah = document.getElementById('p-tgl-serah').value;
     const masaAkhir = document.getElementById('p-masa-akhir').value || null;
-    const status = document.getElementById('p-status').value;
+    const status  = document.getElementById('p-status').value;
     const catatan = document.getElementById('p-catatan').value.trim();
 
     if (!asetId || !nama || !nip || !jabatan || !tglMulai || !tglSerah) {
-      alert('Mohon isi semua field yang wajib (*).');
-      return;
+      alert('Mohon isi semua field yang wajib (*).'); return;
     }
 
-    const data = {
-      aset_id: asetId,
-      nama_pengguna: nama, nip, jabatan_unit: jabatan,
-      tgl_mulai_pengguna: tglMulai,
-      tgl_serah_barang: tglSerah,
-      masa_jabatan_akhir: masaAkhir,
-      status_pengguna: status,
-      catatan,
+    const payload = {
+      aset_id: asetId, nama_pengguna: nama, nip, jabatan_unit: jabatan,
+      tgl_mulai_pengguna: tglMulai, tgl_serah_barang: tglSerah,
+      masa_jabatan_akhir: masaAkhir, status_pengguna: status, catatan,
     };
 
-    let error;
-    if (idPenggunaSaatIni) {
-      ({ error } = await db.from('pengguna_barang').update(data).eq('id', idPenggunaSaatIni));
-    } else {
-      ({ error } = await db.from('pengguna_barang').insert([data]));
-    }
+    const { error } = idPenggunaSaatIni
+      ? await db.from('pengguna_barang').update(payload).eq('id', idPenggunaSaatIni)
+      : await db.from('pengguna_barang').insert([payload]);
 
     if (error) { showAlert('Gagal simpan: ' + error.message, 'error'); return; }
     tutupModal('modal-pengguna');
-    showAlert('✅ Data berhasil disimpan!', 'success');
+    showAlert('✅ Data berhasil disimpan!');
     loadPengguna();
-  }
+  };
+
+  window.hapusPengguna = async function(id) {
+    if (!confirm('Hapus pengguna barang ini? Dokumen akan ikut terhapus.')) return;
+    const { error } = await db.from('pengguna_barang').delete().eq('id', id);
+    if (error) { showAlert('Gagal hapus: ' + error.message, 'error'); return; }
+    showAlert('🗑️ Data dihapus.');
+    loadPengguna();
+  };
 
   // ── MODAL DOKUMEN ──────────────────────────────────────
-  function bukaUploadDokumen(id, nama) {
+  window.bukaUploadDokumen = function(id, nama) {
     idPenggunaSaatIni = id;
     const r = semuaPengguna.find(x => x.id === id);
     document.getElementById('dokumen-desc').textContent = `Pengguna: ${nama}`;
 
-    // Tampilkan dokumen yang sudah ada
     const listExisting = document.getElementById('dokumen-list-existing');
-    if (r && r.dokumen_pengguna && r.dokumen_pengguna.length > 0) {
+    if (r?.dokumen_pengguna?.length > 0) {
       listExisting.innerHTML = `
         <div class="dokumen-list">
           <div style="font-size:11px;color:#7b82a0;margin-bottom:8px">Dokumen yang sudah diupload:</div>
@@ -469,8 +473,7 @@
               </div>
             </div>
           `).join('')}
-        </div>
-      `;
+        </div>`;
     } else {
       listExisting.innerHTML = '';
     }
@@ -480,119 +483,75 @@
     document.getElementById('file-input').value = '';
     document.getElementById('dokumen-preview').style.display = 'none';
     document.getElementById('modal-dokumen').classList.add('show');
-  }
+  };
 
-  // Drag & drop upload
-  const uploadArea = document.getElementById('file-upload-area');
-  const fileInput = document.getElementById('file-input');
-
-  uploadArea.addEventListener('click', () => fileInput.click());
-  uploadArea.addEventListener('dragover', e => {
-    e.preventDefault();
-    uploadArea.classList.add('dragover');
-  });
-  uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
-  uploadArea.addEventListener('drop', e => {
-    e.preventDefault();
-    uploadArea.classList.remove('dragover');
-    if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
-  });
-
-  fileInput.addEventListener('change', e => {
-    if (e.target.files[0]) handleFile(e.target.files[0]);
-  });
-
-  function handleFile(f) {
-    const maxSize = 10 * 1024 * 1024;
-    if (f.type !== 'application/pdf') {
-      alert('Hanya file PDF yang diterima.');
-      return;
-    }
-    if (f.size > maxSize) {
-      alert('File terlalu besar (max 10 MB).');
-      return;
-    }
-    fileDipilih = f;
-    document.getElementById('preview-nama').textContent = f.name;
-    document.getElementById('dokumen-preview').style.display = 'block';
-  }
-
-  async function simpanDokumen() {
+  window.simpanDokumen = async function() {
     if (!fileDipilih) { alert('Pilih file PDF terlebih dahulu.'); return; }
     const jenis = document.getElementById('d-jenis').value;
     if (!jenis) { alert('Pilih jenis dokumen.'); return; }
 
     const btn = document.getElementById('btn-upload-dokumen');
-    btn.disabled = true;
-    btn.textContent = '⏳ Uploading...';
+    btn.disabled = true; btn.textContent = '⏳ Uploading...';
 
     const filePath = `dokumen/${idPenggunaSaatIni}/${Date.now()}_${fileDipilih.name}`;
-    const { error: uploadError } = await db.storage
-      .from('dokumen-barang')
-      .upload(filePath, fileDipilih);
-
+    const { error: uploadError } = await db.storage.from('dokumen-barang').upload(filePath, fileDipilih);
     if (uploadError) {
       showAlert('Gagal upload file: ' + uploadError.message, 'error');
-      btn.disabled = false;
-      btn.textContent = '📤 Upload';
-      return;
+      btn.disabled = false; btn.textContent = '📤 Upload'; return;
     }
 
     const { error: dbError } = await db.from('dokumen_pengguna').insert([{
-      pengguna_barang_id: idPenggunaSaatIni,
-      jenis_dokumen: jenis,
-      nama_file: fileDipilih.name,
-      file_path: filePath,
-      file_size: fileDipilih.size,
+      pengguna_barang_id: idPenggunaSaatIni, jenis_dokumen: jenis,
+      nama_file: fileDipilih.name, file_path: filePath, file_size: fileDipilih.size,
     }]);
 
-    btn.disabled = false;
-    btn.textContent = '📤 Upload';
-
+    btn.disabled = false; btn.textContent = '📤 Upload';
     if (dbError) { showAlert('Gagal simpan record: ' + dbError.message, 'error'); return; }
-    showAlert('✅ Dokumen berhasil diupload!', 'success');
+    showAlert('✅ Dokumen berhasil diupload!');
     loadPengguna();
     tutupModal('modal-dokumen');
-  }
+  };
 
-  async function downloadDokumen(id) {
-    const d = await db.from('dokumen_pengguna').select('file_path').eq('id', id).single();
-    if (d.error) { alert('Gagal ambil file info'); return; }
-    const { data, error } = await db.storage.from('dokumen-barang').download(d.data.file_path);
-    if (error) { alert('Gagal download: ' + error.message); return; }
+  window.downloadDokumen = async function(id) {
+    const { data: d, error } = await db.from('dokumen_pengguna').select('file_path').eq('id', id).single();
+    if (error) { alert('Gagal ambil file info'); return; }
+    const { data, error: dlErr } = await db.storage.from('dokumen-barang').download(d.file_path);
+    if (dlErr) { alert('Gagal download: ' + dlErr.message); return; }
     const url = URL.createObjectURL(data);
     const a = document.createElement('a');
-    a.href = url;
-    a.download = d.data.file_path.split('/').pop();
-    a.click();
-  }
+    a.href = url; a.download = d.file_path.split('/').pop(); a.click();
+  };
 
-  async function hapusDokumen(id) {
+  window.hapusDokumen = async function(id) {
     if (!confirm('Hapus dokumen ini?')) return;
     const { error } = await db.from('dokumen_pengguna').delete().eq('id', id);
     if (error) { showAlert('Gagal hapus: ' + error.message, 'error'); return; }
-    showAlert('🗑️ Dokumen dihapus.', 'success');
-    bukaUploadDokumen(idPenggunaSaatIni, 'Loading...');
+    showAlert('🗑️ Dokumen dihapus.');
+    bukaUploadDokumen(idPenggunaSaatIni, '...');
+  };
+
+  // ── FILE UPLOAD ────────────────────────────────────────
+  const uploadArea = document.getElementById('file-upload-area');
+  const fileInput  = document.getElementById('file-input');
+
+  uploadArea.addEventListener('click', () => fileInput.click());
+  uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.classList.add('dragover'); });
+  uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
+  uploadArea.addEventListener('drop', e => {
+    e.preventDefault(); uploadArea.classList.remove('dragover');
+    if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+  });
+  fileInput.addEventListener('change', e => { if (e.target.files[0]) handleFile(e.target.files[0]); });
+
+  function handleFile(f) {
+    if (f.type !== 'application/pdf') { alert('Hanya file PDF yang diterima.'); return; }
+    if (f.size > 10 * 1024 * 1024)   { alert('File terlalu besar (max 10 MB).'); return; }
+    fileDipilih = f;
+    document.getElementById('preview-nama').textContent = f.name;
+    document.getElementById('dokumen-preview').style.display = 'block';
   }
 
-  async function hapusPengguna(id) {
-    if (!confirm('Hapus pengguna barang ini? Dokumen akan ikut terhapus.')) return;
-    const { error } = await db.from('pengguna_barang').delete().eq('id', id);
-    if (error) { showAlert('Gagal hapus: ' + error.message, 'error'); return; }
-    showAlert('🗑️ Data dihapus.', 'success');
-    loadPengguna();
-  }
-
-  // ── UTILS ──────────────────────────────────────────────
-  function tutupModal(id) { document.getElementById(id).classList.remove('show'); }
-  function escH(s) { return s ? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') : ''; }
-  function formatTgl(d) {
-    if (!d) return '-';
-    const dt = new Date(d);
-    return dt.toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' });
-  }
-
-  // Filter
+  // ── FILTER ─────────────────────────────────────────────
   let ft;
   document.getElementById('search-input').addEventListener('input', function() {
     clearTimeout(ft);
@@ -611,17 +570,10 @@
     el.addEventListener('click', e => { if (e.target === el) el.classList.remove('show'); });
   });
 
-  // Initial load
-document.addEventListener('DOMContentLoaded', async () => {
-  const ready = await window._appReady;
-  if (!ready) return;
-  db = window._authClient; // ← ini yang hilang
-
-  loadDropdownAset();
-  loadPengguna();
-  // ... event listener lainnya tetap di sini
-});
-
+  // ── INIT ───────────────────────────────────────────────
+  await loadDropdownAset();
+  await loadPengguna();
+})();
 </script>
 
 </body>
