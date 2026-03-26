@@ -760,11 +760,10 @@ async function loadPenanggungJawabDropdown(selectedId = null) {
     try {
       const data = await loadAsetById(id);
       fillForm(data);
-          await loadPenanggungJawabDropdown($('penanggung_jawab_id')?.value);
-      initHargaFormat();
+              initHargaFormat();
       initFotoUpload(data.foto_url);
       initDokumenPreview(data);
-      initDokumenUpload();
+              await loadPenanggungJawabDropdown(data.penanggung_jawab_id);
       $('kib')?.addEventListener('change', toggleKIBFields);
       $('btn-simpan')?.addEventListener('click', () => simpanAset(true, id));
     } catch {
