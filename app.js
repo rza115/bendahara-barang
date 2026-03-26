@@ -741,7 +741,7 @@ async function initPemindahtangananPage() {
     async function loadMasterData() {
       try {
         const [resPJ, resAset] = await Promise.all([
-          db.from('penanggung_jawab').select('id, nama, jabatan').eq('aktif', true).order('nama'),
+                    db.from('penanggung_jawab').select('id, nama, jabatan').neq('aktif', false).order('nama'),
           db.from('aset').select('id, nama_barang, kode_barang').order('nama_barang'),
         ]);
         if (resPJ.error) throw new Error('Gagal load PJ: ' + resPJ.error.message);
