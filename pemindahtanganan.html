@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pemindahtanganan Barang — Inventaris Kecamatan Tenjo</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="pemindahtanganan">
+  <div class="loading-overlay" id="loading"><div class="loading-spinner"></div></div>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="header-logo">
+        <div class="header-logo-icon">🏛️</div>
+        <div class="header-logo-text">
+          <span class="title">Inventaris Barang</span>
+          <span class="subtitle">Kecamatan Tenjo — Kab. Bogor</span>
+        </div>
+      </a>
+      <nav class="header-nav"></nav>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <div class="alert" id="alert-box"></div>
+
+    <div class="page-header">
+      <div>
+        <h1>🔄 Pemindahtanganan Barang</h1>
+        <p>Catat perpindahan penanggung jawab barang secara permanen</p>
+      </div>
+      <a href="index.html" class="btn btn-secondary">← Kembali</a>
+    </div>
+
+    <!-- Form Catat Pemindahtanganan -->
+    <div class="form-card" style="margin-bottom:20px">
+      <div class="form-section">
+        <div class="form-section-title" id="form-title">➕ Catat Pemindahtanganan Baru</div>
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label>Barang <span class="req">*</span></label>
+            <select id="pt-barang-id">
+              <option value="">— Pilih Barang —</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Penanggung Jawab Lama</label>
+            <input type="text" id="pt-pj-lama-display" readonly
+              style="background:#f8fafc;color:#64748b;cursor:not-allowed"
+              placeholder="Otomatis dari data barang">
+            <input type="hidden" id="pt-dari-pj-id">
+          </div>
+
+          <div class="form-group">
+            <label>Penanggung Jawab Baru <span class="req">*</span></label>
+            <select id="pt-ke-pj-id">
+              <option value="">— Pilih PJ Baru —</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Tanggal Pemindahtanganan <span class="req">*</span></label>
+            <input type="date" id="pt-tanggal">
+          </div>
+
+          <div class="form-group">
+            <label>No. Dokumen <span style="color:#94a3b8">(BA/SK, opsional)</span></label>
+            <input type="text" id="pt-no-dokumen" placeholder="contoh: 800/123/Kec.Tnj/2026">
+          </div>
+
+          <div class="form-group form-col-full">
+            <label>Keterangan <span style="color:#94a3b8">(opsional)</span></label>
+            <textarea id="pt-keterangan" rows="2" placeholder="Alasan pemindahtanganan, dasar hukum, dll..."></textarea>
+          </div>
+
+          <div class="form-group form-col-full">
+            <label>Upload Dokumen <span style="color:#94a3b8">(scan BA/SK, opsional)</span></label>
+            <input type="file" id="pt-dokumen-file" accept=".pdf,.jpg,.jpeg,.png">
+            <p style="font-size:12px;color:#94a3b8;margin-top:4px">Format: PDF/JPG/PNG · Maks. 5 MB</p>
+          </div>
+
+        </div>
+        <div style="display:flex;gap:10px;margin-top:8px">
+          <button class="btn btn-primary" id="btn-simpan-pt">💾 Simpan Pemindahtanganan</button>
+          <button class="btn btn-secondary" id="btn-batal-pt" style="display:none">✕ Batal</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabel Riwayat -->
+    <div class="form-card">
+      <div class="form-section">
+        <div class="form-section-title">📋 Riwayat Pemindahtanganan</div>
+
+        <!-- Filter -->
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px">
+          <select id="filter-pt-barang" style="min-width:200px;padding:8px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px">
+            <option value="">— Semua Barang —</option>
+          </select>
+          <select id="filter-pt-pj" style="min-width:180px;padding:8px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px">
+            <option value="">— Semua PJ —</option>
+          </select>
+        </div>
+
+        <div style="overflow-x:auto">
+          <table style="width:100%;border-collapse:collapse;font-size:13px">
+            <thead>
+              <tr>
+                <th style="padding:10px 12px;text-align:left;font-size:12px;color:#64748b;border-bottom:2px solid #e2e8f0">#</th>
+                <th style="padding:10px 12px;text-align:left;font-size:12px;color:#64748b;border-bottom:2px solid #e2e8f0">Barang</th>
+                <th style="padding:10px 12px;text-align:left;font-size:12px;color:#64748b;border-bottom:2px solid #e2e8f0">PJ Lama</th>
+                <th style="padding:10px 12px;text-align:left;font-size:12px;color:#64748b;border-bottom:2px solid #e2e8f0">PJ Baru</th>
+                <th style="padding:10px 12px;text-align:left;font-size:12px;color:#64748b;border-bottom:2px solid #e2e8f0">Tanggal</th>
+                <th style="padding:10px 12px;text-align:left;font-size:12px;color:#64748b;border-bottom:2px solid #e2e8f0">No. Dok</th>
+                <th style="padding:10px 12px;text-align:left;font-size:12px;color:#64748b;border-bottom:2px solid #e2e8f0">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="pt-tbody">
+              <tr><td colspan="7" style="text-align:center;padding:40px;color:#94a3b8">Memuat data...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="supabase.js"></script>
+  <script src="auth.js"></script>
+  <script src="nav.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
