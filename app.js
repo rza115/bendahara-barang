@@ -1010,4 +1010,4 @@ if (page === 'detail') {
 if (page === 'pemindahtanganan') {        // ← sejajar, bukan di dalam
     await initPemindahtangananPage();
 }
-)();
+}();
