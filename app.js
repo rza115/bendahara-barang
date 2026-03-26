@@ -1005,9 +1005,9 @@ if (page === 'detail') {
     } finally {
       showLoading(false);
     }
-}                                         // ← tutup if detail di sini
+  }
 
-if (page === 'pemindahtanganan') {        // ← sejajar, bukan di dalam
+  if (page === 'pemindahtanganan') {
     await initPemindahtangananPage();
-}
-}();
+  }
+})();
