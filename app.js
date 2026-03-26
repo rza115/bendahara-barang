@@ -45,6 +45,13 @@ const DOK_FIELDS = [
   { key: 'dok_kuitansi_url', existingId: 'dok_kuitansi_existing', previewId: 'dok_kuitansi_preview' },
 ];
 
+const DOK_PJ_INPUTS = [
+  { id: 'dok_pj_pakta',    jenis: 'Pakta Integritas' },
+  { id: 'dok_pj_sptjm',   jenis: 'SPTJM' },
+  { id: 'dok_pj_bast',    jenis: 'Berita Acara Serah Terima' },
+  { id: 'dok_pj_lainnya', jenis: 'Lainnya' },
+];
+
 // ============================================
 // UTILITY
 // ============================================
@@ -151,6 +158,37 @@ async function uploadDokumen(file, jenisDok) {
   const { error } = await db.storage.from('dokumen-pengadaan').upload(fileName, file, { upsert: true });
   if (error) throw error;
   return db.storage.from('dokumen-pengadaan').getPublicUrl(fileName).data.publicUrl;
+}
+
+async function uploadDokumenPJ(asetId) {
+  const uploads = [];
+  for (const { id, jenis } of DOK_PJ_INPUTS) {
+    const file = $(id)?.files?.[0];
+    if (!file) continue;
+    if (file.size > 5 * 1024 * 1024) {
+      showAlert(`File "${jenis}" melebihi 5 MB, dilewati.`, 'error');
+      continue;
+    }
+    const fileName = `pj_${jenis.replace(/\s+/g,'_')}_${Date.now()}.${file.name.split('.').pop()}`;
+    const { error: uploadErr } = await db.storage
+      .from('dokumen-pengadaan')
+      .upload(fileName, file, { upsert: true });
+    if (uploadErr) {
+      showAlert(`Gagal upload "${jenis}": ${uploadErr.message}`, 'error');
+      continue;
+    }
+    uploads.push({
+      aset_id:      asetId,
+      jenis_dokumen: jenis,
+      nama_file:    file.name,
+      file_path:    fileName,
+      file_size:    file.size,
+    });
+  }
+  if (uploads.length) {
+    const { error } = await db.from('dokumen_aset').insert(uploads);
+    if (error) showAlert('Gagal simpan record dokumen PJ: ' + error.message, 'error');
+  }
 }
 
 function renderDokPreview(wrap, file) {
@@ -509,13 +547,18 @@ async function simpanAset(isEdit = false, id = null) {
       }
     }
 
-    const { error } = isEdit && id
-      ? await db.from('aset').update(data).eq('id', id)
-      : await db.from('aset').insert(data);
-    if (error) throw error;
-
-    showAlert(isEdit ? 'Aset berhasil diperbarui!' : 'Aset berhasil ditambahkan!');
-    setTimeout(() => { window.location.href = 'index.html'; }, 1500);
+let asetId = id;
+if (isEdit && id) {
+  const { error } = await db.from('aset').update(data).eq('id', id);
+  if (error) throw error;
+} else {
+  const { data: inserted, error } = await db.from('aset').insert(data).select('id').single();
+  if (error) throw error;
+  asetId = inserted.id;
+  await uploadDokumenPJ(asetId);
+}
+showAlert(isEdit ? 'Aset berhasil diperbarui!' : 'Aset berhasil ditambahkan!');
+setTimeout(() => { window.location.href = 'index.html'; }, 1500);
   } catch (err) {
     showAlert('Gagal menyimpan: ' + err.message, 'error');
   } finally {
