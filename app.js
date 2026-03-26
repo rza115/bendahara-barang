@@ -670,7 +670,7 @@ function renderDetail(data) {
   set('d-ukuran_aset',   data.ukuran_aset);
   set('d-tahun_cetak',   data.tahun_cetak, true);
 
-  // Dokumen pengadaan
+// Dokumen pengadaan
   const dokGrid    = $('dokumen-grid');
   const dokSection = $('section-dokumen');
   if (dokGrid && dokSection) {
@@ -689,8 +689,7 @@ function renderDetail(data) {
              </a>`;
         return `<div class="detail-item" style="flex-direction:column;gap:6px">
           <span class="detail-label">${escapeHtml(label)}</span>
-   if (page === 'tambah') {
-    await loadPenanggungJawabDropdown();       ${preview}
+          ${preview}
         </div>`;
       });
     if (items.length) {
@@ -699,7 +698,20 @@ function renderDetail(data) {
     }
   }
 
-  // Penanggung Jawab   if (data.penanggung_jawab_id) {     // Fetch nama penanggung jawab     db.from('penanggung_jawab').select('nama, jabatan').eq('id', data.penanggung_jawab_id).single()       .then(({ data: pj }) => {         if (pj) {           set('d-penanggung_jawab', pj.nama);           set('d-pj-jabatan', pj.jabatan);         }       }).catch(() => {});   } else if (data.nama_penanggung_jawab) {     set('d-penanggung_jawab', data.nama_penanggung_jawab);   }   $('detail-content').style.display = 'block';
+  // Penanggung Jawab
+  if (data.penanggung_jawab_id) {
+    db.from('penanggung_jawab').select('nama, jabatan').eq('id', data.penanggung_jawab_id).single()
+      .then(({ data: pj }) => {
+        if (pj) {
+          set('d-penanggung_jawab', pj.nama);
+          set('d-pj-jabatan', pj.jabatan);
+        }
+      }).catch(() => {});
+  } else if (data.nama_penanggung_jawab) {
+    set('d-penanggung_jawab', data.nama_penanggung_jawab);
+  }
+
+  $('detail-content').style.display = 'block';
 }
 
 // ============================================
