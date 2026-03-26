@@ -572,20 +572,20 @@
     });
 
     // ── GENERATE KODE ──────────────────────────────────
-    function getKodeValue(aset) {
-      const opt = document.getElementById('opt-data-kode').value;
-      const base = window.location.origin + window.location.pathname.replace('barcode.html', '');
-    
-      if (opt === 'kode') {
-        return `${base}view.html?kode=${encodeURIComponent(aset.kode_barang || aset.id)}`;
-      }
-      if (opt === 'lengkap') {
-        // UUID tetap jadi identifier utama
-        return `${base}view.html?uuid=${aset.id}&nama=${encodeURIComponent(aset.nama_barang)}`;
-      }
-      // Default: pakai UUID (aset.id dari Supabase)
-      return `${base}view.html?uuid=${aset.id}`;
-    }
+function getKodeValue(aset) {
+  const opt = document.getElementById('opt-data-kode').value;
+  const base = window.location.origin + window.location.pathname.replace('barcode.html', '');
+
+  if (opt === 'kode') {
+    return `${base}view.html?kode=${encodeURIComponent(aset.kode_barang || aset.id)}`;
+  }
+  if (opt === 'lengkap') {
+    // Pakai kode sebagai identifier utama (lebih human-readable)
+    return `${base}view.html?kode=${encodeURIComponent(aset.kode_barang)}&id=${aset.id}`;
+  }
+  // Default: pakai UUID dengan parameter ?id= (sesuai view.html)
+  return `${base}view.html?id=${aset.id}`;  // ← ?id= BENAR
+}
 
     function buatQR(container, value) {
       container.innerHTML = '';
