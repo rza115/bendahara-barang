@@ -7,6 +7,7 @@
     { href: 'peminjaman.html',      icon: '🤝', label: 'Peminjaman' },
     { href: 'pengguna-barang.html', icon: '👤', label: 'Pengguna' },
         { href: 'penanggung-jawab.html', icon: '🧑‍💼', label: 'PJ Barang' },
+        { href: 'pemindahtanganan.html', icon: '🔄', label: 'Pindahtangan' },
   ];
 
   const currentPage = window.location.pathname.split('/').pop() || 'index.html';
