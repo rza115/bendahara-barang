@@ -15,7 +15,7 @@
 | Barcode barang | ✅ Selesai |
 | Peminjaman barang | ✅ Selesai |
 | Pengguna barang | ✅ Selesai |
-| Pemindahtanganan barang | 🔲 Belum |
+| Pemindahtanganan barang | ✅ Selesai |
 | Penanggung jawab barang | ✅ Selesai |
 | Roles operator | 🔲 Belum |
 | Roles bendahara pembantu | 🔲 Belum |
@@ -34,6 +34,10 @@
 | 26 Maret 2026 | ✅ FASE 1B — Dropdown penanggung jawab di `tambah.html` dan `edit.html` terintegrasi ke database |
 | 26 Maret 2026 | ✅ FASE 1B — Link navigasi `PJ Barang` ditambahkan di `nav.js` |
 | 26 Maret 2026 | ✅ Kolom `penanggung_jawab_id` dan `nama_penanggung_jawab` ditambahkan ke form dan `getFormData()` di `app.js` |
+| 26 Maret 2026 | ✅ FASE 1C — Tabel `pemindahtanganan` dibuat (migration SQL) dengan referensi ke `penanggung_jawab` |
+| 26 Maret 2026 | ✅ FASE 1C — Halaman `pemindahtanganan.html` dibuat (form + tabel riwayat) |
+| 26 Maret 2026 | ✅ FASE 1C — Fungsi `initPemindahtangananPage()` ditambahkan di `app.js` |
+| 26 Maret 2026 | ✅ FASE 1C — Link navigasi `Pindahtangan` ditambahkan di `nav.js` |
 ## FASE 1 — Manajemen Data Barang (Prioritas Tinggi)
 
 ### 1.1 Penanggung Jawab Barang
