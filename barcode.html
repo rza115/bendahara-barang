@@ -3,573 +3,713 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cetak Barcode — Inventaris Kecamatan Tenjo</title>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <title>Cetak Label Barcode — Inventaris Kecamatan Tenjo</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --bg: #0f1117;
-      --surface: #181c27;
-      --border: #2e3447;
-      --accent: #4f7eff;
-      --text: #e8eaf0;
-      --text-muted: #7b82a0;
-      --text-dim: #4a5068;
-      --error: #ff5f5f;
-    }
-
-    body {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-    }
-
-    /* ===== HEADER ===== */
-    .site-header {
-      background: rgba(24,28,39,0.95);
-      border-bottom: 1px solid var(--border);
-      padding: 0 24px;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      backdrop-filter: blur(12px);
-    }
-    .header-inner {
-      max-width: 1200px;
-      margin: 0 auto;
-      height: 60px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .header-logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      text-decoration: none;
-      color: var(--text);
-    }
-    .header-logo-icon { font-size: 22px; }
-    .header-logo-text .title { font-size: 15px; font-weight: 600; display: block; }
-    .header-logo-text .subtitle { font-size: 11px; color: var(--text-muted); display: block; }
-    .btn-back {
-      background: rgba(255,255,255,0.06);
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 8px 16px;
-      border-radius: 8px;
-      font-size: 13px;
-      font-family: inherit;
-      cursor: pointer;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .btn-back:hover { background: rgba(255,255,255,0.1); }
-
-    /* ===== MAIN ===== */
-    .main-content {
-      max-width: 1000px;
-      margin: 0 auto;
-      padding: 28px 24px;
-    }
-
-    .page-header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 16px;
-      margin-bottom: 24px;
-      flex-wrap: wrap;
-    }
-    .page-header h1 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
-    .page-header p { font-size: 13px; color: var(--text-muted); }
-
-    .btn { padding: 10px 18px; border-radius: 9px; font-size: 13px; font-weight: 600; font-family: inherit; cursor: pointer; border: none; display: inline-flex; align-items: center; gap: 6px; }
-    .btn-primary { background: var(--accent); color: #fff; }
-    .btn-primary:hover { background: #6b93ff; }
-    .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
-    .btn-outline:hover { background: rgba(255,255,255,0.06); }
-
-    /* ===== FILTER ===== */
-    .filter-bar {
-      background: var(--surface);
-      border: 1px solid var(--border);
+    /* ── SCREEN UI ── */
+    .barcode-toolbar {
+      background: #fff;
+      border: 1px solid #e2e8f0;
       border-radius: 12px;
-      padding: 16px;
+      padding: 16px 20px;
+      margin-bottom: 20px;
       display: flex;
       gap: 12px;
-      align-items: center;
       flex-wrap: wrap;
-      margin-bottom: 20px;
+      align-items: center;
     }
-    .filter-bar label { font-size: 12px; color: var(--text-muted); font-weight: 600; }
-    .filter-bar select, .filter-bar input[type="text"] {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 8px 12px;
+
+    .toolbar-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: #475569;
+    }
+
+    .toolbar-group label { font-weight: 600; white-space: nowrap; }
+
+    .toolbar-group select,
+    .toolbar-group input[type="number"] {
+      padding: 7px 10px;
+      border: 1px solid #e2e8f0;
       border-radius: 8px;
       font-size: 13px;
-      font-family: inherit;
-      outline: none;
+      color: #334155;
+      background: #f8fafc;
     }
-    .filter-bar select:focus, .filter-bar input:focus { border-color: var(--accent); }
-    .search-wrap { position: relative; flex: 1; min-width: 200px; }
-    .search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); opacity: 0.4; }
-    .search-wrap input { width: 100%; padding-left: 32px; }
 
-    /* ===== ASET LIST (checkbox) ===== */
-    .aset-list {
-      background: var(--surface);
-      border: 1px solid var(--border);
+    .toolbar-sep { width: 1px; height: 32px; background: #e2e8f0; margin: 0 4px; }
+
+    .aset-selector {
+      background: #fff;
+      border: 1px solid #e2e8f0;
       border-radius: 12px;
       overflow: hidden;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
     }
-    .aset-list table { width: 100%; border-collapse: collapse; }
-    .aset-list th {
-      background: rgba(255,255,255,0.03);
-      padding: 12px 16px;
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      border-bottom: 1px solid var(--border);
-      text-align: left;
-    }
-    .aset-list td {
-      padding: 12px 16px;
-      font-size: 13px;
-      border-bottom: 1px solid rgba(255,255,255,0.04);
-      vertical-align: middle;
-    }
-    .aset-list tr:last-child td { border-bottom: none; }
-    .aset-list tr:hover td { background: rgba(255,255,255,0.02); }
-    .aset-list tr.selected td { background: rgba(79,126,255,0.06); }
 
-    .check-all-wrap { display: flex; align-items: center; gap: 8px; padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 13px; color: var(--text-muted); }
-    input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer; }
-
-    .kib-badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 20px; }
-    .kib-kib-a { background: rgba(76,222,154,0.1); color: #4cde9a; }
-    .kib-kib-b { background: rgba(79,126,255,0.1); color: #4f7eff; }
-    .kib-kib-c { background: rgba(255,188,79,0.1); color: #ffbc4f; }
-    .kib-kib-e { background: rgba(160,130,255,0.1); color: #a082ff; }
-
-    .nama-barang { font-weight: 500; }
-    .sub-info { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
-    .kode-info { font-size: 11px; color: var(--text-dim); font-family: monospace; }
-
-    .selected-count {
-      font-size: 13px;
-      color: var(--text-muted);
-      padding: 8px 0;
-    }
-    .selected-count span { color: var(--accent); font-weight: 700; }
-
-    /* ===== MODAL PREVIEW BARCODE ===== */
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.7);
-      z-index: 200;
+    .aset-selector-header {
+      padding: 14px 20px;
+      background: #f8fafc;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
       align-items: center;
-      justify-content: center;
-      backdrop-filter: blur(4px);
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
     }
-    .modal-overlay.show { display: flex; }
 
-    .modal {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 28px;
-      width: 90%;
-      max-width: 520px;
-      max-height: 90vh;
+    .aset-selector-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #1e293b;
+    }
+
+    .aset-selector-actions { display: flex; gap: 8px; }
+
+    .btn-sm {
+      padding: 5px 12px;
+      font-size: 12px;
+      border-radius: 6px;
+      border: 1px solid #e2e8f0;
+      background: #fff;
+      cursor: pointer;
+      color: #475569;
+      font-weight: 500;
+    }
+    .btn-sm:hover { background: #f1f5f9; }
+    .btn-sm.active { background: #eff6ff; border-color: #bfdbfe; color: #1d4ed8; }
+
+    .search-bar {
+      padding: 10px 16px;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      gap: 8px;
+    }
+    .search-bar input {
+      flex: 1;
+      padding: 7px 12px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 13px;
+    }
+    .search-bar select {
+      padding: 7px 10px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 13px;
+    }
+
+    .aset-list {
+      max-height: 320px;
       overflow-y: auto;
     }
-    .modal-title { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
-    .modal-desc { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
-    .modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
 
-    /* ===== PRINT AREA ===== */
-    #print-area {
+    .aset-item {
       display: flex;
-      flex-wrap: wrap;
+      align-items: center;
       gap: 12px;
-      justify-content: flex-start;
+      padding: 10px 16px;
+      border-bottom: 1px solid #f1f5f9;
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+    .aset-item:hover { background: #f8fafc; }
+    .aset-item:last-child { border-bottom: none; }
+    .aset-item.selected { background: #eff6ff; }
+
+    .aset-item input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; accent-color: #1d4ed8; }
+
+    .aset-item-info { flex: 1; min-width: 0; }
+    .aset-item-nama { font-size: 13px; font-weight: 600; color: #1e293b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .aset-item-meta { font-size: 11px; color: #94a3b8; margin-top: 2px; }
+
+    .aset-item-kib {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 20px;
+      background: #f1f5f9;
+      color: #64748b;
+      white-space: nowrap;
     }
 
-    .barcode-card {
+    .selected-count {
+      padding: 10px 16px;
+      font-size: 12px;
+      color: #64748b;
+      background: #f8fafc;
+      border-top: 1px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .selected-count strong { color: #1d4ed8; }
+
+    /* ── LABEL PREVIEW ── */
+    .preview-section {
       background: #fff;
-      color: #000;
-      border-radius: 8px;
-      padding: 10px 12px;
-      width: 200px;
-      text-align: center;
-      break-inside: avoid;
-    }
-    .barcode-card .bc-instansi {
-      font-size: 8px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: #555;
-      margin-bottom: 4px;
-    }
-    .barcode-card .bc-nama {
-      font-size: 10px;
-      font-weight: 700;
-      color: #000;
-      margin-bottom: 2px;
-      line-height: 1.3;
-    }
-    .barcode-card .bc-kode {
-      font-size: 8px;
-      color: #666;
-      margin-bottom: 6px;
-      font-family: monospace;
-    }
-    .barcode-card svg { max-width: 100%; height: auto; }
-    .barcode-card .bc-tahun {
-      font-size: 8px;
-      color: #888;
-      margin-top: 4px;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      overflow: hidden;
     }
 
-    /* ===== PRINT STYLES ===== */
-    @media print {
-      body * { visibility: hidden; }
-      #print-section, #print-section * { visibility: visible; }
-      #print-section {
-        position: fixed;
-        inset: 0;
-        background: #fff;
-        padding: 20px;
-      }
-      #print-header { margin-bottom: 16px; }
-      #print-area {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-      }
-      .barcode-card {
-        border: 1px solid #ccc;
-        page-break-inside: avoid;
-      }
+    .preview-header {
+      padding: 14px 20px;
+      background: #f8fafc;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
     }
 
-    /* Loading & empty */
-    .loading-row td, .empty-row td {
+    .preview-title { font-size: 14px; font-weight: 700; color: #1e293b; }
+
+    .preview-actions { display: flex; gap: 8px; }
+
+    .label-grid {
+      padding: 20px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .label-empty {
+      padding: 60px 20px;
       text-align: center;
-      padding: 40px;
-      color: var(--text-muted);
+      color: #94a3b8;
       font-size: 14px;
     }
-    .alert { display: none; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 13px; }
-    .alert-error { display: block; background: rgba(255,95,95,0.1); border: 1px solid rgba(255,95,95,0.2); color: var(--error); }
+
+    /* ── LABEL DESIGN ── */
+    .label-card {
+      border: 1.5px solid #334155;
+      border-radius: 6px;
+      overflow: hidden;
+      background: #fff;
+      font-family: 'Arial', sans-serif;
+      position: relative;
+    }
+
+    .label-inner {
+      display: flex;
+      min-height: 120px;
+    }
+
+    /* Kolom 1 — Logo + Judul */
+    .label-col1 {
+      width: 90px;
+      min-width: 90px;
+      background: #1e3a5f;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 6px;
+      gap: 6px;
+    }
+
+    .label-logo {
+      width: 52px;
+      height: 52px;
+      object-fit: contain;
+      filter: brightness(0) invert(1);
+    }
+
+    .label-logo-placeholder {
+      width: 52px;
+      height: 52px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+
+    .label-tahun-inv {
+      font-size: 7px;
+      font-weight: 700;
+      color: #fff;
+      text-align: center;
+      line-height: 1.3;
+      letter-spacing: 0.3px;
+    }
+
+    /* Kolom 2 — Data */
+    .label-col2 {
+      flex: 1;
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 4px;
+    }
+
+    .label-data { flex: 1; }
+
+    .label-row {
+      display: flex;
+      font-size: 8px;
+      line-height: 1.5;
+      color: #1e293b;
+      gap: 3px;
+    }
+
+    .label-key {
+      font-weight: 700;
+      white-space: nowrap;
+      min-width: 90px;
+      color: #334155;
+    }
+
+    .label-val {
+      flex: 1;
+      font-weight: 400;
+      word-break: break-word;
+    }
+
+    .label-code-wrap {
+      margin-top: 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 6px;
+      border-top: 1px dashed #e2e8f0;
+    }
+
+    .label-code-wrap canvas,
+    .label-code-wrap img,
+    .label-code-wrap svg {
+      max-width: 100%;
+      height: auto;
+    }
+
+    .label-code-text {
+      font-size: 7px;
+      color: #64748b;
+      margin-top: 2px;
+      font-family: monospace;
+    }
+
+    /* ── PRINT STYLES ── */
+    @media print {
+      @page {
+        size: A4 portrait;
+        margin: 10mm 10mm 10mm 10mm;
+      }
+
+      body * { visibility: hidden; }
+      #print-area, #print-area * { visibility: visible; }
+      #print-area {
+        position: fixed;
+        top: 0; left: 0;
+        width: 190mm;
+      }
+
+      .label-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6mm;
+        padding: 0;
+      }
+
+      .label-card {
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+
+      .site-header, .barcode-toolbar, .aset-selector,
+      .preview-header, .selected-count, nav, .page-header { display: none !important; }
+
+      .preview-section { border: none; box-shadow: none; }
+    }
   </style>
 </head>
-<body>
+<body data-page="barcode">
+  <div class="loading-overlay" id="loading"><div class="loading-spinner"></div></div>
 
-<!-- Header -->
-<header class="site-header">
-  <div class="header-inner">
-    <a href="index.html" class="header-logo">
-      <div class="header-logo-icon">🏛️</div>
-      <div class="header-logo-text">
-        <span class="title">Inventaris Barang</span>
-        <span class="subtitle">Kecamatan Tenjo — Kab. Bogor</span>
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="header-logo">
+        <div class="header-logo-icon">🏛️</div>
+        <div class="header-logo-text">
+          <span class="title">Inventaris Barang</span>
+          <span class="subtitle">Kecamatan Tenjo — Kab. Bogor</span>
+        </div>
+      </a>
+      <nav class="header-nav"></nav>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <div class="alert" id="alert-box"></div>
+
+    <div class="page-header">
+      <div>
+        <h1>🏷️ Cetak Label Barcode</h1>
+        <p>Pilih aset, atur opsi, lalu cetak atau unduh PDF label inventaris</p>
       </div>
-    </a>
-    <a href="index.html" class="btn-back">← Kembali</a>
-  </div>
-</header>
-
-<!-- Main -->
-<main class="main-content">
-
-  <div class="page-header">
-    <div>
-      <h1>🏷️ Cetak Barcode Barang</h1>
-      <p>Pilih barang lalu cetak label barcode berdasarkan Kode Barang</p>
+      <a href="index.html" class="btn btn-secondary">← Kembali</a>
     </div>
-  </div>
 
-  <div class="alert" id="alert-box"></div>
-
-  <!-- Filter -->
-  <div class="filter-bar">
-    <div class="search-wrap">
-      <span class="search-icon">🔍</span>
-      <input type="text" id="search-input" placeholder="Cari nama barang...">
+    <!-- Toolbar -->
+    <div class="barcode-toolbar">
+      <div class="toolbar-group">
+        <label>Jenis Kode:</label>
+        <select id="opt-jenis-kode">
+          <option value="qrcode">QR Code</option>
+          <option value="barcode">Barcode (Code128)</option>
+        </select>
+      </div>
+      <div class="toolbar-sep"></div>
+      <div class="toolbar-group">
+        <label>Tahun Inventarisasi:</label>
+        <input type="number" id="opt-tahun" value="" min="2000" max="2099" style="width:80px">
+      </div>
+      <div class="toolbar-sep"></div>
+      <div class="toolbar-group">
+        <label>Data pada kode:</label>
+        <select id="opt-data-kode">
+          <option value="id">ID Barang</option>
+          <option value="kode">Kode Barang</option>
+          <option value="lengkap">Nama + Kode</option>
+        </select>
+      </div>
     </div>
-    <div>
-      <label>KIB &nbsp;</label>
-      <select id="filter-kib">
-        <option value="">Semua KIB</option>
-        <option value="KIB A">KIB A — Tanah</option>
-        <option value="KIB B">KIB B — Peralatan & Mesin</option>
-        <option value="KIB C">KIB C — Gedung & Bangunan</option>
-        <option value="KIB E">KIB E — Aset Tetap Lainnya</option>
-      </select>
-    </div>
-  </div>
 
-  <!-- Tabel pilih barang -->
-  <div class="aset-list">
-    <div class="check-all-wrap">
-      <input type="checkbox" id="check-all">
-      <label for="check-all">Pilih semua yang tampil</label>
-      <span style="margin-left:auto" class="selected-count">Dipilih: <span id="count-selected">0</span> barang</span>
-    </div>
-    <table>
-      <thead>
-        <tr>
-          <th style="width:40px"></th>
-          <th>Nama Barang</th>
-          <th>KIB</th>
-          <th>Kode Barang</th>
-          <th>Tahun</th>
-        </tr>
-      </thead>
-      <tbody id="aset-tbody">
-        <tr class="loading-row"><td colspan="5">⏳ Memuat data...</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- Tombol cetak -->
-  <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
-    <button class="btn btn-primary" id="btn-preview" onclick="bukaPreview()">
-      🏷️ Preview & Cetak Barcode
-    </button>
-    <span style="font-size:12px; color:var(--text-dim)">Pilih minimal 1 barang</span>
-  </div>
-
-</main>
-
-<!-- Modal Preview -->
-<div class="modal-overlay" id="modal-overlay">
-  <div class="modal">
-    <div class="modal-title">🏷️ Preview Label Barcode</div>
-    <div class="modal-desc" id="modal-desc">—</div>
-
-    <!-- Print area -->
-    <div id="print-section">
-      <div id="print-header" style="display:none">
-        <div style="font-size:11px;color:#555;margin-bottom:8px">
-          INVENTARIS BARANG — KECAMATAN TENJO, KAB. BOGOR
+    <!-- Pilih Aset -->
+    <div class="aset-selector">
+      <div class="aset-selector-header">
+        <div class="aset-selector-title">📋 Pilih Aset untuk Dicetak</div>
+        <div class="aset-selector-actions">
+          <button class="btn-sm" id="btn-pilih-semua">Pilih Semua</button>
+          <button class="btn-sm" id="btn-batal-semua">Batal Semua</button>
         </div>
       </div>
-      <div id="print-area"></div>
+      <div class="search-bar">
+        <input type="text" id="search-aset" placeholder="🔍 Cari nama barang atau kode...">
+        <select id="filter-kib">
+          <option value="">Semua KIB</option>
+          <option value="KIB A">KIB A</option>
+          <option value="KIB B">KIB B</option>
+          <option value="KIB C">KIB C</option>
+          <option value="KIB E">KIB E</option>
+        </select>
+      </div>
+      <div class="aset-list" id="aset-list">
+        <div style="padding:40px;text-align:center;color:#94a3b8">⏳ Memuat data aset...</div>
+      </div>
+      <div class="selected-count">
+        <span>Dipilih: <strong id="jumlah-dipilih">0</strong> aset</span>
+        <button class="btn btn-primary" id="btn-generate" style="padding:6px 16px;font-size:13px">
+          🏷️ Generate Label
+        </button>
+      </div>
     </div>
 
-    <div class="modal-footer">
-      <button class="btn btn-outline" onclick="tutupModal()">Tutup</button>
-      <button class="btn btn-primary" onclick="cetakBarcode()">🖨️ Cetak</button>
+    <!-- Preview & Cetak -->
+    <div class="preview-section">
+      <div class="preview-header">
+        <div class="preview-title">🖨️ Preview Label</div>
+        <div class="preview-actions">
+          <button class="btn btn-secondary" id="btn-print" style="font-size:13px;padding:7px 14px">
+            🖨️ Cetak
+          </button>
+          <button class="btn btn-primary" id="btn-pdf" style="font-size:13px;padding:7px 14px">
+            📄 Download PDF
+          </button>
+        </div>
+      </div>
+      <div id="print-area">
+        <div class="label-grid" id="label-grid">
+          <div class="label-empty">
+            Pilih aset di atas lalu klik <strong>Generate Label</strong>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
 
-<!-- Scripts -->
-<script src="supabase.js"></script>
-<script src="JsBarcode.all.min.js"></script>
-<script src="auth.js"></script>
-<script src="app.js"></script>
-<script>
-  let semuaAset = [];
+  </main>
 
-  // Load data aset dari Supabase
-  async function loadBarcode(filter = {}) {
-    const tbody = document.getElementById('aset-tbody');
-    tbody.innerHTML = '<tr class="loading-row"><td colspan="5">⏳ Memuat data...</td></tr>';
+  <script src="supabase.js"></script>
+  <script src="auth.js"></script>
+  <script src="nav.js"></script>
+  <script src="app.js"></script>
+  <script>
+  (async () => {
+    const ready = await window._appReady;
+    if (!ready) return;
+    const db = window._authClient;
 
-    try {
-      let query = db.from('aset').select('id,nama_barang,merk_type,kib,kode_barang,tahun_perolehan')
-        .order('kib').order('nama_barang');
-      if (filter.kib)    query = query.eq('kib', filter.kib);
-      if (filter.search) query = query.ilike('nama_barang', `%${filter.search}%`);
+    const SKPD = 'Kecamatan Tenjo';
+    let semuaAset = [];
+    let selectedIds = new Set();
 
-      const { data, error } = await query;
-      if (error) throw error;
+    // Set tahun default = tahun berjalan
+    document.getElementById('opt-tahun').value = new Date().getFullYear();
 
-      semuaAset = data || [];
-      renderAsetList(semuaAset);
-    } catch (err) {
-      tbody.innerHTML = `<tr class="empty-row"><td colspan="5">❌ Gagal memuat: ${err.message}</td></tr>`;
+    // ── LOAD ASET ──────────────────────────────────────
+    async function loadAset() {
+      showLoading(true);
+      try {
+        const { data, error } = await db.from('aset')
+          .select('id, nama_barang, kode_barang, id_barang, tahun_perolehan, kib')
+          .order('nama_barang');
+        if (error) throw error;
+        semuaAset = data || [];
+        renderList(semuaAset);
+      } catch (err) {
+        showAlert('Gagal memuat data: ' + err.message, 'error');
+      } finally {
+        showLoading(false);
+      }
     }
-  }
 
-  function renderAsetList(data) {
-    const tbody = document.getElementById('aset-tbody');
-    if (!data || data.length === 0) {
-      tbody.innerHTML = '<tr class="empty-row"><td colspan="5">📭 Tidak ada data ditemukan.</td></tr>';
-      return;
+    // ── RENDER LIST ────────────────────────────────────
+    function renderList(data) {
+      const container = document.getElementById('aset-list');
+      if (!data.length) {
+        container.innerHTML = '<div style="padding:40px;text-align:center;color:#94a3b8">📭 Tidak ada aset ditemukan.</div>';
+        return;
+      }
+      container.innerHTML = data.map(a => `
+        <div class="aset-item ${selectedIds.has(a.id) ? 'selected' : ''}"
+          data-id="${a.id}" onclick="toggleItem('${a.id}')">
+          <input type="checkbox" ${selectedIds.has(a.id) ? 'checked' : ''}
+            onclick="event.stopPropagation();toggleItem('${a.id}')">
+          <div class="aset-item-info">
+            <div class="aset-item-nama">${escH(a.nama_barang)}</div>
+            <div class="aset-item-meta">${a.kode_barang || '—'} · ID: ${a.id_barang || '—'} · ${a.tahun_perolehan || '—'}</div>
+          </div>
+          <span class="aset-item-kib">${a.kib || '—'}</span>
+        </div>
+      `).join('');
+      updateCount();
     }
-    tbody.innerHTML = data.map(row => {
-      const kibClass = 'kib-' + (row.kib || '').replace(' ', '-').toLowerCase();
-      return `
-        <tr data-id="${row.id}">
-          <td><input type="checkbox" class="cb-aset" data-id="${row.id}"></td>
-          <td>
-            <div class="nama-barang">${escH(row.nama_barang)}</div>
-            ${row.merk_type ? `<div class="sub-info">${escH(row.merk_type)}</div>` : ''}
-          </td>
-          <td><span class="kib-badge ${kibClass}">${escH(row.kib)}</span></td>
-          <td class="kode-info">${escH(row.kode_barang) || '-'}</td>
-          <td>${row.tahun_perolehan || '-'}</td>
-        </tr>
-      `;
-    }).join('');
 
-    // Update count saat checkbox berubah
-    document.querySelectorAll('.cb-aset').forEach(cb => {
-      cb.addEventListener('change', updateCount);
+    window.toggleItem = function(id) {
+      if (selectedIds.has(id)) selectedIds.delete(id);
+      else selectedIds.add(id);
+      // update tampilan item
+      const item = document.querySelector(`.aset-item[data-id="${id}"]`);
+      if (item) {
+        item.classList.toggle('selected', selectedIds.has(id));
+        const cb = item.querySelector('input[type="checkbox"]');
+        if (cb) cb.checked = selectedIds.has(id);
+      }
+      updateCount();
+    };
+
+    function updateCount() {
+      document.getElementById('jumlah-dipilih').textContent = selectedIds.size;
+    }
+
+    // ── FILTER ─────────────────────────────────────────
+    function applyFilter() {
+      const q = document.getElementById('search-aset').value.toLowerCase();
+      const kib = document.getElementById('filter-kib').value;
+      const filtered = semuaAset.filter(a =>
+        (!q || a.nama_barang?.toLowerCase().includes(q) || a.kode_barang?.toLowerCase().includes(q)) &&
+        (!kib || a.kib === kib)
+      );
+      renderList(filtered);
+    }
+
+    let searchTimer;
+    document.getElementById('search-aset').addEventListener('input', () => {
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(applyFilter, 300);
+    });
+    document.getElementById('filter-kib').addEventListener('change', applyFilter);
+
+    document.getElementById('btn-pilih-semua').addEventListener('click', () => {
+      const visible = document.querySelectorAll('.aset-item');
+      visible.forEach(el => selectedIds.add(el.dataset.id));
+      applyFilter();
     });
 
-    // Klik baris = toggle checkbox
-    document.querySelectorAll('#aset-tbody tr').forEach(tr => {
-      tr.addEventListener('click', e => {
-        if (e.target.type === 'checkbox') return;
-        const cb = tr.querySelector('.cb-aset');
-        if (cb) { cb.checked = !cb.checked; updateCount(); }
+    document.getElementById('btn-batal-semua').addEventListener('click', () => {
+      selectedIds.clear();
+      applyFilter();
+    });
+
+    // ── GENERATE KODE ──────────────────────────────────
+    function getKodeValue(aset) {
+      const opt = document.getElementById('opt-data-kode').value;
+      if (opt === 'kode') return aset.kode_barang || aset.id;
+      if (opt === 'lengkap') return `${aset.nama_barang}|${aset.kode_barang || aset.id}`;
+      return aset.id_barang || aset.id;
+    }
+
+    function buatQR(container, value) {
+      container.innerHTML = '';
+      new QRCode(container, {
+        text: value,
+        width: 72,
+        height: 72,
+        colorDark: '#1e293b',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.M,
       });
-    });
-  }
-
-  function escH(str) {
-    if (!str) return '';
-    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  }
-
-  function updateCount() {
-    const n = document.querySelectorAll('.cb-aset:checked').length;
-    document.getElementById('count-selected').textContent = n;
-    // highlight baris yang dipilih
-    document.querySelectorAll('#aset-tbody tr').forEach(tr => {
-      const cb = tr.querySelector('.cb-aset');
-      tr.classList.toggle('selected', cb && cb.checked);
-    });
-  }
-
-  function applyFilter() {
-    loadBarcode({
-      search: document.getElementById('search-input').value.trim(),
-      kib: document.getElementById('filter-kib').value,
-    });
-  }
-
-  // Ambil barang yang dipilih
-  function getSelectedIds() {
-    return [...document.querySelectorAll('.cb-aset:checked')].map(cb => cb.dataset.id);
-  }
-
-  function bukaPreview() {
-    const ids = getSelectedIds();
-    if (ids.length === 0) {
-      alert('Pilih minimal 1 barang terlebih dahulu.');
-      return;
     }
 
-    const dipilih = semuaAset.filter(a => ids.includes(a.id));
-    const printArea = document.getElementById('print-area');
-    printArea.innerHTML = '';
+    function buatBarcode(container, value) {
+      container.innerHTML = '';
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      container.appendChild(svg);
+      try {
+        JsBarcode(svg, value, {
+          format: 'CODE128',
+          width: 1.2,
+          height: 36,
+          displayValue: false,
+          margin: 0,
+          lineColor: '#1e293b',
+          background: '#ffffff',
+        });
+      } catch (_) {
+        container.innerHTML = '<span style="font-size:9px;color:#ef4444">Kode tidak valid</span>';
+      }
+    }
 
-    document.getElementById('modal-desc').textContent =
-      `${dipilih.length} label siap dicetak`;
-
-    dipilih.forEach(item => {
-      // Nilai barcode: gunakan kode_barang, fallback ke id
-      const barcodeValue = (item.kode_barang || item.id || '')
-        .replace(/[^A-Za-z0-9\-\.\$\/\+% ]/g, '') // hanya karakter valid Code128
-        .substring(0, 40);
-
-      const card = document.createElement('div');
-      card.className = 'barcode-card';
-      card.innerHTML = `
-        <div class="bc-instansi">Kec. Tenjo — Kab. Bogor</div>
-        <div class="bc-nama">${escH(item.nama_barang)}</div>
-        ${item.merk_type ? `<div class="bc-kode">${escH(item.merk_type)}</div>` : ''}
-        <svg class="barcode-svg"></svg>
-        <div class="bc-kode">${escH(barcodeValue || '-')}</div>
-        <div class="bc-tahun">Tahun: ${item.tahun_perolehan || '-'} | ${escH(item.kib)}</div>
+    // ── BUILD LABEL HTML ───────────────────────────────
+    function buildLabel(aset, jenisKode, tahun) {
+      const wrap = document.createElement('div');
+      wrap.className = 'label-card';
+      wrap.innerHTML = `
+        <div class="label-inner">
+          <div class="label-col1">
+            <div class="label-logo-placeholder">🏛️</div>
+            <div class="label-tahun-inv">INVENTARISASI<br>BMD TAHUN<br>${tahun}</div>
+          </div>
+          <div class="label-col2">
+            <div class="label-data">
+              <div class="label-row"><span class="label-key">SKPD</span><span class="label-val">: ${escH(SKPD)}</span></div>
+              <div class="label-row"><span class="label-key">NAMA BARANG</span><span class="label-val">: ${escH(aset.nama_barang || '—')}</span></div>
+              <div class="label-row"><span class="label-key">KODE BARANG</span><span class="label-val">: ${escH(aset.kode_barang || '—')}</span></div>
+              <div class="label-row"><span class="label-key">ID BARANG</span><span class="label-val">: ${escH(String(aset.id_barang || '—'))}</span></div>
+              <div class="label-row"><span class="label-key">TAHUN PEROLEHAN</span><span class="label-val">: ${escH(String(aset.tahun_perolehan || '—'))}</span></div>
+            </div>
+            <div class="label-code-wrap" id="code-${aset.id}"></div>
+          </div>
+        </div>
       `;
-      printArea.appendChild(card);
+      return wrap;
+    }
 
-      // Generate barcode ke SVG
-      if (barcodeValue) {
-        try {
-          JsBarcode(card.querySelector('.barcode-svg'), barcodeValue, {
-            format: 'CODE128',
-            width: 1.5,
-            height: 40,
-            displayValue: false,
-            margin: 4,
-            background: '#ffffff',
-            lineColor: '#000000',
-          });
-        } catch (e) {
-          card.querySelector('.barcode-svg').outerHTML =
-            '<div style="font-size:9px;color:#c00;padding:8px">Barcode error: kode tidak valid</div>';
+    // ── GENERATE SEMUA LABEL ───────────────────────────
+    document.getElementById('btn-generate').addEventListener('click', () => {
+      if (selectedIds.size === 0) {
+        showAlert('Pilih minimal 1 aset terlebih dahulu!', 'error');
+        return;
+      }
+      const jenisKode = document.getElementById('opt-jenis-kode').value;
+      const tahun = document.getElementById('opt-tahun').value || new Date().getFullYear();
+      const grid = document.getElementById('label-grid');
+      grid.innerHTML = '';
+
+      const dipilih = semuaAset.filter(a => selectedIds.has(a.id));
+      dipilih.forEach(aset => {
+        const labelEl = buildLabel(aset, jenisKode, tahun);
+        grid.appendChild(labelEl);
+
+        // Generate kode setelah elemen masuk DOM
+        const codeWrap = labelEl.querySelector(`#code-${aset.id}`);
+        const kodeVal = getKodeValue(aset);
+
+        if (jenisKode === 'qrcode') {
+          buatQR(codeWrap, kodeVal);
+        } else {
+          buatBarcode(codeWrap, kodeVal);
         }
+        const codeText = document.createElement('div');
+        codeText.className = 'label-code-text';
+        codeText.textContent = kodeVal.length > 30 ? kodeVal.substring(0, 30) + '...' : kodeVal;
+        codeWrap.appendChild(codeText);
+      });
+
+      showAlert(`✅ ${dipilih.length} label berhasil digenerate!`);
+      document.getElementById('label-grid').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    // ── CETAK ──────────────────────────────────────────
+    document.getElementById('btn-print').addEventListener('click', () => {
+      const grid = document.getElementById('label-grid');
+      if (!grid.querySelector('.label-card')) {
+        showAlert('Generate label terlebih dahulu!', 'error'); return;
+      }
+      window.print();
+    });
+
+    // ── DOWNLOAD PDF ───────────────────────────────────
+    document.getElementById('btn-pdf').addEventListener('click', async () => {
+      const grid = document.getElementById('label-grid');
+      if (!grid.querySelector('.label-card')) {
+        showAlert('Generate label terlebih dahulu!', 'error'); return;
+      }
+      showLoading(true);
+      try {
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+        const labels = grid.querySelectorAll('.label-card');
+        const margin = 10;
+        const colW = (210 - margin * 2 - 6) / 2;
+        let x = margin, y = margin;
+        let labelH = 0;
+
+        for (let i = 0; i < labels.length; i++) {
+          const canvas = await html2canvas(labels[i], { scale: 2, useCORS: true, backgroundColor: '#fff' });
+          const imgData = canvas.toDataURL('image/png');
+          const ratio = canvas.height / canvas.width;
+          const h = colW * ratio;
+
+          if (labelH === 0) labelH = h;
+
+          // Cek apakah perlu halaman baru
+          if (y + h > 297 - margin) {
+            pdf.addPage();
+            y = margin;
+          }
+
+          pdf.addImage(imgData, 'PNG', x, y, colW, h);
+
+          if (i % 2 === 0) {
+            x = margin + colW + 6;
+          } else {
+            x = margin;
+            y += h + 6;
+          }
+        }
+
+        const tahun = document.getElementById('opt-tahun').value || new Date().getFullYear();
+        pdf.save(`Label_BMD_${SKPD.replace(/\s+/g, '_')}_${tahun}.pdf`);
+        showAlert('✅ PDF berhasil diunduh!');
+      } catch (err) {
+        showAlert('Gagal generate PDF: ' + err.message, 'error');
+      } finally {
+        showLoading(false);
       }
     });
 
-    document.getElementById('modal-overlay').classList.add('show');
-  }
+    // ── UTILS ──────────────────────────────────────────
+    function escH(s) {
+      if (!s) return '';
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
 
-  function tutupModal() {
-    document.getElementById('modal-overlay').classList.remove('show');
-  }
-
-  function cetakBarcode() {
-    document.getElementById('print-header').style.display = 'block';
-    window.print();
-    document.getElementById('print-header').style.display = 'none';
-  }
-
-  // Tutup modal klik overlay
-  document.getElementById('modal-overlay').addEventListener('click', function(e) {
-    if (e.target === this) tutupModal();
-  });
-
-  // ✅ Tunggu _appReady dulu, baru set db dan panggil loadBarcode
-// Init
-let filterTimeout;
-document.addEventListener('DOMContentLoaded', async () => {
-  const ready = await window._appReady;
-  if (!ready) return;
-  db = window._authClient;
-
-  document.getElementById('check-all').addEventListener('change', function () {
-    document.querySelectorAll('.cb-aset').forEach(cb => { cb.checked = this.checked; });
-    updateCount();
-  });
-
-  document.getElementById('search-input').addEventListener('input', function () {
-    clearTimeout(filterTimeout);
-    filterTimeout = setTimeout(() => applyFilter(), 400);
-  });
-
-  document.getElementById('filter-kib').addEventListener('change', applyFilter);
-
-  document.getElementById('modal-overlay').addEventListener('click', function (e) {
-    if (e.target === this) tutupModal();
-  });
-
-  loadBarcode();
-});
-
-
-</script>
-
+    // ── INIT ───────────────────────────────────────────
+    await loadAset();
+  })();
+  </script>
 </body>
 </html>
