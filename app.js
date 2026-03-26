@@ -812,7 +812,7 @@ async function loadPenanggungJawabDropdown(selectedId = null) {
   try {
     const { data, error } = await db.from('penanggung_jawab')
       .select('id, nama, jabatan, unit_kerja')
-      .eq('aktif', true)
+      .neq('aktif', false)
       .order('nama', { ascending: true });
     if (error) throw error;
     sel.innerHTML = '<option value="">— Pilih Penanggung Jawab —</option>';
