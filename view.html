@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detail Aset</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app" style="max-width:480px;margin:40px auto;padding:20px;font-family:sans-serif"></div>
+  <script src="supabase.js"></script>
+  <script src="auth.js"></script>
+  <script>
+  (async () => {
+    const ready = await window._appReady;
+    const db = window._authClient;
+    const params = new URLSearchParams(location.search);
+    const id = params.get('id');
+    const kode = params.get('kode');
+    const app = document.getElementById('app');
+
+    let query = db.from('aset').select('*');
+    if (id) query = query.eq('id_barang', id);
+    else if (kode) query = query.eq('kode_barang', kode);
+    else { app.innerHTML = '<p>Parameter tidak ditemukan.</p>'; return; }
+
+    const { data, error } = await query.single();
+    if (error || !data) { app.innerHTML = '<p>Aset tidak ditemukan.</p>'; return; }
+
+    app.innerHTML = `
+      <h2 style="margin-bottom:16px">🏷️ ${data.nama_barang}</h2>
+      <table style="width:100%;border-collapse:collapse;font-size:14px">
+        ${[
+          ['KIB', data.kib],
+          ['Kode Barang', data.kode_barang],
+          ['ID Barang', data.id_barang],
+          ['Tahun Perolehan', data.tahun_perolehan],
+          ['Kondisi', data.kondisi],
+          ['Lokasi', data.lokasi],
+          ['Harga', data.harga_perolehan ? 'Rp ' + Number(data.harga_perolehan).toLocaleString('id') : '—'],
+        ].map(([k,v]) => `
+          <tr style="border-bottom:1px solid #e2e8f0">
+            <td style="padding:8px;font-weight:600;color:#475569;width:45%">${k}</td>
+            <td style="padding:8px">${v || '—'}</td>
+          </tr>`).join('')}
+      </table>
+      <a href="index.html" style="display:inline-block;margin-top:20px;color:#2563eb">← Kembali</a>
+    `;
+  })();
+  </script>
+</body>
+</html>
