@@ -300,7 +300,7 @@
     if (!d) return '-';
     return new Date(d).toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' });
   }
-  function tutupModal(id) { document.getElementById(id).classList.remove('show'); }
+  window.tutupModal = function(id) { document.getElementById(id).classList.remove('show'); }
 
   // ── LOAD DATA ──────────────────────────────────────────
   async function loadPengguna(filter = {}) {
