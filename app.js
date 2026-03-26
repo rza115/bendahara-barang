@@ -710,7 +710,7 @@ async function loadPenanggungJawabDropdown(selectedId = null) {
   if (!sel) return;
   try {
     const { data, error } = await db.from('penanggung_jawab')
-      .select('id, nama, jabatan, unit')
+      .select('id, nama, jabatan, unit_kerja')
       .eq('aktif', true)
       .order('nama', { ascending: true });
     if (error) throw error;
