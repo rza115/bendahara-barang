@@ -9,10 +9,11 @@
 <body>
   <div id="app" style="max-width:480px;margin:40px auto;padding:20px;font-family:sans-serif"></div>
   <script src="supabase.js"></script>
-  <script src="auth.js"></script>
+  <!-- HAPUS: <script src="auth.js"></script> -->
   <script>
   (async () => {
-    const db = window._authClient;
+    // Gunakan supabase client publik, bukan _authClient yang butuh login
+    const db = window._supabase;  // ganti dari window._authClient
     const params = new URLSearchParams(location.search);
     const id = params.get('id');
     const kode = params.get('kode');
@@ -23,7 +24,6 @@
       return;
     }
 
-    // Ambil semua data publik via RPC
     const { data: list, error } = await db.rpc('get_aset_public');
     if (error || !list) { app.innerHTML = '<p>Gagal memuat data.</p>'; return; }
 
