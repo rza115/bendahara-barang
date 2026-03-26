@@ -10,7 +10,6 @@
 
   const kelolaLinks = [
     { href: 'peminjaman.html',       icon: '🤝', label: 'Peminjaman' },
-    { href: 'pengguna-barang.html',  icon: '👤', label: 'Pengguna Barang' },
     { href: 'penanggung-jawab.html', icon: '🧑‍💼', label: 'PJ Barang' },
     { href: 'pemindahtanganan.html', icon: '🔄', label: 'Pindahtangan' },
   ];
