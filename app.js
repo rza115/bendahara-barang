@@ -698,7 +698,7 @@ function renderDetail(data) {
     }
   }
 
-  $('detail-content').style.display = 'block';
+  // Penanggung Jawab   if (data.penanggung_jawab_id) {     // Fetch nama penanggung jawab     db.from('penanggung_jawab').select('nama, jabatan').eq('id', data.penanggung_jawab_id).single()       .then(({ data: pj }) => {         if (pj) {           set('d-penanggung_jawab', pj.nama);           set('d-pj-jabatan', pj.jabatan);         }       }).catch(() => {});   } else if (data.nama_penanggung_jawab) {     set('d-penanggung_jawab', data.nama_penanggung_jawab);   }   $('detail-content').style.display = 'block';
 }
 
 // ============================================
