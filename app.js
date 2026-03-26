@@ -814,6 +814,8 @@ async function loadPenanggungJawabDropdown(selectedId = null) {
       .select('id, nama, jabatan, unit_kerja')
       .neq('aktif', false)
       .order('nama', { ascending: true });
+    console.log('PJ data:', data, 'error:', error); // ← tambah ini
+    console.log('selectedId:', selectedId);          // ← tambah ini
     if (error) throw error;
     sel.innerHTML = '<option value="">— Pilih Penanggung Jawab —</option>';
     (data || []).forEach(pj => {
