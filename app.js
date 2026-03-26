@@ -993,7 +993,7 @@ async function initPemindahtangananPage() {
     }
   }
 
-  if (page === 'detail') {
+if (page === 'detail') {
     const id = new URLSearchParams(window.location.search).get('id');
     if (!id) { window.location.href = 'index.html'; return; }
     showLoading(true);
@@ -1005,9 +1005,9 @@ async function initPemindahtangananPage() {
     } finally {
       showLoading(false);
     }
-    
-  if (page === 'pemindahtanganan') {
+}                                         // ← tutup if detail di sini
+
+if (page === 'pemindahtanganan') {        // ← sejajar, bukan di dalam
     await initPemindahtangananPage();
-  }
-  }
-})();
+}
+)();
