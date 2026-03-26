@@ -1,9 +1,9 @@
 PENGEMBANGAN SELANJUTNYA
 
-pemindahtanganan
-penanggung jawab barang
+## pemindahtanganan barang di dokumen barang
+## penanggung jawab barang di data barang
 
-operator
-bendahara pembantu 
+## roles operator
+## roles bendahara pembantu 
 
-laporan > excel
+## export laporan ke bentuk  excel
