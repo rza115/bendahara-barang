@@ -399,6 +399,8 @@
     ['p-nip','p-jabatan','p-catatan'].forEach(id => document.getElementById(id).value = '');
     document.getElementById('p-aset-id').value = '';
     document.getElementById('p-nama').value = '';
+    document.getElementById('p-unit').value = 'Kecamatan Tenjo';
+    document.getElementById('p-hp').value   = '';
     document.getElementById('p-tgl-mulai').value = new Date().toISOString().split('T')[0];
     document.getElementById('p-tgl-serah').value = new Date().toISOString().split('T')[0];
     document.getElementById('p-masa-akhir').value = '';
@@ -415,6 +417,8 @@
     document.getElementById('p-nama').value       = r.nama_pengguna;
     document.getElementById('p-nip').value        = r.nip || '';
     document.getElementById('p-jabatan').value    = r.jabatan_unit || '';
+    document.getElementById('p-unit').value       = r.unit_kerja || '';    // ← tambah
+    document.getElementById('p-hp').value         = r.no_hp || '';         // ← tambah
     document.getElementById('p-tgl-mulai').value  = r.tgl_mulai_pengguna || '';
     document.getElementById('p-tgl-serah').value  = r.tgl_serah_barang || '';
     document.getElementById('p-masa-akhir').value = r.masa_jabatan_akhir || '';
@@ -428,6 +432,8 @@
     const nama    = document.getElementById('p-nama').value.trim();
     const nip     = document.getElementById('p-nip').value.trim();
     const jabatan = document.getElementById('p-jabatan').value.trim();
+    const unit   = document.getElementById('p-unit').value.trim();
+    const noHp   = document.getElementById('p-hp').value.trim();
     const tglMulai = document.getElementById('p-tgl-mulai').value;
     const tglSerah = document.getElementById('p-tgl-serah').value;
     const masaAkhir = document.getElementById('p-masa-akhir').value || null;
@@ -440,6 +446,8 @@
 
     const payload = {
       aset_id: asetId, nama_pengguna: nama, nip, jabatan_unit: jabatan,
+      unit_kerja: unit || null,           // ← tambah ini
+      no_hp: noHp || null,                // ← tambah ini
       tgl_mulai_pengguna: tglMulai, tgl_serah_barang: tglSerah,
       masa_jabatan_akhir: masaAkhir, status_pengguna: status, catatan,
     };
