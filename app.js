@@ -169,7 +169,29 @@ async function uploadDokumenPJ(asetId) {
       showAlert(`File "${jenis}" melebihi 5 MB, dilewati.`, 'error');
       continue;
     }
-    async function loadDokumenPJExisting(asetId) {
+    const fileName = `pj_${jenis.replace(/\s+/g,'_')}_${Date.now()}.${file.name.split('.').pop()}`;
+    const { error: uploadErr } = await db.storage
+      .from('dokumen-pengadaan')
+      .upload(fileName, file, { upsert: true });
+    if (uploadErr) {
+      showAlert(`Gagal upload "${jenis}": ${uploadErr.message}`, 'error');
+      continue;
+    }
+    uploads.push({
+      aset_id:       asetId,
+      jenis_dokumen: jenis,
+      nama_file:     file.name,
+      file_path:     fileName,
+      file_size:     file.size,
+    });
+  }
+  if (uploads.length) {
+    const { error } = await db.from('dokumen_aset').insert(uploads);
+    if (error) showAlert('Gagal simpan record dokumen PJ: ' + error.message, 'error');
+  }
+}
+
+async function loadDokumenPJExisting(asetId) {
   const wrap = $('dok-pj-existing');
   const list = $('dok-pj-list');
   if (!wrap || !list) return;
@@ -199,7 +221,6 @@ window.hapusDokumenPJ = async (dokId, asetId) => {
   if (!confirm('Hapus dokumen ini?')) return;
   showLoading(true);
   try {
-    // Ambil file_path dulu untuk hapus dari storage
     const { data } = await db.from('dokumen_aset').select('file_path').eq('id', dokId).single();
     if (data?.file_path) {
       await db.storage.from('dokumen-pengadaan').remove([data.file_path]);
@@ -214,27 +235,6 @@ window.hapusDokumenPJ = async (dokId, asetId) => {
     showLoading(false);
   }
 };
-    const fileName = `pj_${jenis.replace(/\s+/g,'_')}_${Date.now()}.${file.name.split('.').pop()}`;
-    const { error: uploadErr } = await db.storage
-      .from('dokumen-pengadaan')
-      .upload(fileName, file, { upsert: true });
-    if (uploadErr) {
-      showAlert(`Gagal upload "${jenis}": ${uploadErr.message}`, 'error');
-      continue;
-    }
-    uploads.push({
-      aset_id:      asetId,
-      jenis_dokumen: jenis,
-      nama_file:    file.name,
-      file_path:    fileName,
-      file_size:    file.size,
-    });
-  }
-  if (uploads.length) {
-    const { error } = await db.from('dokumen_aset').insert(uploads);
-    if (error) showAlert('Gagal simpan record dokumen PJ: ' + error.message, 'error');
-  }
-}
 
 function renderDokPreview(wrap, file) {
   if (!wrap) return;
