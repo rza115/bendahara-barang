@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kelola Penanggung Jawab — Inventaris Kecamatan Tenjo</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="penanggung-jawab">
+  <div class="loading-overlay" id="loading"><div class="loading-spinner"></div></div>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="header-logo">
+        <div class="header-logo-icon">🏗️</div>
+        <div class="header-logo-text">
+          <span class="title">Inventaris Barang</span>
+          <span class="subtitle">Kecamatan Tenjo — Kab. Bogor</span>
+        </div>
+      </a>
+      <nav class="header-nav"></nav>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <div class="alert" id="alert-box"></div>
+
+    <div class="page-header">
+      <div>
+        <h1>👤 Kelola Penanggung Jawab</h1>
+        <p>Daftar pegawai yang dapat ditugaskan sebagai penanggung jawab barang</p>
+      </div>
+      <a href="index.html" class="btn btn-secondary">← Kembali</a>
+    </div>
+
+    <!-- Form Tambah/Edit -->
+    <div class="form-card" style="margin-bottom:20px">
+      <div class="form-section">
+        <div class="form-section-title" id="form-title">➕ Tambah Penanggung Jawab</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Nama Lengkap <span class="req">*</span></label>
+            <input type="text" id="pj-nama" placeholder="contoh: H. Ahmad Soleh, S.STP">
+          </div>
+          <div class="form-group">
+            <label>NIP</label>
+            <input type="text" id="pj-nip" placeholder="19800101 200801 1 001">
+          </div>
+          <div class="form-group">
+            <label>Jabatan</label>
+            <input type="text" id="pj-jabatan" placeholder="Camat / Bendahara Barang / Kasubag">
+          </div>
+          <div class="form-group">
+            <label>Unit Kerja</label>
+            <input type="text" id="pj-unit" value="Kecamatan Tenjo">
+          </div>
+          <div class="form-group">
+            <label>No. HP</label>
+            <input type="text" id="pj-hp" placeholder="08xx-xxxx-xxxx">
+          </div>
+          <div class="form-group">
+            <label>Status</label>
+            <select id="pj-aktif">
+              <option value="true">Aktif</option>
+              <option value="false">Tidak Aktif</option>
+            </select>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:8px">
+          <button class="btn btn-primary" id="btn-simpan-pj">💾 Simpan</button>
+          <button class="btn btn-secondary" id="btn-batal-pj" style="display:none">✕ Batal Edit</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabel Daftar -->
+    <div class="form-card">
+      <div class="form-section">
+        <div class="form-section-title">📋 Daftar Penanggung Jawab</div>
+        <div style="overflow-x:auto">
+          <table class="data-table" style="width:100%;border-collapse:collapse">
+            <thead>
+              <tr>
+                <th style="padding:10px 12px;text-align:left;font-size:12px;color:#64748b;border-bottom:2px solid #e2e8f0">#</th>
+                <th style="padding:10px 12px;text-align:left;font-size:12px;color:#64748b;border-bottom:2px solid #e2e8f0">Nama</th>
+                <th style="padding:10px 12px;text-align:left;font-size:12px;color:#64748b;border-bottom:2px solid #e2e8f0">NIP</th>
+                <th style="padding:10px 12px;text-align:left;font-size:12px;color:#64748b;border-bottom:2px solid #e2e8f0">Jabatan</th>
+                <th style="padding:10px 12px;text-align:left;font-size:12px;color:#64748b;border-bottom:2px solid #e2e8f0">Status</th>
+                <th style="padding:10px 12px;text-align:left;font-size:12px;color:#64748b;border-bottom:2px solid #e2e8f0">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="pj-tbody">
+              <tr><td colspan="6" style="text-align:center;padding:40px;color:#94a3b8">Memuat data...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="supabase.js"></script>
+  <script src="auth.js"></script>
+  <script src="nav.js"></script>
+  <script>
+  (async () => {
+    const ready = await window._appReady;
+    if (!ready) return;
+    const db = window._authClient;
+
+    const $ = id => document.getElementById(id);
+    let editId = null;
+
+    function showAlert(msg, type = 'success') {
+      const el = $('alert-box');
+      if (!el) return;
+      el.className = `alert alert-${type}`;
+      el.textContent = msg;
+      el.style.display = 'block';
+      setTimeout(() => { el.style.display = 'none'; }, 4000);
+    }
+
+    function showLoading(show) {
+      const el = $('loading');
+      if (el) el.style.display = show ? 'flex' : 'none';
+    }
+
+    async function loadData() {
+      showLoading(true);
+      try {
+        const { data, error } = await db
+          .from('penanggung_jawab')
+          .select('*')
+          .order('nama');
+        if (error) throw error;
+        renderTable(data || []);
+      } catch (err) {
+        showAlert('Gagal memuat data: ' + err.message, 'error');
+        $('pj-tbody').innerHTML = `<tr><td colspan="6" style="text-align:center;padding:40px;color:#ef4444">❌ Error: ${err.message}</td></tr>`;
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    function renderTable(data) {
+      const tbody = $('pj-tbody');
+      if (!data.length) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;color:#94a3b8">📢 Belum ada data. Tambahkan penanggung jawab di form atas.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = data.map((pj, i) => `
+        <tr style="border-bottom:1px solid #f1f5f9">
+          <td style="padding:10px 12px;font-size:13px">${i + 1}</td>
+          <td style="padding:10px 12px;font-size:13px;font-weight:500">${pj.nama}</td>
+          <td style="padding:10px 12px;font-size:12px;color:#64748b;font-family:monospace">${pj.nip || '-'}</td>
+          <td style="padding:10px 12px;font-size:13px">${pj.jabatan || '-'}</td>
+          <td style="padding:10px 12px">
+            <span style="padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;
+              background:${pj.aktif ? '#dcfce7' : '#fee2e2'};
+              color:${pj.aktif ? '#166534' : '#991b1b'}">
+              ${pj.aktif ? 'Aktif' : 'Nonaktif'}
+            </span>
+          </td>
+          <td style="padding:10px 12px">
+            <button onclick="editPJ('${pj.id}')"
+              style="margin-right:6px;padding:4px 10px;font-size:12px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:6px;cursor:pointer;color:#1d4ed8">
+              ✏️ Edit
+            </button>
+            <button onclick="hapusPJ('${pj.id}','${pj.nama}')"
+              style="padding:4px 10px;font-size:12px;background:#fef2f2;border:1px solid #fecaca;border-radius:6px;cursor:pointer;color:#dc2626">
+              🗑️ Hapus
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function simpanPJ() {
+      const nama = $('pj-nama').value.trim();
+      if (!nama) { showAlert('Nama wajib diisi!', 'error'); return; }
+      const payload = {
+        nama,
+        nip: $('pj-nip').value.trim() || null,
+        jabatan: $('pj-jabatan').value.trim() || null,
+        unit_kerja: $('pj-unit').value.trim() || 'Kecamatan Tenjo',
+        no_hp: $('pj-hp').value.trim() || null,
+        aktif: $('pj-aktif').value === 'true',
+      };
+      showLoading(true);
+      try {
+        const { error } = editId
+          ? await db.from('penanggung_jawab').update(payload).eq('id', editId)
+          : await db.from('penanggung_jawab').insert(payload);
+        if (error) throw error;
+        showAlert(editId ? 'Data berhasil diperbarui!' : 'Penanggung jawab berhasil ditambahkan!');
+        resetForm();
+        await loadData();
+      } catch (err) {
+        showAlert('Gagal menyimpan: ' + err.message, 'error');
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    window.editPJ = async (id) => {
+      const { data, error } = await db.from('penanggung_jawab').select('*').eq('id', id).single();
+      if (error || !data) { showAlert('Data tidak ditemukan', 'error'); return; }
+      editId = id;
+      $('pj-nama').value = data.nama || '';
+      $('pj-nip').value = data.nip || '';
+      $('pj-jabatan').value = data.jabatan || '';
+      $('pj-unit').value = data.unit_kerja || 'Kecamatan Tenjo';
+      $('pj-hp').value = data.no_hp || '';
+      $('pj-aktif').value = String(data.aktif);
+      $('form-title').textContent = '✏️ Edit Penanggung Jawab';
+      $('btn-batal-pj').style.display = 'inline-block';
+      $('pj-nama').focus();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    window.hapusPJ = async (id, nama) => {
+      if (!confirm(`Yakin hapus "${nama}"?\nData yang sudah terhubung ke barang tidak akan ikut terhapus.`)) return;
+      showLoading(true);
+      try {
+        const { error } = await db.from('penanggung_jawab').delete().eq('id', id);
+        if (error) throw error;
+        showAlert(`"${nama}" berhasil dihapus.`);
+        await loadData();
+      } catch (err) {
+        showAlert('Gagal menghapus: ' + err.message, 'error');
+      } finally {
+        showLoading(false);
+      }
+    };
+
+    function resetForm() {
+      editId = null;
+      ['pj-nama','pj-nip','pj-jabatan','pj-hp'].forEach(id => { const el = $(id); if(el) el.value = ''; });
+      $('pj-unit').value = 'Kecamatan Tenjo';
+      $('pj-aktif').value = 'true';
+      $('form-title').textContent = '➕ Tambah Penanggung Jawab';
+      $('btn-batal-pj').style.display = 'none';
+    }
+
+    $('btn-simpan-pj').addEventListener('click', simpanPJ);
+    $('btn-batal-pj').addEventListener('click', resetForm);
+
+    await loadData();
+  })();
+  </script>
+</body>
+</html>
