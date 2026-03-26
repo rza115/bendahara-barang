@@ -169,6 +169,51 @@ async function uploadDokumenPJ(asetId) {
       showAlert(`File "${jenis}" melebihi 5 MB, dilewati.`, 'error');
       continue;
     }
+    async function loadDokumenPJExisting(asetId) {
+  const wrap = $('dok-pj-existing');
+  const list = $('dok-pj-list');
+  if (!wrap || !list) return;
+  try {
+    const { data, error } = await db.from('dokumen_aset')
+      .select('*')
+      .eq('aset_id', asetId)
+      .order('created_at');
+    if (error || !data?.length) return;
+    wrap.style.display = 'block';
+    list.innerHTML = data.map(d => `
+      <div style="display:flex;align-items:center;justify-content:space-between;
+        padding:8px 12px;background:#f8fafc;border-radius:8px;margin-bottom:6px;font-size:13px;">
+        <div>
+          <span style="font-weight:500">📄 ${escapeHtml(d.jenis_dokumen)}</span>
+          <span style="color:#94a3b8;margin-left:8px;font-size:12px">${escapeHtml(d.nama_file)}</span>
+        </div>
+        <button onclick="hapusDokumenPJ('${d.id}','${asetId}')"
+          style="padding:3px 8px;font-size:12px;background:#fef2f2;border:1px solid #fecaca;
+          border-radius:6px;cursor:pointer;color:#dc2626">🗑️ Hapus</button>
+      </div>
+    `).join('');
+  } catch (_) {}
+}
+
+window.hapusDokumenPJ = async (dokId, asetId) => {
+  if (!confirm('Hapus dokumen ini?')) return;
+  showLoading(true);
+  try {
+    // Ambil file_path dulu untuk hapus dari storage
+    const { data } = await db.from('dokumen_aset').select('file_path').eq('id', dokId).single();
+    if (data?.file_path) {
+      await db.storage.from('dokumen-pengadaan').remove([data.file_path]);
+    }
+    const { error } = await db.from('dokumen_aset').delete().eq('id', dokId);
+    if (error) throw error;
+    showAlert('Dokumen berhasil dihapus.');
+    await loadDokumenPJExisting(asetId);
+  } catch (err) {
+    showAlert('Gagal hapus dokumen: ' + err.message, 'error');
+  } finally {
+    showLoading(false);
+  }
+};
     const fileName = `pj_${jenis.replace(/\s+/g,'_')}_${Date.now()}.${file.name.split('.').pop()}`;
     const { error: uploadErr } = await db.storage
       .from('dokumen-pengadaan')
@@ -551,6 +596,8 @@ let asetId = id;
 if (isEdit && id) {
   const { error } = await db.from('aset').update(data).eq('id', id);
   if (error) throw error;
+  await uploadDokumenPJ(id);
+}
 } else {
   const { data: inserted, error } = await db.from('aset').insert(data).select('id').single();
   if (error) throw error;
@@ -1035,6 +1082,7 @@ async function initPemindahtangananPage() {
     try {
       const data = await loadAsetById(id);
       fillForm(data);
+      await loadDokumenPJExisting(id);
               initHargaFormat();
       initFotoUpload(data.foto_url);
       initDokumenPreview(data);
