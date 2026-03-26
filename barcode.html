@@ -302,6 +302,33 @@
       font-family: monospace;
     }
 
+        .label-row {
+      display: flex;
+      font-size: 11px;
+      line-height: 1.5;
+      color: #1e293b;
+      gap: 3px;
+    }
+    
+    .label-key {
+      font-weight: 700;
+      white-space: nowrap;
+      min-width: 90px;
+      color: #334155;
+      text-align: left;   /* atau right kalau mau lebih rapat ke titik */
+    }
+    
+    .label-sep {
+      width: 8px;         /* lebar tetap untuk titik dua */
+      text-align: center; /* titik tepat di tengah kolom */
+    }
+    
+    .label-val {
+      flex: 1;
+      font-weight: 400;
+      word-break: break-word;
+    }
+
     /* ── PRINT STYLES ── */
     @media print {
       @page {
@@ -595,11 +622,31 @@
           </div>
           <div class="label-col2">
             <div class="label-data">
-              <div class="label-row"><span class="label-key">SKPD</span><span class="label-val">: ${escH(SKPD)}</span></div>
-              <div class="label-row"><span class="label-key">NAMA BARANG</span><span class="label-val">: ${escH(aset.nama_barang || '—')}</span></div>
-              <div class="label-row"><span class="label-key">KODE BARANG</span><span class="label-val">: ${escH(aset.kode_barang || '—')}</span></div>
-              <div class="label-row"><span class="label-key">ID BARANG</span><span class="label-val">: ${escH(String(aset.id_barang || '—'))}</span></div>
-              <div class="label-row"><span class="label-key">TAHUN PEROLEHAN</span><span class="label-val">: ${escH(String(aset.tahun_perolehan || '—'))}</span></div>
+            <div class="label-row">
+              <span class="label-key">SKPD</span>
+              <span class="label-sep">:</span>
+              <span class="label-val">${escH(SKPD)}</span>
+            </div>
+            <div class="label-row">
+              <span class="label-key">NAMA BARANG</span>
+              <span class="label-sep">:</span>
+              <span class="label-val">${escH(aset.nama_barang || '—')}</span>
+            </div>
+            <div class="label-row">
+              <span class="label-key">KODE BARANG</span>
+              <span class="label-sep">:</span>
+              <span class="label-val">${escH(aset.kode_barang || '—')}</span>
+            </div>
+            <div class="label-row">
+              <span class="label-key">ID BARANG</span>
+              <span class="label-sep">:</span>
+              <span class="label-val">${escH(String(aset.id_barang || '—'))}</span>
+            </div>
+            <div class="label-row">
+  <span class="label-key">TAHUN PEROLEHAN</span>
+  <span class="label-sep">:</span>
+  <span class="label-val">${escH(String(aset.tahun_perolehan || '—'))}</span>
+</div>
             </div>
             <div class="label-code-wrap" id="code-${aset.id}"></div>
           </div>
