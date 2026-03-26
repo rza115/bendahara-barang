@@ -4,32 +4,63 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Detail Aset</title>
-  <link rel="stylesheet" href="style.css">
+  <style>
+    body { font-family: sans-serif; background: #f8fafc; margin: 0; padding: 20px; }
+    #app { max-width: 480px; margin: 40px auto; background: #fff; border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,.08); padding: 24px; }
+    .loading { color: #94a3b8; text-align: center; padding: 32px 0; }
+    .error { color: #ef4444; background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 12px 16px; font-size: 14px; }
+    h2 { margin: 0 0 16px; font-size: 18px; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    td { padding: 8px; border-bottom: 1px solid #e2e8f0; }
+    td:first-child { font-weight: 600; color: #475569; width: 45%; }
+  </style>
 </head>
 <body>
-  <div id="app" style="max-width:480px;margin:40px auto;padding:20px;font-family:sans-serif"></div>
+  <div id="app"><p class="loading">Memuat data...</p></div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
   (async () => {
-  const SUPABASE_URL = 'https://ibektroxjjibniwidmpk.supabase.co';
-  const SUPABASE_KEY = 'sb_publishable_b-oL0WNdkqDjUFhepAkADw_uy9coRD6';
+    const SUPABASE_URL = 'https://ibektroxjjibniwidmpk.supabase.co';
+    // FIX #1: Ganti dengan anon key yang valid dari Supabase dashboard
+    // Project Settings → API → anon public key (format: eyJhbGciOiJIUzI1NiIs...)
+	const SUPABASE_KEY = 'sb_publishable_b-oL0WNdkqDjUFhepAkADw_uy9coRD6';
 
     const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
     const params = new URLSearchParams(location.search);
     const id = params.get('id');
     const kode = params.get('kode');
     const app = document.getElementById('app');
 
     if (!id && !kode) {
-      app.innerHTML = '<p>Parameter tidak ditemukan.</p>';
+      app.innerHTML = '<p class="error">Parameter tidak ditemukan. Tambahkan <code>?id=...</code> atau <code>?kode=...</code> di URL.</p>';
       return;
     }
 
-    const { data: list, error } = await db.rpc('get_aset_public');
-    if (error || !list) {
-      app.innerHTML = `<p>Gagal memuat data: ${error?.message}</p>`;
+    // FIX #2 & #4: Error handling lebih informatif
+    let list, fetchError;
+    try {
+      const result = await db.rpc('get_aset_public');
+      list = result.data;
+      fetchError = result.error;
+    } catch (e) {
+      app.innerHTML = `<p class="error">Gagal terhubung ke server: ${e.message}</p>`;
+      return;
+    }
+
+    if (fetchError) {
+      let msg = fetchError.message;
+      if (fetchError.code === 'PGRST301' || fetchError.message?.includes('JWT')) {
+        msg = 'API key tidak valid. Periksa konfigurasi SUPABASE_KEY.';
+      } else if (fetchError.code === '42883') {
+        msg = 'Fungsi get_aset_public tidak ditemukan di database.';
+      }
+      app.innerHTML = `<p class="error">Gagal memuat data: ${msg}</p>`;
+      return;
+    }
+
+    if (!list || list.length === 0) {
+      app.innerHTML = '<p class="error">Tidak ada data aset yang tersedia.</p>';
       return;
     }
 
@@ -38,20 +69,23 @@
       (kode && a.kode_barang === kode)
     );
 
-    if (!data) { app.innerHTML = '<p>Aset tidak ditemukan.</p>'; return; }
+    if (!data) {
+      app.innerHTML = `<p class="error">Aset dengan ${id ? 'id=' + id : 'kode=' + kode} tidak ditemukan.</p>`;
+      return;
+    }
 
     app.innerHTML = `
-      <h2 style="margin-bottom:16px">🏷️ ${data.nama_barang}</h2>
-      <table style="width:100%;border-collapse:collapse;font-size:14px">
+      <h2>&#127991; ${data.nama_barang}</h2>
+      <table>
         ${[
           ['Kode Barang', data.kode_barang],
           ['Tahun Perolehan', data.tahun_perolehan],
           ['Kondisi', data.kondisi],
           ['Lokasi', data.lokasi],
-        ].map(([k,v]) => `
-          <tr style="border-bottom:1px solid #e2e8f0">
-            <td style="padding:8px;font-weight:600;color:#475569;width:45%">${k}</td>
-            <td style="padding:8px">${v || '—'}</td>
+        ].map(([k, v]) => `
+          <tr>
+            <td>${k}</td>
+            <td>${v ?? '—'}</td>
           </tr>`).join('')}
       </table>
     `;
