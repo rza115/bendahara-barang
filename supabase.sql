@@ -85,6 +85,21 @@ CREATE TABLE public.dokumen_pengguna (
   CONSTRAINT dokumen_pengguna_pkey PRIMARY KEY (id),
   CONSTRAINT dokumen_pengguna_pengguna_barang_id_fkey FOREIGN KEY (pengguna_barang_id) REFERENCES public.pengguna_barang(id)
 );
+CREATE TABLE public.pemindahtanganan (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  barang_id uuid NOT NULL,
+  dari_pj_id uuid,
+  ke_pj_id uuid NOT NULL,
+  tanggal date NOT NULL,
+  no_dokumen text,
+  keterangan text,
+  dokumen_url text,
+  dibuat_pada timestamp with time zone NOT NULL DEFAULT now(),
+  CONSTRAINT pemindahtanganan_pkey PRIMARY KEY (id),
+  CONSTRAINT pemindahtanganan_barang_id_fkey FOREIGN KEY (barang_id) REFERENCES public.aset(id),
+  CONSTRAINT pemindahtanganan_dari_pj_id_fkey FOREIGN KEY (dari_pj_id) REFERENCES public.penanggung_jawab(id),
+  CONSTRAINT pemindahtanganan_ke_pj_id_fkey FOREIGN KEY (ke_pj_id) REFERENCES public.penanggung_jawab(id)
+);
 CREATE TABLE public.peminjaman (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   aset_id uuid,
