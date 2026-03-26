@@ -20,10 +20,12 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
+  function isUUID(str) {
+    return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
+  }
+
   (async () => {
     const SUPABASE_URL = 'https://ibektroxjjibniwidmpk.supabase.co';
-    // FIX #1: Ganti dengan anon key yang valid dari Supabase dashboard
-    // Project Settings → API → anon public key (format: eyJhbGciOiJIUzI1NiIs...)
 	const SUPABASE_KEY = 'sb_publishable_b-oL0WNdkqDjUFhepAkADw_uy9coRD6';
 
     const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -33,11 +35,22 @@
     const app = document.getElementById('app');
 
     if (!id && !kode) {
-      app.innerHTML = '<p class="error">Parameter tidak ditemukan. Tambahkan <code>?id=...</code> atau <code>?kode=...</code> di URL.</p>';
+      app.innerHTML = '<p class="error">Parameter tidak ditemukan. Gunakan <code>?id=uuid</code> atau <code>?kode=...</code>.</p>';
       return;
     }
 
-    // FIX #2 & #4: Error handling lebih informatif
+    // Validasi format UUID jika menggunakan param id
+    if (id && !isUUID(id)) {
+      app.innerHTML = `<p class="error">
+        Format id tidak valid: <strong>${id}</strong><br><br>
+        Kolom id bertipe UUID, contoh format yang benar:<br>
+        <code>?id=550e8400-e29b-41d4-a716-446655440000</code><br><br>
+        Jika ingin pakai nomor urut atau kode, gunakan:<br>
+        <code>?kode=KODE_BARANG</code>
+      </p>`;
+      return;
+    }
+
     let list, fetchError;
     try {
       const result = await db.rpc('get_aset_public');
@@ -50,7 +63,7 @@
 
     if (fetchError) {
       let msg = fetchError.message;
-      if (fetchError.code === 'PGRST301' || fetchError.message?.includes('JWT')) {
+      if (fetchError.message?.includes('JWT') || fetchError.code === 'PGRST301') {
         msg = 'API key tidak valid. Periksa konfigurasi SUPABASE_KEY.';
       } else if (fetchError.code === '42883') {
         msg = 'Fungsi get_aset_public tidak ditemukan di database.';
@@ -65,12 +78,12 @@
     }
 
     const data = list.find(a =>
-      (id && String(a.id) === String(id)) ||
+      (id && a.id === id) ||
       (kode && a.kode_barang === kode)
     );
 
     if (!data) {
-      app.innerHTML = `<p class="error">Aset dengan ${id ? 'id=' + id : 'kode=' + kode} tidak ditemukan.</p>`;
+      app.innerHTML = `<p class="error">Aset tidak ditemukan.</p>`;
       return;
     }
 
