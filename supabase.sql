@@ -74,6 +74,17 @@ CREATE TABLE public.aset (
   CONSTRAINT aset_pkey PRIMARY KEY (id),
   CONSTRAINT aset_penanggung_jawab_id_fkey FOREIGN KEY (penanggung_jawab_id) REFERENCES public.penanggung_jawab(id)
 );
+CREATE TABLE public.dokumen_aset (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  aset_id uuid NOT NULL,
+  jenis_dokumen text NOT NULL,
+  nama_file text NOT NULL,
+  file_path text NOT NULL,
+  file_size bigint,
+  created_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT dokumen_aset_pkey PRIMARY KEY (id),
+  CONSTRAINT dokumen_aset_aset_id_fkey FOREIGN KEY (aset_id) REFERENCES public.aset(id)
+);
 CREATE TABLE public.dokumen_pengguna (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   pengguna_barang_id uuid NOT NULL,
@@ -141,6 +152,8 @@ CREATE TABLE public.pengguna_barang (
   catatan text,
   created_at timestamp without time zone DEFAULT now(),
   updated_at timestamp without time zone DEFAULT now(),
+  unit_kerja text,
+  no_hp text,
   CONSTRAINT pengguna_barang_pkey PRIMARY KEY (id),
   CONSTRAINT pengguna_barang_aset_id_fkey FOREIGN KEY (aset_id) REFERENCES public.aset(id)
 );
