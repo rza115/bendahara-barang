@@ -1,7 +1,5 @@
 /* ============================================================
    sidebar.css — Dark Sidebar Layout untuk SiAset
-   Import SEBELUM file CSS lain di setiap halaman:
-   <link rel="stylesheet" href="sidebar.css">
    ============================================================ */
 
 /* ——— Font ——— */
@@ -30,12 +28,13 @@
 
   --main-bg: #F9FAFB;
   --transition: 0.22s cubic-bezier(.4,0,.2,1);
-
-  font-family: 'DM Sans', system-ui, sans-serif;
 }
 
 /* ——— Reset minimal ——— */
-*, *::before, *::after { box-sizing: border-box; }
+*, *::before, *::after {
+  box-sizing: border-box;
+  font-family: 'DM Sans', system-ui, sans-serif;
+}
 
 /* ——— Layout utama ——— */
 .app-layout {
@@ -292,7 +291,7 @@
   white-space: nowrap;
 }
 
-/* ——— Topbar ——— */
+/* ——— Sidebar main area ——— */
 .sidebar-main {
   grid-column: 2;
   display: flex;
@@ -301,6 +300,7 @@
   min-width: 0;
 }
 
+/* ——— Topbar ——— */
 .topbar {
   height: var(--topbar-h);
   background: var(--topbar-bg);
