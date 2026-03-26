@@ -574,9 +574,10 @@
     // ── GENERATE KODE ──────────────────────────────────
     function getKodeValue(aset) {
       const opt = document.getElementById('opt-data-kode').value;
-      if (opt === 'kode') return aset.kode_barang || aset.id;
-      if (opt === 'lengkap') return `${aset.nama_barang}|${aset.kode_barang || aset.id}`;
-      return aset.id_barang || aset.id;
+      const base = window.location.origin + window.location.pathname.replace('barcode.html', '');
+      if (opt === 'kode') return `${base}detail.html?kode=${encodeURIComponent(aset.kode_barang || aset.id)}`;
+      if (opt === 'lengkap') return `${base}detail.html?id=${aset.id_barang || aset.id}&nama=${encodeURIComponent(aset.nama_barang)}`;
+      return `${base}detail.html?id=${aset.id_barang || aset.id}`;
     }
 
     function buatQR(container, value) {
