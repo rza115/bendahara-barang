@@ -246,26 +246,35 @@
     });
   }
 
-  function playPageEnter() {
-    // Set overlay tampak, lalu animasikan keluar
-    overlay.style.cssText = 'opacity:1;transform:translateX(0);transition:none';
+function playPageEnter() {
+  // 1. Kunci viewport height SEBELUM apapun terlihat
+  document.body.style.minHeight = '100vh';
+  document.body.style.overflow = 'hidden'; // cegah scrollbar shift
 
-    // Double rAF agar browser sempat apply style di atas dulu
+  // 2. Tambah .page-content SEKARANG, sebelum overlay mulai fade
+  const mainContent = document.querySelector('.main-content');
+  mainContent?.classList.add('page-content');
+
+  // 3. Pastikan overlay solid dulu
+  overlay.style.cssText = 'opacity:1;transform:translateX(0);transition:none';
+
+  requestAnimationFrame(() => {
     requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        overlay.style.cssText = ''; // lepas inline style, biar CSS animation jalan
-        overlay.className = 'is-leaving';
+      // 4. Baru lepas overlay
+      overlay.style.cssText = '';
+      overlay.className = 'is-leaving';
 
-        // Animasi masuk konten
-        document.querySelector('.main-content')?.classList.add('page-content');
+      setTimeout(() => {
+        overlay.className = '';
+        document.body.classList.remove('page-transitioning');
 
-        setTimeout(() => {
-          overlay.className = '';
-          document.body.classList.remove('page-transitioning');
-        }, PT_DURATION);
-      });
+        // 5. Lepas lock SETELAH transisi selesai
+        document.body.style.minHeight = '';
+        document.body.style.overflow = '';
+      }, PT_DURATION);
     });
-  }
+  });
+}
 
   // Sidebar sudah dirender sync di atas, langsung bind — tidak perlu DOMContentLoaded
   bindSidebarLinks();
