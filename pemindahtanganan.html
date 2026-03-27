@@ -8,10 +8,11 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body data-page="pemindahtanganan">
-  <div class="loading-overlay" id="loading"><div class="loading-spinner"></div></div>
-  <main class="main-content">
-    <div class="alert" id="alert-box"></div>
 
+  <div class="loading-overlay" id="loading"><div class="loading-spinner"></div></div>
+  <div class="alert" id="alert-box"></div>
+
+  <div id="page-body">
     <div class="page-header">
       <div>
         <h1>🔄 Pemindahtanganan Barang</h1>
@@ -20,7 +21,6 @@
       <a href="index.html" class="btn btn-secondary">← Kembali</a>
     </div>
 
-    <!-- Form Catat Pemindahtanganan -->
     <div class="form-card" style="margin-bottom:20px">
       <div class="form-section">
         <div class="form-section-title" id="form-title">➕ Catat Pemindahtanganan Baru</div>
@@ -77,12 +77,10 @@
       </div>
     </div>
 
-    <!-- Tabel Riwayat -->
     <div class="form-card">
       <div class="form-section">
         <div class="form-section-title">📋 Riwayat Pemindahtanganan</div>
 
-        <!-- Filter -->
         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px">
           <select id="filter-pt-barang" style="min-width:200px;padding:8px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px">
             <option value="">— Semua Barang —</option>
@@ -112,7 +110,7 @@
         </div>
       </div>
     </div>
-  </main>
+  </div>
 
   <script src="supabase.js"></script>
   <script src="auth.js"></script>
