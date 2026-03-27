@@ -20,7 +20,7 @@
 | Roles operator | 🔲 Belum |
 | Roles bendahara pembantu | 🔲 Belum |
 | Export laporan ke Excel | 🔲 Belum |
-| Cetak label barang (barcode) | 🔲 Belum |
+| Cetak label barang (barcode) | ✅ Selesai |
 
 ---
 
