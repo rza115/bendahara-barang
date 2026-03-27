@@ -53,24 +53,29 @@
   transform: translateX(-100%);
   will-change: opacity, transform;
 }
-
 #page-transition-overlay.is-entering {
   animation: pt-slide-in var(--pt-duration) var(--pt-easing) forwards;
   pointer-events: all;
 }
-
 #page-transition-overlay.is-leaving {
   animation: pt-slide-out var(--pt-duration) var(--pt-easing) forwards;
 }
-
 @keyframes pt-slide-in {
   from { opacity: 0; transform: translateX(-8px); }
   to   { opacity: 1; transform: translateX(0); }
 }
-
 @keyframes pt-slide-out {
   from { opacity: 1; transform: translateX(0); }
   to   { opacity: 0; transform: translateX(8px); }
+}
+
+/* Animasi konten halaman */
+.page-content {
+  animation: page-enter var(--pt-duration) var(--pt-easing) both;
+}
+@keyframes page-enter {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 /* Konten halaman — fade + slide saat masuk */
