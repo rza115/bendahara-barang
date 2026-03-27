@@ -258,22 +258,24 @@ function playPageEnter() {
   // 3. Pastikan overlay solid dulu
   overlay.style.cssText = 'opacity:1;transform:translateX(0);transition:none';
 
+requestAnimationFrame(() => {
   requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      // 4. Baru lepas overlay
-      overlay.style.cssText = '';
-      overlay.className = 'is-leaving';
+    overlay.style.cssText = '';
+    overlay.className = 'is-leaving';
 
-      setTimeout(() => {
-        overlay.className = '';
-        document.body.classList.remove('page-transitioning');
+    // Delay sedikit agar overlap antara overlay out & content in
+    setTimeout(() => {
+      mainContent?.classList.add('page-content');
+    }, 40); // 40ms overlap sudah cukup
 
-        // 5. Lepas lock SETELAH transisi selesai
-        document.body.style.minHeight = '';
-        document.body.style.overflow = '';
-      }, PT_DURATION);
-    });
+    setTimeout(() => {
+      overlay.className = '';
+      document.body.classList.remove('page-transitioning');
+      document.body.style.minHeight = '';
+      document.body.style.overflow = '';
+    }, PT_DURATION);
   });
+});
 }
 
   // Sidebar sudah dirender sync di atas, langsung bind — tidak perlu DOMContentLoaded
