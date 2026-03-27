@@ -84,10 +84,9 @@
 <body data-page="peminjaman">
 
 <div class="loading-overlay" id="loading"><div class="loading-spinner"></div></div>
+<div class="alert" id="alert-box"></div>
 
-<main class="main-content">
-
-  <div class="alert" id="alert-box"></div>
+<div id="page-body">
 
   <div class="page-header">
     <div>
@@ -97,7 +96,6 @@
     <button class="btn btn-primary" onclick="bukaPinjam()">➕ Catat Peminjaman</button>
   </div>
 
-  <!-- Statistik -->
   <div class="stats-grid">
     <div class="stat-card">
       <div class="stat-icon">📋</div>
@@ -121,7 +119,6 @@
     </div>
   </div>
 
-  <!-- Filter -->
   <div class="filter-bar">
     <div class="search-wrap">
       <span class="search-icon">🔍</span>
@@ -135,7 +132,6 @@
     </select>
   </div>
 
-  <!-- Tabel -->
   <div class="table-wrap">
     <table>
       <thead>
@@ -156,89 +152,86 @@
     </table>
   </div>
 
-</main>
+  <div class="modal-overlay" id="modal-pinjam">
+    <div class="modal">
+      <div class="modal-title">➕ Catat Peminjaman Barang</div>
+      <div class="modal-desc">Isi data peminjam dan barang yang dipinjam</div>
 
-<!-- Modal Catat Peminjaman -->
-<div class="modal-overlay" id="modal-pinjam">
-  <div class="modal">
-    <div class="modal-title">➕ Catat Peminjaman Barang</div>
-    <div class="modal-desc">Isi data peminjam dan barang yang dipinjam</div>
+      <div class="form-group">
+        <label>Barang yang Dipinjam *</label>
+        <select id="p-aset-id">
+          <option value="">-- Pilih Barang --</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nama Peminjam *</label>
+          <input type="text" id="p-nama" placeholder="Nama lengkap">
+        </div>
+        <div class="form-group">
+          <label>Jabatan / Unit</label>
+          <input type="text" id="p-jabatan" placeholder="Misal: Kasi Trantibum">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>NIP / No. Identitas</label>
+        <input type="text" id="p-nip" placeholder="NIP atau NIK (opsional)">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Tanggal Pinjam *</label>
+          <input type="date" id="p-tgl-pinjam">
+        </div>
+        <div class="form-group">
+          <label>Batas Pengembalian *</label>
+          <input type="date" id="p-tgl-batas">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Keperluan / Catatan</label>
+        <textarea id="p-catatan" placeholder="Contoh: Digunakan untuk kegiatan rapat koordinasi..."></textarea>
+      </div>
 
-    <div class="form-group">
-      <label>Barang yang Dipinjam *</label>
-      <select id="p-aset-id">
-        <option value="">-- Pilih Barang --</option>
-      </select>
-    </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label>Nama Peminjam *</label>
-        <input type="text" id="p-nama" placeholder="Nama lengkap">
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="tutupModal('modal-pinjam')">Batal</button>
+        <button class="btn btn-primary" onclick="simpanPinjam()">💾 Simpan</button>
       </div>
-      <div class="form-group">
-        <label>Jabatan / Unit</label>
-        <input type="text" id="p-jabatan" placeholder="Misal: Kasi Trantibum">
-      </div>
-    </div>
-    <div class="form-group">
-      <label>NIP / No. Identitas</label>
-      <input type="text" id="p-nip" placeholder="NIP atau NIK (opsional)">
-    </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label>Tanggal Pinjam *</label>
-        <input type="date" id="p-tgl-pinjam">
-      </div>
-      <div class="form-group">
-        <label>Batas Pengembalian *</label>
-        <input type="date" id="p-tgl-batas">
-      </div>
-    </div>
-    <div class="form-group">
-      <label>Keperluan / Catatan</label>
-      <textarea id="p-catatan" placeholder="Contoh: Digunakan untuk kegiatan rapat koordinasi..."></textarea>
-    </div>
-
-    <div class="modal-footer">
-      <button class="btn btn-outline" onclick="tutupModal('modal-pinjam')">Batal</button>
-      <button class="btn btn-primary" onclick="simpanPinjam()">💾 Simpan</button>
     </div>
   </div>
-</div>
 
-<!-- Modal Kembalikan Barang -->
-<div class="modal-overlay" id="modal-kembali">
-  <div class="modal">
-    <div class="modal-title">✅ Kembalikan Barang</div>
-    <div class="modal-desc" id="kembali-desc">—</div>
+  <div class="modal-overlay" id="modal-kembali">
+    <div class="modal">
+      <div class="modal-title">✅ Kembalikan Barang</div>
+      <div class="modal-desc" id="kembali-desc">—</div>
 
-    <div class="info-box" id="kembali-info">—</div>
+      <div class="info-box" id="kembali-info">—</div>
 
-    <div class="form-group">
-      <label>Tanggal Pengembalian *</label>
-      <input type="date" id="k-tgl-kembali">
-    </div>
-    <div class="form-group">
-      <label>Kondisi Barang Saat Kembali</label>
-      <select id="k-kondisi">
-        <option value="Baik">Baik</option>
-        <option value="Rusak Ringan">Rusak Ringan</option>
-        <option value="Rusak Berat">Rusak Berat</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label>Catatan Pengembalian</label>
-      <textarea id="k-catatan" placeholder="Catatan kondisi atau keterangan lain..."></textarea>
-    </div>
+      <div class="form-group">
+        <label>Tanggal Pengembalian *</label>
+        <input type="date" id="k-tgl-kembali">
+      </div>
+      <div class="form-group">
+        <label>Kondisi Barang Saat Kembali</label>
+        <select id="k-kondisi">
+          <option value="Baik">Baik</option>
+          <option value="Rusak Ringan">Rusak Ringan</option>
+          <option value="Rusak Berat">Rusak Berat</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Catatan Pengembalian</label>
+        <textarea id="k-catatan" placeholder="Catatan kondisi atau keterangan lain..."></textarea>
+      </div>
 
-    <div class="modal-footer">
-      <button class="btn btn-outline" onclick="tutupModal('modal-kembali')">Batal</button>
-      <button class="btn btn-primary" onclick="simpanKembali()">✅ Konfirmasi Kembali</button>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="tutupModal('modal-kembali')">Batal</button>
+        <button class="btn btn-primary" onclick="simpanKembali()">✅ Konfirmasi Kembali</button>
+      </div>
     </div>
   </div>
+
 </div>
 
-<!-- Script -->
 <script src="supabase.js"></script>
 <script src="auth.js"></script>
 <script src="nav.js"></script>
