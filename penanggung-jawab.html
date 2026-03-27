@@ -8,10 +8,11 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body data-page="penanggung-jawab">
-  <div class="loading-overlay" id="loading"><div class="loading-spinner"></div></div>
-  <main class="main-content">
-    <div class="alert" id="alert-box"></div>
 
+  <div class="loading-overlay" id="loading"><div class="loading-spinner"></div></div>
+  <div class="alert" id="alert-box"></div>
+
+  <div id="page-body">
     <div class="page-header">
       <div>
         <h1>👤 Kelola Penanggung Jawab</h1>
@@ -20,7 +21,6 @@
       <a href="index.html" class="btn btn-secondary">← Kembali</a>
     </div>
 
-    <!-- Form Tambah/Edit -->
     <div class="form-card" style="margin-bottom:20px">
       <div class="form-section">
         <div class="form-section-title" id="form-title">➕ Tambah Penanggung Jawab</div>
@@ -60,7 +60,6 @@
       </div>
     </div>
 
-    <!-- Tabel Daftar -->
     <div class="form-card">
       <div class="form-section">
         <div class="form-section-title">📋 Daftar Penanggung Jawab</div>
@@ -83,7 +82,7 @@
         </div>
       </div>
     </div>
-  </main>
+  </div>
 
   <script src="supabase.js"></script>
   <script src="auth.js"></script>
