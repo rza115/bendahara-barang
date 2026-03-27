@@ -131,328 +131,335 @@
   <div class="loading-overlay" id="loading">
     <div class="loading-spinner"></div>
   </div>
-  <main class="main-content" id="detail-content" style="display:none">
+  <div class="alert" id="alert-box"></div>
 
-    <div class="alert" id="alert-box"></div>
-
-    <!-- Page Header -->
-    <div class="page-header">
-      <div>
-        <h1 id="detail-nama">—</h1>
-        <p id="detail-kib-label">—</p>
+  <div id="page-body">
+    
+    <div id="detail-content" style="display:none">
+      <div class="page-header">
+        <div>
+          <h1 id="detail-nama">—</h1>
+          <p id="detail-kib-label">—</p>
+        </div>
+        <div class="action-bar">
+          <a href="index.html" class="btn btn-secondary">← Kembali</a>
+          <a href="#" id="btn-edit" class="btn btn-primary">✏️ Edit Aset</a>
+        </div>
       </div>
-      <div class="action-bar">
-        <a href="index.html" class="btn btn-secondary">← Kembali</a>
-        <a href="#" id="btn-edit" class="btn btn-primary">✏️ Edit Aset</a>
-      </div>
-    </div>
 
-    <!-- ── FOTO & DATA UMUM ── -->
-    <div class="form-card" style="max-width:100%;margin-bottom:18px">
-      <div class="form-section">
-        <div class="form-section-title">📦 Informasi Umum</div>
-        <div style="display:flex;gap:28px;flex-wrap:wrap;align-items:flex-start">
+      <div class="form-card" style="max-width:100%;margin-bottom:18px">
+        <div class="form-section">
+          <div class="form-section-title">📦 Informasi Umum</div>
+          <div style="display:flex;gap:28px;flex-wrap:wrap;align-items:flex-start">
 
-          <!-- Foto -->
-          <div id="foto-wrap">
-            <div class="foto-placeholder"><span>📷</span>Tidak ada foto</div>
+            <div id="foto-wrap">
+              <div class="foto-placeholder"><span>📷</span>Tidak ada foto</div>
+            </div>
+
+            <div style="flex:1;min-width:240px">
+              <div class="detail-grid" style="margin-bottom:0">
+                <div class="detail-item">
+                  <span class="detail-label">Kode Barang</span>
+                  <span class="detail-value mono" id="d-kode_barang">—</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">No. Register</span>
+                  <span class="detail-value mono" id="d-no_register">—</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">ID Barang</span>
+                  <span class="detail-value mono" id="d-id_barang">—</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Kategori KIB</span>
+                  <span class="detail-value" id="d-kib">—</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Merk / Type</span>
+                  <span class="detail-value" id="d-merk_type">—</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Ukuran / CC</span>
+                  <span class="detail-value" id="d-ukuran_cc">—</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Bahan</span>
+                  <span class="detail-value" id="d-bahan">—</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Jumlah</span>
+                  <span class="detail-value mono" id="d-jumlah">—</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Kondisi</span>
+                  <span id="d-kondisi">—</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Status Barang</span>
+                  <span class="detail-value" id="d-status_barang">—</span>
+                </div>
+              </div>
+            </div>
           </div>
+        </div>
 
-          <!-- Data umum -->
-          <div style="flex:1;min-width:240px">
-            <div class="detail-grid" style="margin-bottom:0">
-              <div class="detail-item">
-                <span class="detail-label">Kode Barang</span>
-                <span class="detail-value mono" id="d-kode_barang">—</span>
-              </div>
-              <div class="detail-item">
-                <span class="detail-label">No. Register</span>
-                <span class="detail-value mono" id="d-no_register">—</span>
-              </div>
-              <div class="detail-item">
-                <span class="detail-label">ID Barang</span>
-                <span class="detail-value mono" id="d-id_barang">—</span>
-              </div>
-              <div class="detail-item">
-                <span class="detail-label">Kategori KIB</span>
-                <span class="detail-value" id="d-kib">—</span>
-              </div>
-              <div class="detail-item">
-                <span class="detail-label">Merk / Type</span>
-                <span class="detail-value" id="d-merk_type">—</span>
-              </div>
-              <div class="detail-item">
-                <span class="detail-label">Ukuran / CC</span>
-                <span class="detail-value" id="d-ukuran_cc">—</span>
-              </div>
-              <div class="detail-item">
-                <span class="detail-label">Bahan</span>
-                <span class="detail-value" id="d-bahan">—</span>
-              </div>
-              <div class="detail-item">
-                <span class="detail-label">Jumlah</span>
-                <span class="detail-value mono" id="d-jumlah">—</span>
-              </div>
-              <div class="detail-item">
-                <span class="detail-label">Kondisi</span>
-                <span id="d-kondisi">—</span>
-              </div>
-              <div class="detail-item">
-                <span class="detail-label">Status Barang</span>
-                <span class="detail-value" id="d-status_barang">—</span>
-              </div>
+        <div class="form-section">
+          <div class="form-section-title">📋 Data Perolehan</div>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <span class="detail-label">Tahun Perolehan</span>
+              <span class="detail-value mono" id="d-tahun_perolehan">—</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Harga Perolehan</span>
+              <span class="detail-value mono" id="d-harga">—</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Cara Perolehan</span>
+              <span class="detail-value" id="d-cara_perolehan">—</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Sumber Dana</span>
+              <span class="detail-value" id="d-sumber_dana">—</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Tgl. Buku</span>
+              <span class="detail-value" id="d-tgl_buku">—</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">No. BAST</span>
+              <span class="detail-value mono" id="d-no_bast">—</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Tgl. BAST</span>
+              <span class="detail-value" id="d-tgl_bast">—</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">ID Penerimaan</span>
+              <span class="detail-value mono" id="d-id_penerimaan">—</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-card" style="max-width:100%;margin-bottom:18px">     
+          <div class="form-section">       
+            <div class="form-section-title">👤 Penanggung Jawab Barang</div>       
+            <div class="detail-grid">         
+              <div class="detail-item">           
+                <span class="detail-label">Penanggung Jawab</span>           
+                <span class="detail-value" id="d-penanggung_jawab">—</span>         
+              </div>         
+              <div class="detail-item">           
+                <span class="detail-label">Jabatan</span>           
+                <span class="detail-value" id="d-pj-jabatan">—</span>         
+              </div>       
+            </div>     
+          </div>   
+        </div>    
+        
+        <div class="form-section">
+          <div class="form-section-title">📍 Lokasi & Penggunaan</div>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <span class="detail-label">Lokasi</span>
+              <span class="detail-value" id="d-lokasi">—</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Penggunaan</span>
+              <span class="detail-value" id="d-penggunaan">—</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Status Aset</span>
+              <span class="detail-value" id="d-status_aset">—</span>
+            </div>
+            <div class="detail-item" style="grid-column:1/-1">
+              <span class="detail-label">Keterangan</span>
+              <span class="detail-value" id="d-keterangan">—</span>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- ── PEROLEHAN ── -->
-      <div class="form-section">
-        <div class="form-section-title">📋 Data Perolehan</div>
-        <div class="detail-grid">
-          <div class="detail-item">
-            <span class="detail-label">Tahun Perolehan</span>
-            <span class="detail-value mono" id="d-tahun_perolehan">—</span>
+      <div class="form-card section-kib" id="section-kib-a" style="max-width:100%;margin-bottom:18px">
+        <div class="form-section">
+          <div class="form-section-title">🏞️ KIB A — Data Tanah</div>
+          <div class="detail-grid cols-3">
+            <div class="detail-item">
+              <span class="detail-label">Luas Tanah (m²)</span>
+              <span class="detail-value mono" id="d-luas_tanah">—</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Tahun Perolehan Tanah</span>
+              <span class="detail-value mono" id="d-tahun_perolehan_tanah">—</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Status Tanah</span>
+              <span class="detail-value" id="d-status_tanah">—</span>
+            </div>
+            <div class="detail-item" style="grid-column:1/-1">
+              <span class="detail-label">Letak / Alamat</span>
+              <span class="detail-value" id="d-letak_alamat">—</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">No. Urut Sertifikat</span>
+              <span class="detail-value mono" id="d-no_urut_sertifikat">—</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">No. Sertifikat</span>
+              <span class="detail-value mono" id="d-no_sertifikat">—</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Tgl. Sertifikat</span>
+              <span class="detail-value" id="d-tgl_sertifikat">—</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Penggunaan Tanah</span>
+              <span class="detail-value" id="d-penggunaan_tanah">—</span>
+            </div>
           </div>
-          <div class="detail-item">
-            <span class="detail-label">Harga Perolehan</span>
-            <span class="detail-value mono" id="d-harga">—</span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">Cara Perolehan</span>
-            <span class="detail-value" id="d-cara_perolehan">—</span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">Sumber Dana</span>
-            <span class="detail-value" id="d-sumber_dana">—</span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">Tgl. Buku</span>
-            <span class="detail-value" id="d-tgl_buku">—</span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">No. BAST</span>
-            <span class="detail-value mono" id="d-no_bast">—</span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">Tgl. BAST</span>
-            <span class="detail-value" id="d-tgl_bast">—</span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">ID Penerimaan</span>
-            <span class="detail-value mono" id="d-id_penerimaan">—</span>
+        </div>
+      </div>
+
+      <div class="form-card section-kib" id="section-kib-b" style="max-width:100%;margin-bottom:18px">
+        <div class="form-section">
+          <div class="form-section-title">⚙️ KIB B — Data Kendaraan / Mesin</div>
+          <div class="detail-grid cols-3">
+            <div class="detail-item">
+              <span class="detail-label">No. Pabrik</span>
+              <span class="detail-value mono" id="d-no_pabrik">—</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">No. Rangka</span>
+              <span class="detail-value mono" id="d-no_rangka">—</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">No. Mesin</span>
+              <span class="detail-value mono" id="d-no_mesin">—</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">No. Polisi</span>
+              <span class="detail-value mono" id="d-no_polisi">—</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">No. BPKB</span>
+              <span class="detail-value mono" id="d-no_bpkb">—</span>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- ── PENANGGUNG JAWAB ── -->   <div class="form-card" style="max-width:100%;margin-bottom:18px">     <div class="form-section">       <div class="form-section-title">👤 Penanggung Jawab Barang</div>       <div class="detail-grid">         <div class="detail-item">           <span class="detail-label">Penanggung Jawab</span>           <span class="detail-value" id="d-penanggung_jawab">—</span>         </div>         <div class="detail-item">           <span class="detail-label">Jabatan</span>           <span class="detail-value" id="d-pj-jabatan">—</span>         </div>       </div>     </div>   </div>    <!-- ── LOKASI ── -->
-      <div class="form-section">
-        <div class="form-section-title">📍 Lokasi & Penggunaan</div>
-        <div class="detail-grid">
-          <div class="detail-item">
-            <span class="detail-label">Lokasi</span>
-            <span class="detail-value" id="d-lokasi">—</span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">Penggunaan</span>
-            <span class="detail-value" id="d-penggunaan">—</span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">Status Aset</span>
-            <span class="detail-value" id="d-status_aset">—</span>
-          </div>
-          <div class="detail-item" style="grid-column:1/-1">
-            <span class="detail-label">Keterangan</span>
-            <span class="detail-value" id="d-keterangan">—</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ── KIB A — TANAH ── -->
-    <div class="form-card section-kib" id="section-kib-a" style="max-width:100%;margin-bottom:18px">
-      <div class="form-section">
-        <div class="form-section-title">🏞️ KIB A — Data Tanah</div>
-        <div class="detail-grid cols-3">
-          <div class="detail-item">
-            <span class="detail-label">Luas Tanah (m²)</span>
-            <span class="detail-value mono" id="d-luas_tanah">—</span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">Tahun Perolehan Tanah</span>
-            <span class="detail-value mono" id="d-tahun_perolehan_tanah">—</span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">Status Tanah</span>
-            <span class="detail-value" id="d-status_tanah">—</span>
-          </div>
-          <div class="detail-item" style="grid-column:1/-1">
-            <span class="detail-label">Letak / Alamat</span>
-            <span class="detail-value" id="d-letak_alamat">—</span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">No. Urut Sertifikat</span>
-            <span class="detail-value mono" id="d-no_urut_sertifikat">—</span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">No. Sertifikat</span>
-            <span class="detail-value mono" id="d-no_sertifikat">—</span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">Tgl. Sertifikat</span>
-            <span class="detail-value" id="d-tgl_sertifikat">—</span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">Penggunaan Tanah</span>
-            <span class="detail-value" id="d-penggunaan_tanah">—</span>
+      <div class="form-card section-kib" id="section-kib-c" style="max-width:100%;margin-bottom:18px">
+        <div class="form-section">
+          <div class="form-section-title">🏢 KIB C — Data Gedung & Bangunan</div>
+          <div class="detail-grid cols-3">
+            <div class="detail-item">
+              <span class="detail-label">Kondisi Bangunan</span>
+              <span class="detail-value" id="d-kondisi_bangunan">—</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Luas Lantai (m²)</span>
+              <span class="detail-value mono" id="d-luas_lantai">—</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Jumlah Lantai</span>
+              <span class="detail-value mono" id="d-jumlah_lantai">—</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Konstruksi Bertingkat</span>
+              <span class="detail-value" id="d-konstruksi_bertingkat">—</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Konstruksi Beton</span>
+              <span class="detail-value" id="d-konstruksi_beton">—</span>
+            </div>
+            <div class="detail-item" style="grid-column:1/-1">
+              <span class="detail-label">Letak Bangunan</span>
+              <span class="detail-value" id="d-letak_bangunan">—</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">No. IMB</span>
+              <span class="detail-value mono" id="d-no_imb">—</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Tgl. IMB</span>
+              <span class="detail-value" id="d-tgl_imb">—</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Status Tanah Gedung</span>
+              <span class="detail-value" id="d-status_tanah_gedung">—</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">No. Kode Tanah</span>
+              <span class="detail-value mono" id="d-no_kode_tanah">—</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">ID Awal Tanah</span>
+              <span class="detail-value mono" id="d-id_awal_tanah">—</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Status Sertifikat Tanah</span>
+              <span class="detail-value" id="d-status_sertifikat_tanah">—</span>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- ── KIB B — PERALATAN & MESIN ── -->
-    <div class="form-card section-kib" id="section-kib-b" style="max-width:100%;margin-bottom:18px">
-      <div class="form-section">
-        <div class="form-section-title">⚙️ KIB B — Data Kendaraan / Mesin</div>
-        <div class="detail-grid cols-3">
-          <div class="detail-item">
-            <span class="detail-label">No. Pabrik</span>
-            <span class="detail-value mono" id="d-no_pabrik">—</span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">No. Rangka</span>
-            <span class="detail-value mono" id="d-no_rangka">—</span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">No. Mesin</span>
-            <span class="detail-value mono" id="d-no_mesin">—</span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">No. Polisi</span>
-            <span class="detail-value mono" id="d-no_polisi">—</span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">No. BPKB</span>
-            <span class="detail-value mono" id="d-no_bpkb">—</span>
+      <div class="form-card section-kib" id="section-kib-e" style="max-width:100%;margin-bottom:18px">
+        <div class="form-section">
+          <div class="form-section-title">📦 KIB E — Aset Tetap Lainnya</div>
+          <div class="detail-grid cols-3">
+            <div class="detail-item">
+              <span class="detail-label">Judul Koleksi</span>
+              <span class="detail-value" id="d-judul_koleksi">—</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Spesifikasi</span>
+              <span class="detail-value" id="d-spesifikasi">—</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Penerbit</span>
+              <span class="detail-value" id="d-penerbit">—</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Asal Daerah</span>
+              <span class="detail-value" id="d-asal_daerah">—</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Bahan Aset</span>
+              <span class="detail-value" id="d-bahan_aset">—</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Jenis Aset</span>
+              <span class="detail-value" id="d-jenis_aset">—</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Ukuran Aset</span>
+              <span class="detail-value" id="d-ukuran_aset">—</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Tahun Cetak</span>
+              <span class="detail-value mono" id="d-tahun_cetak">—</span>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- ── KIB C — GEDUNG ── -->
-    <div class="form-card section-kib" id="section-kib-c" style="max-width:100%;margin-bottom:18px">
-      <div class="form-section">
-        <div class="form-section-title">🏢 KIB C — Data Gedung & Bangunan</div>
-        <div class="detail-grid cols-3">
-          <div class="detail-item">
-            <span class="detail-label">Kondisi Bangunan</span>
-            <span class="detail-value" id="d-kondisi_bangunan">—</span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">Luas Lantai (m²)</span>
-            <span class="detail-value mono" id="d-luas_lantai">—</span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">Jumlah Lantai</span>
-            <span class="detail-value mono" id="d-jumlah_lantai">—</span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">Konstruksi Bertingkat</span>
-            <span class="detail-value" id="d-konstruksi_bertingkat">—</span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">Konstruksi Beton</span>
-            <span class="detail-value" id="d-konstruksi_beton">—</span>
-          </div>
-          <div class="detail-item" style="grid-column:1/-1">
-            <span class="detail-label">Letak Bangunan</span>
-            <span class="detail-value" id="d-letak_bangunan">—</span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">No. IMB</span>
-            <span class="detail-value mono" id="d-no_imb">—</span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">Tgl. IMB</span>
-            <span class="detail-value" id="d-tgl_imb">—</span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">Status Tanah Gedung</span>
-            <span class="detail-value" id="d-status_tanah_gedung">—</span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">No. Kode Tanah</span>
-            <span class="detail-value mono" id="d-no_kode_tanah">—</span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">ID Awal Tanah</span>
-            <span class="detail-value mono" id="d-id_awal_tanah">—</span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">Status Sertifikat Tanah</span>
-            <span class="detail-value" id="d-status_sertifikat_tanah">—</span>
-          </div>
+      <div class="form-card" id="section-dokumen" style="max-width:100%;margin-bottom:18px;display:none">
+        <div class="form-section">
+          <div class="form-section-title">📎 Dokumen Pengadaan</div>
+          <div class="detail-grid" id="dokumen-grid"></div>
         </div>
       </div>
+
     </div>
 
-    <!-- ── KIB E — ASET LAINNYA ── -->
-    <div class="form-card section-kib" id="section-kib-e" style="max-width:100%;margin-bottom:18px">
-      <div class="form-section">
-        <div class="form-section-title">📦 KIB E — Aset Tetap Lainnya</div>
-        <div class="detail-grid cols-3">
-          <div class="detail-item">
-            <span class="detail-label">Judul Koleksi</span>
-            <span class="detail-value" id="d-judul_koleksi">—</span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">Spesifikasi</span>
-            <span class="detail-value" id="d-spesifikasi">—</span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">Penerbit</span>
-            <span class="detail-value" id="d-penerbit">—</span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">Asal Daerah</span>
-            <span class="detail-value" id="d-asal_daerah">—</span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">Bahan Aset</span>
-            <span class="detail-value" id="d-bahan_aset">—</span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">Jenis Aset</span>
-            <span class="detail-value" id="d-jenis_aset">—</span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">Ukuran Aset</span>
-            <span class="detail-value" id="d-ukuran_aset">—</span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label">Tahun Cetak</span>
-            <span class="detail-value mono" id="d-tahun_cetak">—</span>
-          </div>
-        </div>
-      </div>
+    <div id="detail-error" style="display:none">
+      <div>😕</div>
+      <p>Data aset tidak ditemukan.</p>
+      <br>
+      <a href="index.html" class="btn btn-secondary">← Kembali ke Daftar</a>
     </div>
 
-    <!-- ── DOKUMEN PENGADAAN ── -->
-    <div class="form-card" id="section-dokumen" style="max-width:100%;margin-bottom:18px;display:none">
-      <div class="form-section">
-        <div class="form-section-title">📎 Dokumen Pengadaan</div>
-        <div class="detail-grid" id="dokumen-grid"></div>
-      </div>
-    </div>
-
-  </main>
-
-  <!-- Error state (jika data tidak ditemukan) -->
-  <div id="detail-error" style="display:none">
-    <div>😕</div>
-    <p>Data aset tidak ditemukan.</p>
-    <br>
-    <a href="index.html" class="btn btn-secondary">← Kembali ke Daftar</a>
   </div>
 
   <script src="supabase.js"></script>
