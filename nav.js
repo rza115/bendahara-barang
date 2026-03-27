@@ -73,7 +73,9 @@
   ================================================================ */
   let sidebar = document.getElementById('app-sidebar');
   if (!sidebar) {
-    const existingContent = document.body.innerHTML;
+    const pageBody = document.getElementById('page-body');
+    const existingContent = pageBody ? pageBody.outerHTML : '';
+    pageBody?.remove();
     document.body.innerHTML = `
       <div class="app-layout">
         <aside id="app-sidebar" class="sidebar"></aside>
