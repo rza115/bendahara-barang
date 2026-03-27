@@ -365,9 +365,11 @@
   </style>
 </head>
 <body data-page="barcode">
+  
   <div class="loading-overlay" id="loading"><div class="loading-spinner"></div></div>
-  <main class="main-content">
-    <div class="alert" id="alert-box"></div>
+  <div class="alert" id="alert-box"></div>
+
+  <div id="page-body">
 
     <div class="page-header">
       <div>
@@ -377,7 +379,6 @@
       <a href="index.html" class="btn btn-secondary">← Kembali</a>
     </div>
 
-    <!-- Toolbar -->
     <div class="barcode-toolbar">
       <div class="toolbar-group">
         <label>Jenis Kode:</label>
@@ -402,7 +403,6 @@
       </div>
     </div>
 
-    <!-- Pilih Aset -->
     <div class="aset-selector">
       <div class="aset-selector-header">
         <div class="aset-selector-title">📋 Pilih Aset untuk Dicetak</div>
@@ -432,7 +432,6 @@
       </div>
     </div>
 
-    <!-- Preview & Cetak -->
     <div class="preview-section">
       <div class="preview-header">
         <div class="preview-title">🖨️ Preview Label</div>
@@ -454,7 +453,7 @@
       </div>
     </div>
 
-  </main>
+  </div>
 
   <script src="supabase.js"></script>
   <script src="auth.js"></script>
