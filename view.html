@@ -4,114 +4,438 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Detail Aset</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
   <style>
-    body { font-family: sans-serif; background: #f8fafc; margin: 0; padding: 20px; }
-    #app { max-width: 480px; margin: 40px auto; background: #fff; border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,.08); padding: 24px; }
-    .loading { color: #94a3b8; text-align: center; padding: 32px 0; }
-    .error { color: #ef4444; background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 12px 16px; font-size: 14px; }
-    h2 { margin: 0 0 16px; font-size: 18px; }
-    table { width: 100%; border-collapse: collapse; font-size: 14px; }
-    td { padding: 8px; border-bottom: 1px solid #e2e8f0; }
-    td:first-child { font-weight: 600; color: #475569; width: 45%; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0d1117;
+      --surface:   #161b22;
+      --surface2:  #1c2330;
+      --border:    #30363d;
+      --accent:    #f0a500;
+      --accent2:   #ff6b35;
+      --text:      #e6edf3;
+      --muted:     #8b949e;
+      --radius:    14px;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Ambient glow background */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -20%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(ellipse, rgba(240,165,0,.12) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    #app {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 480px;
+      animation: fadeUp .5s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 24px 64px rgba(0,0,0,.5);
+    }
+
+    /* ── Header strip ── */
+    .card-header {
+      padding: 28px 28px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .icon-wrap {
+      flex-shrink: 0;
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      box-shadow: 0 4px 16px rgba(240,165,0,.25);
+    }
+
+    .header-text { flex: 1; min-width: 0; }
+
+    .label-badge {
+      font-family: 'Syne', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 4px;
+    }
+
+    .asset-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.25;
+      word-break: break-word;
+    }
+
+    /* ── Photo area ── */
+    .photo-wrap {
+      position: relative;
+      width: 100%;
+      background: var(--surface2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 200px;
+      max-height: 280px;
+      overflow: hidden;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .photo-wrap img {
+      width: 100%;
+      max-height: 280px;
+      object-fit: cover;
+      display: block;
+      transition: transform .4s ease;
+    }
+
+    .photo-wrap img:hover { transform: scale(1.03); }
+
+    .no-photo {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 40px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .no-photo svg { opacity: .4; }
+
+    /* ── Info rows ── */
+    .info-grid {
+      padding: 8px 0;
+    }
+
+    .info-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 28px;
+      border-bottom: 1px solid var(--border);
+      transition: background .15s;
+    }
+
+    .info-row:last-child { border-bottom: none; }
+    .info-row:hover { background: var(--surface2); }
+
+    .row-icon {
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(240,165,0,.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+    }
+
+    .row-content { flex: 1; min-width: 0; }
+
+    .row-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 2px;
+    }
+
+    .row-value {
+      font-size: 15px;
+      font-weight: 400;
+      color: var(--text);
+    }
+
+    /* Kondisi badge */
+    .badge {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 20px;
+      text-transform: capitalize;
+    }
+
+    .badge-baik   { background: rgba(34,197,94,.15);  color: #4ade80; }
+    .badge-rusak  { background: rgba(239,68,68,.15);  color: #f87171; }
+    .badge-sedang { background: rgba(251,191,36,.15); color: #fbbf24; }
+    .badge-other  { background: rgba(139,148,158,.15); color: #8b949e; }
+
+    /* ── Footer ── */
+    .card-footer {
+      padding: 16px 28px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--muted);
+      background: var(--surface2);
+    }
+
+    .dot { width: 6px; height: 6px; border-radius: 50%; background: #4ade80; flex-shrink: 0; }
+
+    /* ── States ── */
+    .state-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 48px 32px;
+      text-align: center;
+      box-shadow: 0 24px 64px rgba(0,0,0,.5);
+    }
+
+    .state-icon { font-size: 40px; margin-bottom: 16px; }
+
+    .state-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+
+    .state-msg {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .state-msg code {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 2px 7px;
+      font-family: monospace;
+      font-size: 12px;
+      color: var(--accent);
+    }
+
+    .spinner {
+      width: 40px; height: 40px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
-  <div id="app"><p class="loading">Memuat data...</p></div>
+  <div id="app">
+    <div class="state-wrap">
+      <div class="spinner"></div>
+      <p class="state-title">Memuat data aset…</p>
+      <p class="state-msg">Mohon tunggu sebentar.</p>
+    </div>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-  function isUUID(str) {
-    return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
-  }
+  (() => {
+    /* ── Helpers ── */
+    const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    const isUUID  = s => UUID_RE.test(s);
 
-  (async () => {
     const SUPABASE_URL = 'https://ibektroxjjibniwidmpk.supabase.co';
-	const SUPABASE_KEY = 'sb_publishable_b-oL0WNdkqDjUFhepAkADw_uy9coRD6';
+    const SUPABASE_KEY = 'sb_publishable_b-oL0WNdkqDjUFhepAkADw_uy9coRD6';
 
-    const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    const params = new URLSearchParams(location.search);
-    const id = params.get('id');
-    const kode = params.get('kode');
     const app = document.getElementById('app');
 
-    if (!id && !kode) {
-      app.innerHTML = '<p class="error">Parameter tidak ditemukan. Gunakan <code>?id=uuid</code> atau <code>?kode=...</code>.</p>';
-      return;
+    function renderError(icon, title, html) {
+      app.innerHTML = `
+        <div class="state-wrap">
+          <div class="state-icon">${icon}</div>
+          <p class="state-title">${title}</p>
+          <div class="state-msg">${html}</div>
+        </div>`;
     }
 
-    // Validasi format UUID jika menggunakan param id
-    if (id && !isUUID(id)) {
-      app.innerHTML = `<p class="error">
-        Format id tidak valid: <strong>${id}</strong><br><br>
-        Kolom id bertipe UUID, contoh format yang benar:<br>
-        <code>?id=550e8400-e29b-41d4-a716-446655440000</code><br><br>
-        Jika ingin pakai nomor urut atau kode, gunakan:<br>
-        <code>?kode=KODE_BARANG</code>
-      </p>`;
-      return;
+    function kondisiBadge(kondisi = '') {
+      const k = kondisi.toLowerCase();
+      const cls =
+        k.includes('baik')   ? 'badge-baik'   :
+        k.includes('rusak')  ? 'badge-rusak'  :
+        k.includes('sedang') ? 'badge-sedang' : 'badge-other';
+      return `<span class="badge ${cls}">${kondisi}</span>`;
     }
 
-    let list, fetchError;
-    try {
-      const result = await db.rpc('get_aset_public');
-      list = result.data;
-      fetchError = result.error;
-    } catch (e) {
-      app.innerHTML = `<p class="error">Gagal terhubung ke server: ${e.message}</p>`;
-      return;
+    function infoRow(icon, label, valueHTML) {
+      return `
+        <div class="info-row">
+          <div class="row-icon">${icon}</div>
+          <div class="row-content">
+            <div class="row-label">${label}</div>
+            <div class="row-value">${valueHTML}</div>
+          </div>
+        </div>`;
     }
 
-    if (fetchError) {
-      let msg = fetchError.message;
-      if (fetchError.message?.includes('JWT') || fetchError.code === 'PGRST301') {
-        msg = 'API key tidak valid. Periksa konfigurasi SUPABASE_KEY.';
-      } else if (fetchError.code === '42883') {
-        msg = 'Fungsi get_aset_public tidak ditemukan di database.';
+    async function main() {
+      const params = new URLSearchParams(location.search);
+      const id    = params.get('id');
+      const kode  = params.get('kode');
+
+      /* Validate params */
+      if (!id && !kode) {
+        renderError('🔍', 'Parameter tidak ditemukan',
+          `Gunakan <code>?id=uuid</code> atau <code>?kode=KODE_BARANG</code> pada URL.`);
+        return;
       }
-      app.innerHTML = `<p class="error">Gagal memuat data: ${msg}</p>`;
-      return;
+
+      if (id && !isUUID(id)) {
+        renderError('⚠️', 'Format ID tidak valid',
+          `<code>${id}</code> bukan UUID yang valid.<br>Contoh benar:<br>
+           <code>?id=550e8400-e29b-41d4-a716-446655440000</code><br><br>
+           Atau gunakan kode barang:<br><code>?kode=KODE_BARANG</code>`);
+        return;
+      }
+
+      /* Fetch data */
+      const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      let list, fetchError;
+
+      try {
+        const res = await db.rpc('get_aset_public');
+        list       = res.data;
+        fetchError = res.error;
+      } catch (e) {
+        renderError('🔌', 'Gagal terhubung ke server', e.message);
+        return;
+      }
+
+      if (fetchError) {
+        const msg =
+          /JWT|PGRST301/.test(fetchError.message + fetchError.code)
+            ? 'API key tidak valid. Periksa konfigurasi SUPABASE_KEY.'
+            : fetchError.code === '42883'
+            ? 'Fungsi <code>get_aset_public</code> tidak ditemukan di database.'
+            : fetchError.message;
+        renderError('❌', 'Gagal memuat data', msg);
+        return;
+      }
+
+      if (!list?.length) {
+        renderError('📭', 'Tidak ada data', 'Belum ada aset yang tersedia dalam sistem.');
+        return;
+      }
+
+      /* Find asset */
+      const data = list.find(a =>
+        (id   && a.id          === id)   ||
+        (kode && a.kode_barang === kode)
+      );
+
+      if (!data) {
+        renderError('🗂️', 'Aset tidak ditemukan',
+          `Tidak ada aset dengan ${id ? `id <code>${id}</code>` : `kode <code>${kode}</code>`}.`);
+        return;
+      }
+
+      /* Photo */
+      const photoHTML = data.foto_url
+        ? `<div class="photo-wrap">
+             <img src="${data.foto_url}"
+                  alt="Foto ${data.nama_barang}"
+                  onerror="this.closest('.photo-wrap').innerHTML='<div class=no-photo>
+                    <svg width=40 height=40 viewBox=\'0 0 24 24\' fill=none stroke=currentColor stroke-width=1.5>
+                      <rect x=3 y=3 width=18 height=18 rx=2/><circle cx=8.5 cy=8.5 r=1.5/>
+                      <path d=\'m21 15-5-5L5 21\'/>
+                    </svg>
+                    <span>Foto tidak tersedia</span></div>'">
+           </div>`
+        : `<div class="photo-wrap">
+             <div class="no-photo">
+               <svg width="40" height="40" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1.5">
+                 <rect x="3" y="3" width="18" height="18" rx="2"/>
+                 <circle cx="8.5" cy="8.5" r="1.5"/>
+                 <path d="m21 15-5-5L5 21"/>
+               </svg>
+               <span>Tidak ada foto</span>
+             </div>
+           </div>`;
+
+      /* Render */
+      app.innerHTML = `
+        <div class="card">
+          <div class="card-header">
+            <div class="icon-wrap">🏷️</div>
+            <div class="header-text">
+              <div class="label-badge">Detail Aset</div>
+              <div class="asset-name">${data.nama_barang ?? '—'}</div>
+            </div>
+          </div>
+
+          ${photoHTML}
+
+          <div class="info-grid">
+            ${infoRow('📦', 'Kode Barang',     data.kode_barang    ?? '—')}
+            ${infoRow('📅', 'Tahun Perolehan', data.tahun_perolehan ?? '—')}
+            ${infoRow('✅', 'Kondisi',         data.kondisi ? kondisiBadge(data.kondisi) : '—')}
+            ${infoRow('📍', 'Lokasi',          data.lokasi         ?? '—')}
+          </div>
+
+          <div class="card-footer">
+            <div class="dot"></div>
+            Data terhubung langsung dari sistem inventaris
+          </div>
+        </div>`;
     }
 
-    if (!list || list.length === 0) {
-      app.innerHTML = '<p class="error">Tidak ada data aset yang tersedia.</p>';
-      return;
-    }
-
-    const data = list.find(a =>
-      (id && a.id === id) ||
-      (kode && a.kode_barang === kode)
-    );
-
-    if (!data) {
-      app.innerHTML = `<p class="error">Aset tidak ditemukan.</p>`;
-      return;
-    }
-
-    const fotoHTML = data.foto_url
-      ? `<img src="${data.foto_url}" alt="Foto ${data.nama_barang}"
-            style="max-width:100%;max-height:220px;border-radius:8px;margin-top:4px;object-fit:contain;"
-            onerror="this.replaceWith(document.createTextNode('Foto tidak dapat dimuat'))">`
-      : '—';
-
-    app.innerHTML = `
-      <h2>&#127991; ${data.nama_barang}</h2>
-      <table>
-        ${[
-          ['Kode Barang', data.kode_barang],
-          ['Tahun Perolehan', data.tahun_perolehan],
-          ['Kondisi', data.kondisi],
-          ['Lokasi', data.lokasi],
-        ].map(([k, v]) => `
-          <tr>
-            <td>${k}</td>
-            <td>${v ?? '—'}</td>
-          </tr>`).join('')}
-        <tr>
-          <td>Foto</td>
-          <td>${fotoHTML}</td>
-        </tr>
-      </table>
-    `;
+    main();
   })();
   </script>
 </body>
