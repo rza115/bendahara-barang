@@ -21,6 +21,7 @@
 | Roles bendahara pembantu | 🔲 Belum |
 | Export laporan ke Excel | 🔲 Belum |
 | Cetak label barang (barcode) | ✅ Selesai |
+| View Scan (barcode) Public | ✅ Selesai |
 
 ---
 
