@@ -4,75 +4,72 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Inventaris Barang — Kecamatan Tenjo</title>
-  <link rel="stylesheet" href="sidebar.css">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="../assets/styles/sidebar.css">
+  <link rel="stylesheet" href="../assets/styles/style.css">
 </head>
 <body data-page="index">
 
-  <!-- Utility elements: tetap di body, TIDAK ikut masuk main-content -->
   <div class="loading-overlay" id="loading">
     <div class="loading-spinner"></div>
   </div>
   <div class="alert" id="alert-box"></div>
 
-  <!-- #page-body: hanya ini yang di-inject nav.js ke dalam main-content -->
   <div id="page-body">
-
     <!-- Page Header -->
     <div class="page-header">
       <div>
-        <h1>📦 Kartu Inventaris Barang</h1>
+        <h1>Kartu Inventaris Barang</h1>
         <p>Daftar seluruh aset tetap per 31 Desember 2025</p>
       </div>
-      <a href="tambah.html" class="btn btn-primary">➕ Tambah Aset</a>
+      <a href="tambah.html" class="btn btn-primary">&#10010; Tambah Aset</a>
     </div>
 
     <!-- Stats -->
     <div class="stats-grid">
       <div class="stat-card accent">
-        <div class="stat-icon">📦</div>
-        <div class="stat-value" id="total-aset">—</div>
+        <div class="stat-icon"></div>
+        <div class="stat-value" id="total-aset"></div>
         <div class="stat-label">Total Aset</div>
       </div>
       <div class="stat-card gold">
-        <div class="stat-icon">💰</div>
-        <div class="stat-value" id="total-nilai" style="font-size:14px">—</div>
+        <div class="stat-icon"></div>
+        <div class="stat-value" id="total-nilai" style="font-size:14px"></div>
         <div class="stat-label">Total Nilai</div>
       </div>
       <div class="stat-card">
-        <div class="stat-icon">🏞️</div>
-        <div class="stat-value" id="total-kib-a">—</div>
-        <div class="stat-label">KIB A — Tanah</div>
+        <div class="stat-icon">&#127966;&#65039;</div>
+        <div class="stat-value" id="total-kib-a"></div>
+        <div class="stat-label">KIB A &mdash; Tanah</div>
       </div>
       <div class="stat-card">
-        <div class="stat-icon">⚙️</div>
-        <div class="stat-value" id="total-kib-b">—</div>
-        <div class="stat-label">KIB B — Peralatan</div>
+        <div class="stat-icon">&#9881;&#65039;</div>
+        <div class="stat-value" id="total-kib-b"></div>
+        <div class="stat-label">KIB B &mdash; Peralatan</div>
       </div>
       <div class="stat-card">
-        <div class="stat-icon">🏢</div>
-        <div class="stat-value" id="total-kib-c">—</div>
-        <div class="stat-label">KIB C — Gedung</div>
+        <div class="stat-icon"></div>
+        <div class="stat-value" id="total-kib-c"></div>
+        <div class="stat-label">KIB C &mdash; Gedung</div>
       </div>
       <div class="stat-card">
-        <div class="stat-icon">📦</div>
-        <div class="stat-value" id="total-kib-e">—</div>
-        <div class="stat-label">KIB E — Lainnya</div>
+        <div class="stat-icon"></div>
+        <div class="stat-value" id="total-kib-e"></div>
+        <div class="stat-label">KIB E &mdash; Lainnya</div>
       </div>
     </div>
 
     <!-- Filter Bar -->
     <div class="filter-bar">
       <div class="search-wrap">
-        <span class="search-icon">🔍</span>
+        <span class="search-icon"></span>
         <input type="text" id="search-input" placeholder="Cari nama barang...">
       </div>
       <select id="filter-kib" style="width:auto">
         <option value="">Semua KIB</option>
-        <option value="KIB A">KIB A — Tanah</option>
-        <option value="KIB B">KIB B — Peralatan &amp; Mesin</option>
-        <option value="KIB C">KIB C — Gedung &amp; Bangunan</option>
-        <option value="KIB E">KIB E — Aset Tetap Lainnya</option>
+        <option value="KIB A">KIB A &mdash; Tanah</option>
+        <option value="KIB B">KIB B &mdash; Peralatan &amp; Mesin</option>
+        <option value="KIB C">KIB C &mdash; Gedung &amp; Bangunan</option>
+        <option value="KIB E">KIB E &mdash; Aset Tetap Lainnya</option>
       </select>
       <select id="filter-kondisi" style="width:auto">
         <option value="">Semua Kondisi</option>
@@ -86,8 +83,8 @@
         <option value="terlama">Tahun Terlama</option>
         <option value="harga-tertinggi">Harga Tertinggi</option>
         <option value="harga-terendah">Harga Terendah</option>
-        <option value="nama-az">Nama A–Z</option>
-        <option value="nama-za">Nama Z–A</option>
+        <option value="nama-az">Nama A&ndash;Z</option>
+        <option value="nama-za">Nama Z&ndash;A</option>
       </select>
       <select id="limit-rows" style="width:auto">
         <option value="100">100 Data</option>
@@ -113,22 +110,24 @@
           </tr>
         </thead>
         <tbody id="aset-tbody">
-          <tr>
-            <td colspan="8" class="empty-state">
-              <div>⏳</div>
-              <p>Memuat data...</p>
-            </td>
-          </tr>
+          <tr><td colspan="8" class="empty-state"><div></div><p>Memuat data...</p></td></tr>
         </tbody>
       </table>
     </div>
+  </div><!-- /page-body -->
 
-  </div><!-- /#page-body -->
-
-  <script src="supabase.js"></script>
-  <script src="auth.js"></script>
-  <script src="nav.js"></script>
-  <script src="app.js"></script>
-
+  <!-- Scripts: urutan PENTING -->
+  <script src="../supabase.js"></script>
+  <script src="../shared/auth/auth-guard.js"></script>
+  <script src="../nav.js"></script>
+  <script src="../shared/utils/constants.js"></script>
+  <script src="../shared/utils/dom.js"></script>
+  <script src="../shared/utils/formatters.js"></script>
+  <script src="../shared/ui/feedback.js"></script>
+  <script src="../features/barang/barang-state.js"></script>
+  <script src="../features/barang/barang-service.js"></script>
+  <script src="../features/barang/barang-view.js"></script>
+  <script src="../features/barang/barang-page.js"></script>
+  <script src="../main.js"></script>
 </body>
 </html>
