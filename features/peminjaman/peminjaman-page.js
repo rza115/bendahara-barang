@@ -1,14 +1,9 @@
 // features/peminjaman/peminjaman-page.js
 'use strict';
 
+// 
 window.initPeminjaman = async function () {
-  if (window._appReady)   await window._appReady;
-  else if (window.appReady) await window.appReady;
-
-  const db = window._authClient || window.authClient;
-  if (!db) { console.error('[peminjaman-page] DB client belum siap'); return; }
-
-  window.PeminjamanService.init(db);
+  window.PeminjamanService.init(db); // pakai global db dari main.js
 
   let allAset = [];
 
