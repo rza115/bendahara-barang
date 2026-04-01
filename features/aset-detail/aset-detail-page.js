@@ -1,22 +1,25 @@
-// ============================================
 // features/aset-detail/aset-detail-page.js
-// Controller halaman detail aset
-// ============================================
-
 async function initDetailPage() {
-  const params = new URLSearchParams(window.location.search);
-  const id = params.get('id');
+  const id = new URLSearchParams(window.location.search).get('id');
   if (!id) {
-    showAlert('ID aset tidak ditemukan.', 'error');
+    window.location.href = 'index.html';
     return;
   }
-
   showLoading(true);
   try {
-    const data = await fetchAsetById(id);
+    // Query langsung — tidak bergantung nama fungsi di barang-service.js
+    const { data, error } = await db
+      .from('aset')
+      .select('*')
+      .eq('id', id)
+      .single();
+    if (error) throw error;
+    if (!data) throw new Error('Data tidak ditemukan');
     renderDetail(data);
   } catch (err) {
-    showAlert('Gagal memuat data aset: ' + err.message, 'error');
+    const errEl = document.getElementById('detail-error');
+    if (errEl) errEl.style.display = 'block';
+    showAlert('Gagal memuat data: ' + err.message, 'error');
   } finally {
     showLoading(false);
   }

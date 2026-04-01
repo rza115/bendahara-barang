@@ -1,7 +1,5 @@
-// ============================================
 // features/pemindahtanganan/pt-service.js
-// Operasi Supabase untuk tabel pemindahtanganan
-// ============================================
+// Tabel: penanggung_jawab (bukan penanggungjawab)
 
 async function fetchRiwayatPT(filter = {}) {
   let q = db.from('pemindahtanganan').select('*').order('tanggal', { ascending: false });
@@ -18,7 +16,9 @@ async function savePT(payload) {
 }
 
 async function updatePJAset(barangId, kePjId) {
-  const { error } = await db.from('aset').update({ penanggungjawab_id: kePjId }).eq('id', barangId);
+  const { error } = await db.from('aset')
+    .update({ penanggung_jawab_id: kePjId })
+    .eq('id', barangId);
   if (error) throw error;
 }
 
