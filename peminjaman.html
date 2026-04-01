@@ -3,480 +3,301 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Peminjaman Barang — Inventaris Kecamatan Tenjo</title>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <title>Peminjaman — Inventaris Kecamatan Tenjo</title>
   <link rel="stylesheet" href="sidebar.css">
-  <link rel="stylesheet" href="style.css">
   <style>
-    .status-badge { display:inline-block; padding:3px 10px; border-radius:20px; font-size:11px; font-weight:600; }
-    .status-dipinjam { background:rgba(255,188,79,0.12); color:#ffbc4f; }
-    .status-dikembalikan { background:rgba(76,222,154,0.12); color:#4cde9a; }
-    .status-terlambat { background:rgba(255,95,95,0.12); color:#ff5f5f; }
-
-    .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:200; align-items:center; justify-content:center; backdrop-filter:blur(4px); }
-    .modal-overlay.show { display:flex; }
-    .modal { background:#181c27; border:1px solid #2e3447; border-radius:16px; padding:28px; width:90%; max-width:500px; max-height:90vh; overflow-y:auto; }
-    .modal-title { font-size:16px; font-weight:700; margin-bottom:4px; }
-    .modal-desc { font-size:13px; color:#7b82a0; margin-bottom:20px; }
-    .modal-footer { display:flex; gap:10px; justify-content:flex-end; margin-top:24px; }
-
-    .form-group { margin-bottom:16px; }
-    .form-group label { display:block; font-size:12px; font-weight:600; color:#7b82a0; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; }
-    .form-group input, .form-group select, .form-group textarea {
-      width:100%; background:rgba(255,255,255,0.04); border:1px solid #2e3447;
-      border-radius:9px; padding:10px 14px; font-family:inherit; font-size:13px;
-      color:#e8eaf0; outline:none; transition:border-color 0.2s;
+    /* ── Ringkasan cards ── */
+    .pm-summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
     }
-    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color:#4f7eff; }
-    .form-group textarea { resize:vertical; min-height:70px; }
-    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .pm-stat {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 14px 16px;
+      text-align: center;
+    }
+    .pm-stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: #1e293b;
+      line-height: 1.1;
+    }
+    .pm-stat-label {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-top: 4px;
+    }
+    .pm-stat.terlambat .pm-stat-value { color: #dc2626; }
+    .pm-stat.aktif     .pm-stat-value { color: #a16207; }
+    .pm-stat.kembali   .pm-stat-value { color: #16a34a; }
 
-    .btn { padding:9px 18px; border-radius:9px; font-size:13px; font-weight:600; font-family:inherit; cursor:pointer; border:none; display:inline-flex; align-items:center; gap:6px; }
-    .btn-primary { background:#4f7eff; color:#fff; }
-    .btn-primary:hover { background:#6b93ff; }
-    .btn-outline { background:transparent; border:1px solid #2e3447; color:#e8eaf0; }
-    .btn-outline:hover { background:rgba(255,255,255,0.06); }
-    .btn-kembali { background:rgba(76,222,154,0.12); color:#4cde9a; border:1px solid rgba(76,222,154,0.2); font-size:12px; padding:5px 10px; }
-    .btn-kembali:hover { background:rgba(76,222,154,0.2); }
-    .btn-hapus-p { background:rgba(255,95,95,0.1); color:#ff5f5f; border:none; font-size:12px; padding:5px 10px; border-radius:6px; cursor:pointer; font-family:inherit; }
-    .btn-hapus-p:hover { background:rgba(255,95,95,0.2); }
+    /* ── Filter bar ── */
+    .filter-bar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .filter-bar select {
+      padding: 7px 12px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 13px;
+      background: #fff;
+      color: #374151;
+      cursor: pointer;
+    }
 
-    .info-box { background:rgba(79,126,255,0.06); border:1px solid rgba(79,126,255,0.15); border-radius:10px; padding:12px 16px; font-size:13px; color:#7b82a0; margin-bottom:20px; }
-    .info-box strong { color:#e8eaf0; }
+    /* ── Tabel ── */
+    .pm-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .pm-table thead th {
+      padding: 10px 12px;
+      text-align: left;
+      font-size: 12px;
+      font-weight: 600;
+      color: #64748b;
+      background: #f8fafc;
+      border-bottom: 1px solid #e2e8f0;
+      white-space: nowrap;
+    }
+    .pm-table tbody tr:hover { background: #f8fafc; }
 
-    .stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:14px; margin-bottom:24px; }
-    .stat-card { background:#181c27; border:1px solid #2e3447; border-radius:12px; padding:16px; }
-    .stat-icon { font-size:22px; margin-bottom:8px; }
-    .stat-value { font-size:22px; font-weight:700; }
-    .stat-label { font-size:12px; color:#7b82a0; margin-top:4px; }
-    .stat-card.warn .stat-value { color:#ffbc4f; }
-    .stat-card.danger .stat-value { color:#ff5f5f; }
-    .stat-card.ok .stat-value { color:#4cde9a; }
+    /* ── Modal ── */
+    .modal-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.45);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal-box {
+      background: #fff;
+      border-radius: 14px;
+      padding: 28px;
+      width: 100%;
+      max-width: 520px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .modal-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 20px;
+    }
+    .field-group { margin-bottom: 14px; }
+    .field-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: #374151;
+      margin-bottom: 5px;
+    }
+    .field-input, .field-select, .field-textarea {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 14px;
+      color: #111827;
+      background: #fff;
+      transition: border-color .15s;
+    }
+    .field-input:focus, .field-select:focus, .field-textarea:focus {
+      outline: none;
+      border-color: #01696f;
+      box-shadow: 0 0 0 3px rgba(1,105,111,.12);
+    }
+    .field-textarea { resize: vertical; min-height: 72px; }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
 
-    .filter-bar { background:#181c27; border:1px solid #2e3447; border-radius:12px; padding:14px 16px; display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin-bottom:18px; }
-    .filter-bar select, .filter-bar input { background:rgba(255,255,255,0.05); border:1px solid #2e3447; color:#e8eaf0; padding:8px 12px; border-radius:8px; font-size:13px; font-family:inherit; outline:none; }
-    .search-wrap { position:relative; flex:1; min-width:180px; }
-    .search-icon { position:absolute; left:10px; top:50%; transform:translateY(-50%); opacity:0.4; }
-    .search-wrap input { width:100%; padding-left:32px; }
+    /* ── Buttons ── */
+    .btn { padding: 9px 18px; border: none; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; transition: background .15s; }
+    .btn-primary  { background: #01696f; color: #fff; }
+    .btn-primary:hover  { background: #0c4e54; }
+    .btn-secondary { background: #f1f5f9; color: #374151; border: 1px solid #e2e8f0; }
+    .btn-secondary:hover { background: #e2e8f0; }
 
-    .table-wrap { background:#181c27; border:1px solid #2e3447; border-radius:12px; overflow:hidden; }
-    table { width:100%; border-collapse:collapse; }
-    th { background:rgba(255,255,255,0.03); padding:12px 16px; font-size:11px; font-weight:600; color:#7b82a0; text-transform:uppercase; border-bottom:1px solid #2e3447; text-align:left; }
-    td { padding:12px 16px; font-size:13px; border-bottom:1px solid rgba(255,255,255,0.04); vertical-align:middle; }
-    tr:last-child td { border-bottom:none; }
-    tr:hover td { background:rgba(255,255,255,0.015); }
-    .empty-td { text-align:center; padding:40px; color:#4a5068; }
+    /* ── Page header ── */
+    .page-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 20px; flex-wrap: wrap; gap: 10px;
+    }
+    .page-header h1 { font-size: 20px; font-weight: 700; color: #1e293b; }
 
-    .terlambat-row td { background:rgba(255,95,95,0.03); }
-    .nama-peminjam { font-weight:500; }
-    .sub-peminjam { font-size:11px; color:#7b82a0; margin-top:2px; }
-    .nama-barang-p { font-weight:500; font-size:13px; }
-    .sub-barang { font-size:11px; color:#7b82a0; }
+    /* ── Form card ── */
+    .form-card {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 20px;
+      overflow-x: auto;
+    }
 
-    .page-header { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:22px; flex-wrap:wrap; }
-    .page-header h1 { font-size:20px; font-weight:700; margin-bottom:4px; }
-    .page-header p { font-size:13px; color:#7b82a0; }
-    .alert { display:none; padding:12px 16px; border-radius:8px; margin-bottom:16px; font-size:13px; }
-    .alert-success { display:block; background:rgba(76,222,154,0.1); border:1px solid rgba(76,222,154,0.2); color:#4cde9a; }
-    .alert-error { display:block; background:rgba(255,95,95,0.1); border:1px solid rgba(255,95,95,0.2); color:#ff5f5f; }
+    /* ── Loading & alert ── */
+    .loading-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(255,255,255,.7);
+      z-index: 9999; align-items: center; justify-content: center;
+    }
+    .loading-spinner {
+      width: 36px; height: 36px;
+      border: 3px solid #e2e8f0;
+      border-top-color: #01696f;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .alert {
+      display: none; position: fixed; top: 20px; right: 20px;
+      padding: 12px 20px; border-radius: 10px; font-size: 14px;
+      font-weight: 500; z-index: 9998; max-width: 360px;
+      box-shadow: 0 4px 16px rgba(0,0,0,.12);
+    }
+    .alert-success { background: #dcfce7; color: #166534; }
+    .alert-error   { background: #fee2e2; color: #991b1b; }
   </style>
 </head>
 <body data-page="peminjaman">
+  <div class="loading-overlay" id="loading"><div class="loading-spinner"></div></div>
+  <div class="alert" id="alert-box"></div>
 
-<div class="loading-overlay" id="loading"><div class="loading-spinner"></div></div>
-<div class="alert" id="alert-box"></div>
+  <div id="page-body">
 
-<div id="page-body">
+    <!-- ── Modal Tambah Peminjaman ── -->
+    <div class="modal-overlay" id="modal-peminjaman">
+      <div class="modal-box">
+        <div class="modal-title">📋 Catat Peminjaman Baru</div>
 
-  <div class="page-header">
-    <div>
-      <h1>🤝 Peminjaman Barang</h1>
-      <p>Catat pengguna & peminjam barang inventaris</p>
-    </div>
-    <button class="btn btn-primary" onclick="bukaPinjam()">➕ Catat Peminjaman</button>
-  </div>
-
-  <div class="stats-grid">
-    <div class="stat-card">
-      <div class="stat-icon">📋</div>
-      <div class="stat-value" id="stat-total">—</div>
-      <div class="stat-label">Total Catatan</div>
-    </div>
-    <div class="stat-card warn">
-      <div class="stat-icon">⏳</div>
-      <div class="stat-value" id="stat-dipinjam">—</div>
-      <div class="stat-label">Sedang Dipinjam</div>
-    </div>
-    <div class="stat-card danger">
-      <div class="stat-icon">⚠️</div>
-      <div class="stat-value" id="stat-terlambat">—</div>
-      <div class="stat-label">Terlambat Kembali</div>
-    </div>
-    <div class="stat-card ok">
-      <div class="stat-icon">✅</div>
-      <div class="stat-value" id="stat-kembali">—</div>
-      <div class="stat-label">Sudah Dikembalikan</div>
-    </div>
-  </div>
-
-  <div class="filter-bar">
-    <div class="search-wrap">
-      <span class="search-icon">🔍</span>
-      <input type="text" id="search-input" placeholder="Cari nama peminjam atau barang...">
-    </div>
-    <select id="filter-status">
-      <option value="">Semua Status</option>
-      <option value="dipinjam">Sedang Dipinjam</option>
-      <option value="dikembalikan">Sudah Dikembalikan</option>
-      <option value="terlambat">Terlambat</option>
-    </select>
-  </div>
-
-  <div class="table-wrap">
-    <table>
-      <thead>
-        <tr>
-          <th>No</th>
-          <th>Barang</th>
-          <th>Peminjam</th>
-          <th>Tgl Pinjam</th>
-          <th>Batas Kembali</th>
-          <th>Tgl Kembali</th>
-          <th>Status</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody id="pinjam-tbody">
-        <tr><td colspan="8" class="empty-td">⏳ Memuat data...</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="modal-overlay" id="modal-pinjam">
-    <div class="modal">
-      <div class="modal-title">➕ Catat Peminjaman Barang</div>
-      <div class="modal-desc">Isi data peminjam dan barang yang dipinjam</div>
-
-      <div class="form-group">
-        <label>Barang yang Dipinjam *</label>
-        <select id="p-aset-id">
-          <option value="">-- Pilih Barang --</option>
-        </select>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label>Nama Peminjam *</label>
-          <input type="text" id="p-nama" placeholder="Nama lengkap">
+        <div class="field-group">
+          <label class="field-label" for="pm-aset-id">Aset yang Dipinjam <span style="color:red">*</span></label>
+          <select class="field-select" id="pm-aset-id">
+            <option value="">Pilih Aset</option>
+          </select>
         </div>
-        <div class="form-group">
-          <label>Jabatan / Unit</label>
-          <input type="text" id="p-jabatan" placeholder="Misal: Kasi Trantibum">
+
+        <div class="field-group">
+          <label class="field-label" for="pm-namapeminjam">Nama Peminjam <span style="color:red">*</span></label>
+          <input class="field-input" id="pm-namapeminjam" type="text" placeholder="Nama lengkap peminjam">
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="pm-unitkerja">Unit Kerja</label>
+          <input class="field-input" id="pm-unitkerja" type="text" placeholder="Instansi / unit kerja">
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="pm-keperluan">Keperluan</label>
+          <input class="field-input" id="pm-keperluan" type="text" placeholder="Tujuan peminjaman">
+        </div>
+
+        <div class="field-row">
+          <div class="field-group">
+            <label class="field-label" for="pm-tanggal-pinjam">Tanggal Pinjam <span style="color:red">*</span></label>
+            <input class="field-input" id="pm-tanggal-pinjam" type="date">
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="pm-batas-kembali">Batas Kembali</label>
+            <input class="field-input" id="pm-batas-kembali" type="date">
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="pm-keterangan">Keterangan</label>
+          <textarea class="field-textarea" id="pm-keterangan" placeholder="Catatan tambahan (opsional)"></textarea>
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn btn-secondary" id="btn-batal-peminjaman">Batal</button>
+          <button class="btn btn-primary"   id="btn-simpan-peminjaman">💾 Simpan</button>
         </div>
       </div>
-      <div class="form-group">
-        <label>NIP / No. Identitas</label>
-        <input type="text" id="p-nip" placeholder="NIP atau NIK (opsional)">
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label>Tanggal Pinjam *</label>
-          <input type="date" id="p-tgl-pinjam">
-        </div>
-        <div class="form-group">
-          <label>Batas Pengembalian *</label>
-          <input type="date" id="p-tgl-batas">
-        </div>
-      </div>
-      <div class="form-group">
-        <label>Keperluan / Catatan</label>
-        <textarea id="p-catatan" placeholder="Contoh: Digunakan untuk kegiatan rapat koordinasi..."></textarea>
-      </div>
+    </div>
+    <!-- ── End Modal ── -->
 
-      <div class="modal-footer">
-        <button class="btn btn-outline" onclick="tutupModal('modal-pinjam')">Batal</button>
-        <button class="btn btn-primary" onclick="simpanPinjam()">💾 Simpan</button>
+    <!-- ── Header ── -->
+    <div class="page-header">
+      <h1>📋 Peminjaman Aset</h1>
+      <button class="btn btn-primary" id="btn-tambah-peminjaman">+ Catat Peminjaman</button>
+    </div>
+
+    <!-- ── Ringkasan ── -->
+    <div class="pm-summary">
+      <div class="pm-stat">
+        <div class="pm-stat-value" id="pm-total">-</div>
+        <div class="pm-stat-label">Total Transaksi</div>
+      </div>
+      <div class="pm-stat aktif">
+        <div class="pm-stat-value" id="pm-aktif">-</div>
+        <div class="pm-stat-label">Sedang Dipinjam</div>
+      </div>
+      <div class="pm-stat kembali">
+        <div class="pm-stat-value" id="pm-kembali">-</div>
+        <div class="pm-stat-label">Dikembalikan</div>
+      </div>
+      <div class="pm-stat terlambat">
+        <div class="pm-stat-value" id="pm-terlambat">-</div>
+        <div class="pm-stat-label">Terlambat Kembali</div>
       </div>
     </div>
-  </div>
 
-  <div class="modal-overlay" id="modal-kembali">
-    <div class="modal">
-      <div class="modal-title">✅ Kembalikan Barang</div>
-      <div class="modal-desc" id="kembali-desc">—</div>
-
-      <div class="info-box" id="kembali-info">—</div>
-
-      <div class="form-group">
-        <label>Tanggal Pengembalian *</label>
-        <input type="date" id="k-tgl-kembali">
-      </div>
-      <div class="form-group">
-        <label>Kondisi Barang Saat Kembali</label>
-        <select id="k-kondisi">
-          <option value="Baik">Baik</option>
-          <option value="Rusak Ringan">Rusak Ringan</option>
-          <option value="Rusak Berat">Rusak Berat</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Catatan Pengembalian</label>
-        <textarea id="k-catatan" placeholder="Catatan kondisi atau keterangan lain..."></textarea>
-      </div>
-
-      <div class="modal-footer">
-        <button class="btn btn-outline" onclick="tutupModal('modal-kembali')">Batal</button>
-        <button class="btn btn-primary" onclick="simpanKembali()">✅ Konfirmasi Kembali</button>
-      </div>
+    <!-- ── Filter ── -->
+    <div class="filter-bar">
+      <select id="filter-pm-aset">
+        <option value="">Semua Aset</option>
+      </select>
+      <select id="filter-pm-status">
+        <option value="">Semua Status</option>
+        <option value="dipinjam">Sedang Dipinjam</option>
+        <option value="dikembalikan">Dikembalikan</option>
+      </select>
     </div>
-  </div>
 
-</div>
+    <!-- ── Tabel ── -->
+    <div class="form-card" style="max-width:100%">
+      <table class="pm-table">
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Aset</th>
+            <th>Peminjam</th>
+            <th>Unit Kerja</th>
+            <th>Tgl Pinjam</th>
+            <th>Batas Kembali</th>
+            <th>Tgl Kembali</th>
+            <th>Status</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="pm-tbody">
+          <tr><td colspan="9" style="text-align:center;padding:40px;color:#94a3b8">Memuat data...</td></tr>
+        </tbody>
+      </table>
+    </div>
 
-<script src="supabase.js"></script>
-<script src="auth.js"></script>
-<script src="nav.js"></script>
-<script src="app.js"></script>
-<script>
-  let semuaPinjam = [];
-  let idKembali = null;
+  </div><!-- #page-body -->
 
-  // ── LOAD DATA ──────────────────────────────────────────
-  async function loadPeminjaman(filter = {}) {
-    showLoading(true);
-    try {
-      let query = db
-        .from('peminjaman')
-        .select(`
-          id, nama_peminjam, jabatan, nip,
-          tgl_pinjam, tgl_batas_kembali, tgl_kembali,
-          kondisi_kembali, catatan, catatan_kembali, status,
-          aset ( id, nama_barang, merk_type, kode_barang, kib )
-        `)
-        .order('tgl_pinjam', { ascending: false });
-
-      if (filter.status === 'terlambat') {
-        const today = new Date().toISOString().split('T')[0];
-        query = query.eq('status', 'dipinjam').lte('tgl_batas_kembali', today);
-      } else if (filter.status) {
-        query = query.eq('status', filter.status);
-      }
-
-      const { data, error } = await query;
-      if (error) throw error;
-
-      let hasil = data || [];
-
-      // Filter search lokal
-      if (filter.search) {
-        const q = filter.search.toLowerCase();
-        hasil = hasil.filter(r =>
-          r.nama_peminjam?.toLowerCase().includes(q) ||
-          r.aset?.nama_barang?.toLowerCase().includes(q)
-        );
-      }
-
-      semuaPinjam = hasil;
-      renderTabel(hasil);
-      updateStats(data || []);
-    } catch (err) {
-      showAlert('Gagal memuat data: ' + err.message, 'error');
-    } finally {
-      showLoading(false);
-    }
-  }
-
-  function renderTabel(data) {
-    const tbody = document.getElementById('pinjam-tbody');
-    const today = new Date().toISOString().split('T')[0];
-
-    if (!data || data.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="8" class="empty-td">📭 Belum ada data peminjaman.</td></tr>`;
-      return;
-    }
-
-    tbody.innerHTML = data.map((r, i) => {
-      const terlambat = r.status === 'dipinjam' && r.tgl_batas_kembali < today;
-      const statusLabel = terlambat ? 'terlambat' : r.status;
-      const statusMap = {
-        dipinjam: '<span class="status-badge status-dipinjam">⏳ Dipinjam</span>',
-        dikembalikan: '<span class="status-badge status-dikembalikan">✅ Kembali</span>',
-        terlambat: '<span class="status-badge status-terlambat">⚠️ Terlambat</span>',
-      };
-
-      return `
-        <tr class="${terlambat ? 'terlambat-row' : ''}">
-          <td>${i + 1}</td>
-          <td>
-            <div class="nama-barang-p">${escH(r.aset?.nama_barang || '-')}</div>
-            <div class="sub-barang">${escH(r.aset?.kib || '')} ${r.aset?.merk_type ? '· ' + escH(r.aset.merk_type) : ''}</div>
-          </td>
-          <td>
-            <div class="nama-peminjam">${escH(r.nama_peminjam)}</div>
-            <div class="sub-peminjam">${escH(r.jabatan || '')}${r.nip ? ' · ' + escH(r.nip) : ''}</div>
-          </td>
-          <td>${formatTgl(r.tgl_pinjam)}</td>
-          <td style="${terlambat ? 'color:#ff5f5f;font-weight:600' : ''}">${formatTgl(r.tgl_batas_kembali)}</td>
-          <td>${r.tgl_kembali ? formatTgl(r.tgl_kembali) : '<span style="color:#4a5068">—</span>'}</td>
-          <td>${statusMap[statusLabel] || statusLabel}</td>
-          <td style="white-space:nowrap">
-            ${r.status === 'dipinjam'
-              ? `<button class="btn-kembali" onclick="bukaKembali('${r.id}')">✅ Kembalikan</button>`
-              : ''}
-            <button class="btn-hapus-p" onclick="hapusPinjam('${r.id}')">🗑️</button>
-          </td>
-        </tr>`;
-    }).join('');
-  }
-
-  function updateStats(data) {
-    const today = new Date().toISOString().split('T')[0];
-    const dipinjam   = data.filter(r => r.status === 'dipinjam').length;
-    const terlambat  = data.filter(r => r.status === 'dipinjam' && r.tgl_batas_kembali < today).length;
-    const kembali    = data.filter(r => r.status === 'dikembalikan').length;
-    document.getElementById('stat-total').textContent     = data.length;
-    document.getElementById('stat-dipinjam').textContent  = dipinjam;
-    document.getElementById('stat-terlambat').textContent = terlambat;
-    document.getElementById('stat-kembali').textContent   = kembali;
-  }
-
-  // ── LOAD DROPDOWN ASET ─────────────────────────────────
-  async function loadDropdownAset() {
-    const { data } = await db.from('aset').select('id,nama_barang,kib,kode_barang').order('nama_barang');
-    const sel = document.getElementById('p-aset-id');
-    if (data) {
-      data.forEach(a => {
-        const opt = document.createElement('option');
-        opt.value = a.id;
-        opt.textContent = `${a.nama_barang}${a.kib ? ' [' + a.kib + ']' : ''}`;
-        sel.appendChild(opt);
-      });
-    }
-  }
-
-  // ── MODAL PINJAM ───────────────────────────────────────
-  function bukaPinjam() {
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById('p-tgl-pinjam').value = today;
-    document.getElementById('p-tgl-batas').value  = '';
-    document.getElementById('p-nama').value       = '';
-    document.getElementById('p-jabatan').value    = '';
-    document.getElementById('p-nip').value        = '';
-    document.getElementById('p-catatan').value    = '';
-    document.getElementById('p-aset-id').value    = '';
-    document.getElementById('modal-pinjam').classList.add('show');
-  }
-
-  async function simpanPinjam() {
-    const asetId   = document.getElementById('p-aset-id').value;
-    const nama     = document.getElementById('p-nama').value.trim();
-    const jabatan  = document.getElementById('p-jabatan').value.trim();
-    const nip      = document.getElementById('p-nip').value.trim();
-    const tglPinjam = document.getElementById('p-tgl-pinjam').value;
-    const tglBatas  = document.getElementById('p-tgl-batas').value;
-    const catatan   = document.getElementById('p-catatan').value.trim();
-
-    if (!asetId || !nama || !tglPinjam || !tglBatas) {
-      alert('Barang, nama peminjam, tanggal pinjam, dan batas kembali wajib diisi.');
-      return;
-    }
-
-    const { error } = await db.from('peminjaman').insert([{
-      aset_id: asetId,
-      nama_peminjam: nama,
-      jabatan, nip,
-      tgl_pinjam: tglPinjam,
-      tgl_batas_kembali: tglBatas,
-      catatan,
-      status: 'dipinjam',
-    }]);
-
-    if (error) { showAlert('Gagal simpan: ' + error.message, 'error'); return; }
-    tutupModal('modal-pinjam');
-    showAlert('✅ Peminjaman berhasil dicatat!', 'success');
-    loadPeminjaman();
-  }
-
-  // ── MODAL KEMBALI ──────────────────────────────────────
-  function bukaKembali(id) {
-    idKembali = id;
-    const r = semuaPinjam.find(x => x.id === id);
-    if (!r) return;
-    document.getElementById('kembali-desc').textContent =
-      `Konfirmasi pengembalian barang oleh ${r.nama_peminjam}`;
-    document.getElementById('kembali-info').innerHTML =
-      `<strong>${r.aset?.nama_barang || '-'}</strong><br>
-       Dipinjam: ${formatTgl(r.tgl_pinjam)} · Batas: ${formatTgl(r.tgl_batas_kembali)}`;
-    document.getElementById('k-tgl-kembali').value = new Date().toISOString().split('T')[0];
-    document.getElementById('k-kondisi').value = 'Baik';
-    document.getElementById('k-catatan').value = '';
-    document.getElementById('modal-kembali').classList.add('show');
-  }
-
-  async function simpanKembali() {
-    const tgl     = document.getElementById('k-tgl-kembali').value;
-    const kondisi = document.getElementById('k-kondisi').value;
-    const catatan = document.getElementById('k-catatan').value.trim();
-    if (!tgl) { alert('Tanggal pengembalian wajib diisi.'); return; }
-
-    const { error } = await db.from('peminjaman').update({
-      tgl_kembali: tgl,
-      kondisi_kembali: kondisi,
-      catatan_kembali: catatan,
-      status: 'dikembalikan',
-    }).eq('id', idKembali);
-
-    if (error) { showAlert('Gagal update: ' + error.message, 'error'); return; }
-    tutupModal('modal-kembali');
-    showAlert('✅ Barang berhasil dikembalikan!', 'success');
-    loadPeminjaman();
-  }
-
-  // ── HAPUS ──────────────────────────────────────────────
-  async function hapusPinjam(id) {
-    if (!confirm('Hapus catatan peminjaman ini?')) return;
-    const { error } = await db.from('peminjaman').delete().eq('id', id);
-    if (error) { showAlert('Gagal hapus: ' + error.message, 'error'); return; }
-    showAlert('🗑️ Catatan dihapus.', 'success');
-    loadPeminjaman();
-  }
-
-  // ── UTILS ──────────────────────────────────────────────
-  function tutupModal(id) { document.getElementById(id).classList.remove('show'); }
-  function escH(s) { return s ? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') : ''; }
-  function formatTgl(d) {
-    if (!d) return '-';
-    const dt = new Date(d);
-    return dt.toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' });
-  }
-
-  // Filter
-  let ft;
-  document.getElementById('search-input').addEventListener('input', function() {
-    clearTimeout(ft);
-    ft = setTimeout(() => applyFilter(), 400);
-  });
-  document.getElementById('filter-status').addEventListener('change', applyFilter);
-  function applyFilter() {
-    loadPeminjaman({
-      search: document.getElementById('search-input').value.trim(),
-      status: document.getElementById('filter-status').value,
-    });
-  }
-
-  // Tutup modal klik overlay
-  document.querySelectorAll('.modal-overlay').forEach(el => {
-    el.addEventListener('click', e => { if (e.target === el) el.classList.remove('show'); });
-  });
-
-  // Init
-  document.addEventListener('DOMContentLoaded', async () => {
-  const ready = await window._appReady;
-  if (!ready) return;
-  db = window._authClient;
-  loadDropdownAset();
-  loadPeminjaman();
-  });
-
-</script>
+  <script src="supabase.js"></script>
+  <script src="shared/auth/auth-guard.js"></script>
+  <script src="nav.js"></script>
+  <script src="shared/utils/constants.js"></script>
+  <script src="shared/utils/dom.js"></script>
+  <script src="shared/utils/formatters.js"></script>
+  <script src="shared/ui/feedback.js"></script>
+  <script src="features/peminjaman/peminjaman-service.js"></script>
+  <script src="features/peminjaman/peminjaman-page.js"></script>
+  <script src="main.js"></script>
 </body>
 </html>
