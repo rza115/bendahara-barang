@@ -26,41 +26,50 @@
   </style>
 </head>
 <body data-page="pj">
-  <div class="loading-overlay" id="loading"><div class="loading-spinner"></div></div>
-  <div class="alert" id="alert-box"></div>
-
-  <!-- Modal Tambah/Edit PJ -->
-  <div class="modal-overlay" id="modal-pj">
-    <div class="modal-box">
-      <div class="modal-title" id="modal-pj-title">Tambah Penanggung Jawab</div>
-      <div class="field-group">
-        <label class="field-label" for="pj-nama">Nama <span style="color:red">*</span></label>
-        <input class="field-input" id="pj-nama" type="text" placeholder="Nama lengkap">
-      </div>
-      <div class="field-group">
-        <label class="field-label" for="pj-nip">NIP</label>
-        <input class="field-input" id="pj-nip" type="text" placeholder="NIP (opsional)">
-      </div>
-      <div class="field-group">
-        <label class="field-label" for="pj-jabatan">Jabatan</label>
-        <input class="field-input" id="pj-jabatan" type="text" placeholder="Jabatan">
-      </div>
-      <div class="field-group">
-        <label class="field-label" for="pj-unit-kerja">Unit Kerja</label>
-        <input class="field-input" id="pj-unit-kerja" type="text" placeholder="Unit kerja" value="Kecamatan Tenjo">
-      </div>
-      <div class="field-group">
-        <label class="field-label" for="pj-no-hp">No. HP</label>
-        <input class="field-input" id="pj-no-hp" type="text" placeholder="Nomor HP">
-      </div>
-      <div class="modal-actions">
-        <button class="btn btn-secondary" id="btn-batal-pj">Batal</button>
-        <button class="btn btn-primary" id="btn-simpan-pj">💾 Simpan</button>
-      </div>
-    </div>
+  <div class="loading-overlay" id="loading">
+    <div class="loading-spinner"></div>
   </div>
 
+  <div class="alert" id="alert-box"></div>
+
   <div id="page-body">
+    <!-- Modal Tambah/Edit PJ -->
+    <div class="modal-overlay" id="modal-pj">
+      <div class="modal-box">
+        <div class="modal-title" id="modal-pj-title">Tambah Penanggung Jawab</div>
+
+        <div class="field-group">
+          <label class="field-label" for="pj-nama">Nama <span style="color:red">*</span></label>
+          <input class="field-input" id="pj-nama" type="text" placeholder="Nama lengkap">
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="pj-nip">NIP</label>
+          <input class="field-input" id="pj-nip" type="text" placeholder="NIP (opsional)">
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="pj-jabatan">Jabatan</label>
+          <input class="field-input" id="pj-jabatan" type="text" placeholder="Jabatan">
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="pj-unit-kerja">Unit Kerja</label>
+          <input class="field-input" id="pj-unit-kerja" type="text" placeholder="Unit kerja" value="Kecamatan Tenjo">
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="pj-no-hp">No. HP</label>
+          <input class="field-input" id="pj-no-hp" type="text" placeholder="Nomor HP">
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn btn-secondary" id="btn-batal-pj">Batal</button>
+          <button class="btn btn-primary" id="btn-simpan-pj">💾 Simpan</button>
+        </div>
+      </div>
+    </div>
+
     <div class="page-header">
       <h1>👤 Kelola Penanggung Jawab</h1>
       <div>
@@ -83,7 +92,9 @@
             </tr>
           </thead>
           <tbody id="pj-tbody">
-            <tr><td colspan="7" style="text-align:center;padding:40px;color:#94a3b8">Memuat data...</td></tr>
+            <tr>
+              <td colspan="7" style="text-align:center;padding:40px;color:#94a3b8">Memuat data...</td>
+            </tr>
           </tbody>
         </table>
       </div>
