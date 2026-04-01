@@ -10,11 +10,9 @@
 
   const page = document.body.dataset.page;
 
-  if (page === 'index')  { initBarangPage(); }
-  if (page === 'tambah') { initTambahPage(); }
-  if (page === 'edit')   { initEditPage();   }
-
-  // Tahap berikutnya:
-  // if (page === 'detail')           { initDetailPage(); }
-  // if (page === 'pemindahtanganan') { initPemindahtangananPage(); }
+  if (page === 'index')             { initBarangPage();           }
+  if (page === 'tambah')            { initTambahPage();           }
+  if (page === 'edit')              { initEditPage();             }
+  if (page === 'detail')            { initDetailPage();           }
+  if (page === 'pemindahtanganan')  { initPemindahtangananPage(); }
 })();
