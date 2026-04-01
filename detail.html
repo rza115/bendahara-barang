@@ -7,139 +7,39 @@
   <link rel="stylesheet" href="sidebar.css">
   <link rel="stylesheet" href="style.css">
   <style>
-    .detail-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px 28px;
-    }
-    .detail-grid.cols-1 { grid-template-columns: 1fr; }
-    .detail-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
-
-    .detail-item { display: flex; flex-direction: column; gap: 3px; }
-    .detail-item .detail-label {
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: var(--text-muted);
-    }
-    .detail-item .detail-value {
-      font-size: 13px;
-      color: var(--text-primary);
-      font-weight: 500;
-      word-break: break-word;
-    }
-    .detail-item .detail-value.mono {
-      font-family: var(--font-mono);
-    }
-    .detail-item .detail-value.empty {
-      color: var(--text-muted);
-      font-weight: 400;
-      font-style: italic;
-    }
-
-    .foto-box {
-      width: 100%;
-      max-width: 280px;
-      aspect-ratio: 4/3;
-      border-radius: var(--radius);
-      border: 1px solid var(--border);
-      object-fit: cover;
-      background: var(--bg);
-      display: block;
-    }
-    .foto-placeholder {
-      width: 100%;
-      max-width: 280px;
-      aspect-ratio: 4/3;
-      border-radius: var(--radius);
-      border: 1px dashed var(--border);
-      background: var(--bg);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      gap: 6px;
-      color: var(--text-muted);
-      font-size: 12px;
-    }
-    .foto-placeholder span { font-size: 32px; }
-
-    .dok-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 7px 14px;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      text-decoration: none;
-      color: var(--accent);
-      font-size: 13px;
-      font-weight: 500;
-      transition: all 0.15s;
-    }
-    .dok-link:hover {
-      background: #eff6ff;
-      border-color: var(--accent);
-    }
-    .dok-img {
-      max-width: 160px;
-      max-height: 120px;
-      border-radius: 6px;
-      border: 1px solid var(--border);
-      object-fit: cover;
-    }
-    .dok-row {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-    .dok-label {
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: var(--text-muted);
-      margin-bottom: 2px;
-    }
-
-    .section-kib { display: none; }
-
-    .action-bar {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
-    #detail-error {
-      text-align: center;
-      padding: 60px 20px;
-      color: var(--text-muted);
-    }
-    #detail-error div { font-size: 40px; margin-bottom: 12px; }
-
-    @media (max-width: 768px) {
-      .detail-grid,
-      .detail-grid.cols-3 { grid-template-columns: 1fr; }
-    }
+    .detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 28px}
+    .detail-grid.cols-1{grid-template-columns:1fr}
+    .detail-grid.cols-3{grid-template-columns:1fr 1fr 1fr}
+    .detail-item{display:flex;flex-direction:column;gap:3px}
+    .detail-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted)}
+    .detail-value{font-size:13px;color:var(--text-primary);font-weight:500;word-break:break-word}
+    .detail-value.mono{font-family:var(--font-mono)}
+    .detail-value.empty{color:var(--text-muted);font-weight:400;font-style:italic}
+    .foto-box{width:100%;max-width:280px;aspect-ratio:4/3;border-radius:var(--radius);border:1px solid var(--border);object-fit:cover;background:var(--bg);display:block}
+    .foto-placeholder{width:100%;max-width:280px;aspect-ratio:4/3;border-radius:var(--radius);border:1px dashed var(--border);background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;color:var(--text-muted);font-size:12px}
+    .foto-placeholder span{font-size:32px}
+    .section-kib{display:none}
+    .action-bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    #detail-error{text-align:center;padding:60px 20px;color:var(--text-muted)}
+    #detail-error div{font-size:40px;margin-bottom:12px}
+    .dok-link{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);text-decoration:none;color:var(--accent);font-size:13px;font-weight:500;transition:all .15s}
+    .dok-link:hover{background:#eff6ff;border-color:var(--accent)}
+    .dok-img{max-width:160px;max-height:120px;border-radius:6px;border:1px solid var(--border);object-fit:cover}
+    @media(max-width:768px){.detail-grid,.detail-grid.cols-3{grid-template-columns:1fr}}
   </style>
 </head>
 <body data-page="detail">
-
-  <div class="loading-overlay" id="loading">
-    <div class="loading-spinner"></div>
-  </div>
+  <div class="loading-overlay" id="loading"><div class="loading-spinner"></div></div>
   <div class="alert" id="alert-box"></div>
 
   <div id="page-body">
-    
     <div id="detail-content" style="display:none">
+
+      <!-- Header -->
       <div class="page-header">
         <div>
-          <h1 id="detail-nama">—</h1>
-          <p id="detail-kib-label">—</p>
+          <h1 id="detail-nama"></h1>
+          <p id="detail-kib-label"></p>
         </div>
         <div class="action-bar">
           <a href="index.html" class="btn btn-secondary">← Kembali</a>
@@ -147,48 +47,49 @@
         </div>
       </div>
 
+      <!-- Informasi Umum -->
       <div class="form-card" style="max-width:100%;margin-bottom:18px">
         <div class="form-section">
           <div class="form-section-title">📦 Informasi Umum</div>
           <div style="display:flex;gap:28px;flex-wrap:wrap;align-items:flex-start">
-
+            <!-- Foto -->
             <div id="foto-wrap">
               <div class="foto-placeholder"><span>📷</span>Tidak ada foto</div>
             </div>
-
+            <!-- Field grid -->
             <div style="flex:1;min-width:240px">
               <div class="detail-grid" style="margin-bottom:0">
                 <div class="detail-item">
                   <span class="detail-label">Kode Barang</span>
-                  <span class="detail-value mono" id="d-kode_barang">—</span>
+                  <span class="detail-value mono empty" id="d-kodebarang">—</span>
                 </div>
                 <div class="detail-item">
                   <span class="detail-label">No. Register</span>
-                  <span class="detail-value mono" id="d-no_register">—</span>
+                  <span class="detail-value mono empty" id="d-noregister">—</span>
                 </div>
                 <div class="detail-item">
                   <span class="detail-label">ID Barang</span>
-                  <span class="detail-value mono" id="d-id_barang">—</span>
+                  <span class="detail-value mono empty" id="d-idbarang">—</span>
                 </div>
                 <div class="detail-item">
                   <span class="detail-label">Kategori KIB</span>
-                  <span class="detail-value" id="d-kib">—</span>
+                  <span class="detail-value empty" id="d-kib">—</span>
                 </div>
                 <div class="detail-item">
                   <span class="detail-label">Merk / Type</span>
-                  <span class="detail-value" id="d-merk_type">—</span>
+                  <span class="detail-value empty" id="d-merktype">—</span>
                 </div>
                 <div class="detail-item">
                   <span class="detail-label">Ukuran / CC</span>
-                  <span class="detail-value" id="d-ukuran_cc">—</span>
+                  <span class="detail-value empty" id="d-ukurancc">—</span>
                 </div>
                 <div class="detail-item">
                   <span class="detail-label">Bahan</span>
-                  <span class="detail-value" id="d-bahan">—</span>
+                  <span class="detail-value empty" id="d-bahan">—</span>
                 </div>
                 <div class="detail-item">
                   <span class="detail-label">Jumlah</span>
-                  <span class="detail-value mono" id="d-jumlah">—</span>
+                  <span class="detail-value mono empty" id="d-jumlah">—</span>
                 </div>
                 <div class="detail-item">
                   <span class="detail-label">Kondisi</span>
@@ -196,254 +97,266 @@
                 </div>
                 <div class="detail-item">
                   <span class="detail-label">Status Barang</span>
-                  <span class="detail-value" id="d-status_barang">—</span>
+                  <span class="detail-value empty" id="d-statusbarang">—</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
+      </div>
 
+      <!-- Data Perolehan -->
+      <div class="form-card" style="max-width:100%;margin-bottom:18px">
         <div class="form-section">
           <div class="form-section-title">📋 Data Perolehan</div>
           <div class="detail-grid">
             <div class="detail-item">
               <span class="detail-label">Tahun Perolehan</span>
-              <span class="detail-value mono" id="d-tahun_perolehan">—</span>
+              <span class="detail-value mono empty" id="d-tahunperolehan">—</span>
             </div>
             <div class="detail-item">
               <span class="detail-label">Harga Perolehan</span>
-              <span class="detail-value mono" id="d-harga">—</span>
+              <span class="detail-value mono empty" id="d-harga">—</span>
             </div>
             <div class="detail-item">
               <span class="detail-label">Cara Perolehan</span>
-              <span class="detail-value" id="d-cara_perolehan">—</span>
+              <span class="detail-value empty" id="d-caraperolehan">—</span>
             </div>
             <div class="detail-item">
               <span class="detail-label">Sumber Dana</span>
-              <span class="detail-value" id="d-sumber_dana">—</span>
+              <span class="detail-value empty" id="d-sumberdana">—</span>
             </div>
             <div class="detail-item">
               <span class="detail-label">Tgl. Buku</span>
-              <span class="detail-value" id="d-tgl_buku">—</span>
+              <span class="detail-value empty" id="d-tglbuku">—</span>
             </div>
             <div class="detail-item">
               <span class="detail-label">No. BAST</span>
-              <span class="detail-value mono" id="d-no_bast">—</span>
+              <span class="detail-value mono empty" id="d-nobast">—</span>
             </div>
             <div class="detail-item">
               <span class="detail-label">Tgl. BAST</span>
-              <span class="detail-value" id="d-tgl_bast">—</span>
+              <span class="detail-value empty" id="d-tglbast">—</span>
             </div>
             <div class="detail-item">
               <span class="detail-label">ID Penerimaan</span>
-              <span class="detail-value mono" id="d-id_penerimaan">—</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="form-card" style="max-width:100%;margin-bottom:18px">     
-          <div class="form-section">       
-            <div class="form-section-title">👤 Penanggung Jawab Barang</div>       
-            <div class="detail-grid">         
-              <div class="detail-item">           
-                <span class="detail-label">Penanggung Jawab</span>           
-                <span class="detail-value" id="d-penanggung_jawab">—</span>         
-              </div>         
-              <div class="detail-item">           
-                <span class="detail-label">Jabatan</span>           
-                <span class="detail-value" id="d-pj-jabatan">—</span>         
-              </div>       
-            </div>     
-          </div>   
-        </div>    
-        
-        <div class="form-section">
-          <div class="form-section-title">📍 Lokasi & Penggunaan</div>
-          <div class="detail-grid">
-            <div class="detail-item">
-              <span class="detail-label">Lokasi</span>
-              <span class="detail-value" id="d-lokasi">—</span>
-            </div>
-            <div class="detail-item">
-              <span class="detail-label">Penggunaan</span>
-              <span class="detail-value" id="d-penggunaan">—</span>
-            </div>
-            <div class="detail-item">
-              <span class="detail-label">Status Aset</span>
-              <span class="detail-value" id="d-status_aset">—</span>
-            </div>
-            <div class="detail-item" style="grid-column:1/-1">
-              <span class="detail-label">Keterangan</span>
-              <span class="detail-value" id="d-keterangan">—</span>
+              <span class="detail-value mono empty" id="d-idpenerimaan">—</span>
             </div>
           </div>
         </div>
       </div>
 
+      <!-- Penanggung Jawab -->
+      <div class="form-card" style="max-width:100%;margin-bottom:18px">
+        <div class="form-section">
+          <div class="form-section-title">👤 Penanggung Jawab Barang</div>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <span class="detail-label">Penanggung Jawab</span>
+              <span class="detail-value empty" id="d-penanggungjawab">—</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Jabatan</span>
+              <span class="detail-value empty" id="d-pj-jabatan">—</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lokasi & Penggunaan -->
+      <div class="form-card" style="max-width:100%;margin-bottom:18px">
+        <div class="form-section">
+          <div class="form-section-title">📍 Lokasi &amp; Penggunaan</div>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <span class="detail-label">Lokasi</span>
+              <span class="detail-value empty" id="d-lokasi">—</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Penggunaan</span>
+              <span class="detail-value empty" id="d-penggunaan">—</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Status Aset</span>
+              <span class="detail-value empty" id="d-statusaset">—</span>
+            </div>
+            <div class="detail-item" style="grid-column:1/-1">
+              <span class="detail-label">Keterangan</span>
+              <span class="detail-value empty" id="d-keterangan">—</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- KIB A — Tanah -->
       <div class="form-card section-kib" id="section-kib-a" style="max-width:100%;margin-bottom:18px">
         <div class="form-section">
           <div class="form-section-title">🏞️ KIB A — Data Tanah</div>
           <div class="detail-grid cols-3">
             <div class="detail-item">
               <span class="detail-label">Luas Tanah (m²)</span>
-              <span class="detail-value mono" id="d-luas_tanah">—</span>
+              <span class="detail-value mono empty" id="d-luastanah">—</span>
             </div>
             <div class="detail-item">
               <span class="detail-label">Tahun Perolehan Tanah</span>
-              <span class="detail-value mono" id="d-tahun_perolehan_tanah">—</span>
+              <span class="detail-value mono empty" id="d-tahunperolehantanah">—</span>
             </div>
             <div class="detail-item">
               <span class="detail-label">Status Tanah</span>
-              <span class="detail-value" id="d-status_tanah">—</span>
+              <span class="detail-value empty" id="d-statustanah">—</span>
             </div>
             <div class="detail-item" style="grid-column:1/-1">
               <span class="detail-label">Letak / Alamat</span>
-              <span class="detail-value" id="d-letak_alamat">—</span>
+              <span class="detail-value empty" id="d-letakalamat">—</span>
             </div>
             <div class="detail-item">
               <span class="detail-label">No. Urut Sertifikat</span>
-              <span class="detail-value mono" id="d-no_urut_sertifikat">—</span>
+              <span class="detail-value mono empty" id="d-nourutsertifikat">—</span>
             </div>
             <div class="detail-item">
               <span class="detail-label">No. Sertifikat</span>
-              <span class="detail-value mono" id="d-no_sertifikat">—</span>
+              <span class="detail-value mono empty" id="d-nosertifikat">—</span>
             </div>
             <div class="detail-item">
               <span class="detail-label">Tgl. Sertifikat</span>
-              <span class="detail-value" id="d-tgl_sertifikat">—</span>
+              <span class="detail-value empty" id="d-tglsertifikat">—</span>
             </div>
             <div class="detail-item">
               <span class="detail-label">Penggunaan Tanah</span>
-              <span class="detail-value" id="d-penggunaan_tanah">—</span>
+              <span class="detail-value empty" id="d-penggunaantanah">—</span>
             </div>
           </div>
         </div>
       </div>
 
+      <!-- KIB B — Kendaraan/Mesin -->
       <div class="form-card section-kib" id="section-kib-b" style="max-width:100%;margin-bottom:18px">
         <div class="form-section">
           <div class="form-section-title">⚙️ KIB B — Data Kendaraan / Mesin</div>
           <div class="detail-grid cols-3">
             <div class="detail-item">
               <span class="detail-label">No. Pabrik</span>
-              <span class="detail-value mono" id="d-no_pabrik">—</span>
+              <span class="detail-value mono empty" id="d-nopabrik">—</span>
             </div>
             <div class="detail-item">
               <span class="detail-label">No. Rangka</span>
-              <span class="detail-value mono" id="d-no_rangka">—</span>
+              <span class="detail-value mono empty" id="d-norangka">—</span>
             </div>
             <div class="detail-item">
               <span class="detail-label">No. Mesin</span>
-              <span class="detail-value mono" id="d-no_mesin">—</span>
+              <span class="detail-value mono empty" id="d-nomesin">—</span>
             </div>
             <div class="detail-item">
               <span class="detail-label">No. Polisi</span>
-              <span class="detail-value mono" id="d-no_polisi">—</span>
+              <span class="detail-value mono empty" id="d-nopolisi">—</span>
             </div>
             <div class="detail-item">
               <span class="detail-label">No. BPKB</span>
-              <span class="detail-value mono" id="d-no_bpkb">—</span>
+              <span class="detail-value mono empty" id="d-nobpkb">—</span>
             </div>
           </div>
         </div>
       </div>
 
+      <!-- KIB C — Gedung -->
       <div class="form-card section-kib" id="section-kib-c" style="max-width:100%;margin-bottom:18px">
         <div class="form-section">
-          <div class="form-section-title">🏢 KIB C — Data Gedung & Bangunan</div>
+          <div class="form-section-title">🏢 KIB C — Data Gedung &amp; Bangunan</div>
           <div class="detail-grid cols-3">
             <div class="detail-item">
               <span class="detail-label">Kondisi Bangunan</span>
-              <span class="detail-value" id="d-kondisi_bangunan">—</span>
+              <span class="detail-value empty" id="d-kondisibangunan">—</span>
             </div>
             <div class="detail-item">
               <span class="detail-label">Luas Lantai (m²)</span>
-              <span class="detail-value mono" id="d-luas_lantai">—</span>
+              <span class="detail-value mono empty" id="d-luaslantai">—</span>
             </div>
             <div class="detail-item">
               <span class="detail-label">Jumlah Lantai</span>
-              <span class="detail-value mono" id="d-jumlah_lantai">—</span>
+              <span class="detail-value mono empty" id="d-jumlahlantai">—</span>
             </div>
             <div class="detail-item">
               <span class="detail-label">Konstruksi Bertingkat</span>
-              <span class="detail-value" id="d-konstruksi_bertingkat">—</span>
+              <span class="detail-value empty" id="d-konstruksibertingkat">—</span>
             </div>
             <div class="detail-item">
               <span class="detail-label">Konstruksi Beton</span>
-              <span class="detail-value" id="d-konstruksi_beton">—</span>
+              <span class="detail-value empty" id="d-konstruksibeton">—</span>
             </div>
             <div class="detail-item" style="grid-column:1/-1">
               <span class="detail-label">Letak Bangunan</span>
-              <span class="detail-value" id="d-letak_bangunan">—</span>
+              <span class="detail-value empty" id="d-letakbangunan">—</span>
             </div>
             <div class="detail-item">
               <span class="detail-label">No. IMB</span>
-              <span class="detail-value mono" id="d-no_imb">—</span>
+              <span class="detail-value mono empty" id="d-noimb">—</span>
             </div>
             <div class="detail-item">
               <span class="detail-label">Tgl. IMB</span>
-              <span class="detail-value" id="d-tgl_imb">—</span>
+              <span class="detail-value empty" id="d-tglimb">—</span>
             </div>
             <div class="detail-item">
               <span class="detail-label">Status Tanah Gedung</span>
-              <span class="detail-value" id="d-status_tanah_gedung">—</span>
+              <span class="detail-value empty" id="d-statustanahgedung">—</span>
             </div>
             <div class="detail-item">
               <span class="detail-label">No. Kode Tanah</span>
-              <span class="detail-value mono" id="d-no_kode_tanah">—</span>
+              <span class="detail-value mono empty" id="d-nokodetanah">—</span>
             </div>
             <div class="detail-item">
               <span class="detail-label">ID Awal Tanah</span>
-              <span class="detail-value mono" id="d-id_awal_tanah">—</span>
+              <span class="detail-value mono empty" id="d-idawaltanah">—</span>
             </div>
             <div class="detail-item">
               <span class="detail-label">Status Sertifikat Tanah</span>
-              <span class="detail-value" id="d-status_sertifikat_tanah">—</span>
+              <span class="detail-value empty" id="d-statussertifikattanah">—</span>
             </div>
           </div>
         </div>
       </div>
 
+      <!-- KIB E — Aset Tetap Lainnya -->
       <div class="form-card section-kib" id="section-kib-e" style="max-width:100%;margin-bottom:18px">
         <div class="form-section">
           <div class="form-section-title">📦 KIB E — Aset Tetap Lainnya</div>
           <div class="detail-grid cols-3">
             <div class="detail-item">
               <span class="detail-label">Judul Koleksi</span>
-              <span class="detail-value" id="d-judul_koleksi">—</span>
+              <span class="detail-value empty" id="d-judulkoleksi">—</span>
             </div>
             <div class="detail-item">
               <span class="detail-label">Spesifikasi</span>
-              <span class="detail-value" id="d-spesifikasi">—</span>
+              <span class="detail-value empty" id="d-spesifikasi">—</span>
             </div>
             <div class="detail-item">
               <span class="detail-label">Penerbit</span>
-              <span class="detail-value" id="d-penerbit">—</span>
+              <span class="detail-value empty" id="d-penerbit">—</span>
             </div>
             <div class="detail-item">
               <span class="detail-label">Asal Daerah</span>
-              <span class="detail-value" id="d-asal_daerah">—</span>
+              <span class="detail-value empty" id="d-asaldaerah">—</span>
             </div>
             <div class="detail-item">
               <span class="detail-label">Bahan Aset</span>
-              <span class="detail-value" id="d-bahan_aset">—</span>
+              <span class="detail-value empty" id="d-bahanaset">—</span>
             </div>
             <div class="detail-item">
               <span class="detail-label">Jenis Aset</span>
-              <span class="detail-value" id="d-jenis_aset">—</span>
+              <span class="detail-value empty" id="d-jenisaset">—</span>
             </div>
             <div class="detail-item">
               <span class="detail-label">Ukuran Aset</span>
-              <span class="detail-value" id="d-ukuran_aset">—</span>
+              <span class="detail-value empty" id="d-ukuranaset">—</span>
             </div>
             <div class="detail-item">
               <span class="detail-label">Tahun Cetak</span>
-              <span class="detail-value mono" id="d-tahun_cetak">—</span>
+              <span class="detail-value mono empty" id="d-tahuncetak">—</span>
             </div>
           </div>
         </div>
       </div>
 
+      <!-- Dokumen Pengadaan -->
       <div class="form-card" id="section-dokumen" style="max-width:100%;margin-bottom:18px;display:none">
         <div class="form-section">
           <div class="form-section-title">📎 Dokumen Pengadaan</div>
@@ -451,26 +364,25 @@
         </div>
       </div>
 
-    </div>
+    </div><!-- /detail-content -->
 
     <div id="detail-error" style="display:none">
-      <div>😕</div>
-      <p>Data aset tidak ditemukan.</p>
-      <br>
+      <div>⚠️</div>
+      <p>Data aset tidak ditemukan.</p><br>
       <a href="index.html" class="btn btn-secondary">← Kembali ke Daftar</a>
     </div>
+  </div><!-- /page-body -->
 
-  </div>
+  <script src="supabase.js"></script>
+  <script src="shared/auth/auth-guard.js"></script>
+  <script src="nav.js"></script>
+  <script src="shared/utils/constants.js"></script>
+  <script src="shared/utils/dom.js"></script>
+  <script src="shared/utils/formatters.js"></script>
+  <script src="shared/ui/feedback.js"></script>
+  <script src="features/barang/barang-service.js"></script>
+  <script src="features/aset-detail/aset-detail-view.js"></script>
+  <script src="features/aset-detail/aset-detail-page.js"></script>
+  <script src="main.js"></script>
 </body>
-<script src="supabase.js"></script>
-<script src="shared/auth/auth-guard.js"></script>
-<script src="nav.js"></script>
-<script src="shared/utils/constants.js"></script>
-<script src="shared/utils/dom.js"></script>
-<script src="shared/utils/formatters.js"></script>
-<script src="shared/ui/feedback.js"></script>
-<script src="features/barang/barang-service.js"></script>
-<script src="features/aset-detail/aset-detail-view.js"></script>
-<script src="features/aset-detail/aset-detail-page.js"></script>
-<script src="main.js"></script>
 </html>
