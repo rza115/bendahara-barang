@@ -48,17 +48,14 @@ function renderTable(data) {
            onclick="event.stopPropagation()">🔍</a>
         <a href="edit.html?id=${row.id}" class="btn-edit" title="Edit"
            onclick="event.stopPropagation()">✏️</a>
-        <button class="btn-hapus"
-          data-id="${row.id}"
-          data-nama="${escapeHtml(row.nama_barang)}"
-          title="Hapus"
-          onclick="event.stopPropagation()">🗑️</button>
+        <button class="btn-hapus" title="Hapus"
+          onclick="event.stopPropagation(); hapusAsetHandler('${row.id}', '${escapeHtml(row.nama_barang)}')">🗑️</button>
       </td>
     </tr>`).join('');
 
+  // Klik baris → buka detail (hanya jika bukan klik pada tombol aksi)
   tbody.onclick = e => {
-    const btn = e.target.closest('.btn-hapus');
-    if (btn) { hapusAsetHandler(btn.dataset.id, btn.dataset.nama); return; }
+    if (e.target.closest('.btn-hapus, .btn-edit, a')) return;
     const row = e.target.closest('.row-clickable');
     if (row) window.location.href = `detail.html?id=${row.dataset.id}`;
   };
