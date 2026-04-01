@@ -1,7 +1,6 @@
 // ============================================
 // features/barang/barang-view.js
 // Render tabel daftar barang dan statistik ringkas
-// Tidak melakukan query — hanya menerima data dan menggambar UI
 // ============================================
 
 function renderTable(data) {
@@ -12,7 +11,7 @@ function renderTable(data) {
     tbody.innerHTML = `
       <tr>
         <td colspan="8" class="empty-state">
-          <div></div>
+          <div>📭</div>
           <p>Belum ada data aset. <a href="tambah.html">Tambah aset pertama</a></p>
         </td>
       </tr>`;
@@ -24,23 +23,36 @@ function renderTable(data) {
       <td class="td-no">${i + 1}</td>
       <td>
         ${row.foto_url
-          ? `<img src="${escapeHtml(row.foto_url)}" alt="" style="width:40px;height:40px;object-fit:cover;border-radius:4px;margin-right:8px;vertical-align:middle">`
+          ? `<img src="${escapeHtml(row.foto_url)}" alt=""
+              style="width:40px;height:40px;object-fit:cover;border-radius:4px;margin-right:8px;vertical-align:middle">`
           : ''}
         <div class="nama-barang">${escapeHtml(row.nama_barang)}</div>
-        ${row.merk_type  ? `<div class="sub-info">${escapeHtml(row.merk_type)}</div>`  : ''}
+        ${row.merk_type   ? `<div class="sub-info">${escapeHtml(row.merk_type)}</div>`   : ''}
         ${row.kode_barang ? `<div class="kode-info">${escapeHtml(row.kode_barang)}</div>` : ''}
       </td>
-      <td><span class="kib-badge kib-${row.kib?.replace(/ /g,'-').toLowerCase()}">${escapeHtml(row.kib)}</span></td>
+      <td>
+        <span class="kib-badge kib-${row.kib?.replace(/ /g, '-').toLowerCase()}">
+          ${escapeHtml(row.kib)}
+        </span>
+      </td>
       <td>${row.tahun_perolehan || '-'}</td>
       <td class="td-harga">${formatRupiah(row.harga)}</td>
-      <td>${row.kondisi
-            ? `<span class="badge ${getKondisiBadge(row.kondisi)}">${escapeHtml(row.kondisi)}</span>`
-            : '-'}</td>
+      <td>
+        ${row.kondisi
+          ? `<span class="badge ${getKondisiBadge(row.kondisi)}">${escapeHtml(row.kondisi)}</span>`
+          : '-'}
+      </td>
       <td>${escapeHtml(row.lokasi || row.penggunaan) || '-'}</td>
       <td class="td-action">
-        <a href="detail.html?id=${row.id}" class="btn-edit" title="Detail" onclick="event.stopPropagation()"></a>
-        <a href="edit.html?id=${row.id}"   class="btn-edit" title="Edit"   onclick="event.stopPropagation()"></a>
-        <button class="btn-hapus" data-id="${row.id}" data-nama="${escapeHtml(row.nama_barang)}" title="Hapus" onclick="event.stopPropagation()"></button>
+        <a href="detail.html?id=${row.id}" class="btn-edit" title="Detail"
+           onclick="event.stopPropagation()">🔍</a>
+        <a href="edit.html?id=${row.id}" class="btn-edit" title="Edit"
+           onclick="event.stopPropagation()">✏️</a>
+        <button class="btn-hapus"
+          data-id="${row.id}"
+          data-nama="${escapeHtml(row.nama_barang)}"
+          title="Hapus"
+          onclick="event.stopPropagation()">🗑️</button>
       </td>
     </tr>`).join('');
 
