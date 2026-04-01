@@ -15,4 +15,6 @@
   if (page === 'edit')              { initEditPage();             }
   if (page === 'detail')            { initDetailPage();           }
   if (page === 'pemindahtanganan')  { initPemindahtangananPage(); }
+  if (page === 'pj') { initPJPage(); }
+  if (page === 'peminjaman')  { initPeminjaman(); }
 })();

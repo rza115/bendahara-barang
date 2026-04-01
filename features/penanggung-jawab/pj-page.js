@@ -130,6 +130,4 @@ async function initPJPage() {
   await loadAndRenderPJ();
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  if (document.body.dataset.page === 'pj') initPJPage();
-});
+
