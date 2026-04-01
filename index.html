@@ -4,21 +4,24 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Inventaris Barang — Kecamatan Tenjo</title>
-  <link rel="stylesheet" href="../assets/styles/sidebar.css">
-  <link rel="stylesheet" href="../assets/styles/style.css">
+  <link rel="stylesheet" href="sidebar.css">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body data-page="index">
 
+  <!-- Utility elements -->
   <div class="loading-overlay" id="loading">
     <div class="loading-spinner"></div>
   </div>
   <div class="alert" id="alert-box"></div>
 
+  <!-- page-body: di-inject nav.js ke dalam main-content -->
   <div id="page-body">
+
     <!-- Page Header -->
     <div class="page-header">
       <div>
-        <h1>Kartu Inventaris Barang</h1>
+        <h1>&#128230; Kartu Inventaris Barang</h1>
         <p>Daftar seluruh aset tetap per 31 Desember 2025</p>
       </div>
       <a href="tambah.html" class="btn btn-primary">&#10010; Tambah Aset</a>
@@ -47,12 +50,12 @@
         <div class="stat-label">KIB B &mdash; Peralatan</div>
       </div>
       <div class="stat-card">
-        <div class="stat-icon"></div>
+        <div class="stat-icon">&#127962;&#65039;</div>
         <div class="stat-value" id="total-kib-c"></div>
         <div class="stat-label">KIB C &mdash; Gedung</div>
       </div>
       <div class="stat-card">
-        <div class="stat-icon"></div>
+        <div class="stat-icon">&#128230;</div>
         <div class="stat-value" id="total-kib-e"></div>
         <div class="stat-label">KIB E &mdash; Lainnya</div>
       </div>
@@ -110,24 +113,39 @@
           </tr>
         </thead>
         <tbody id="aset-tbody">
-          <tr><td colspan="8" class="empty-state"><div></div><p>Memuat data...</p></td></tr>
+          <tr>
+            <td colspan="8" class="empty-state">
+              <div></div>
+              <p>Memuat data...</p>
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>
-  </div><!-- /page-body o -->
 
-  <!-- Scripts: urutan PENTING -->
-  <script src="../supabase.js"></script>
-  <script src="../shared/auth/auth-guard.js"></script>
-  <script src="../nav.js"></script>
-  <script src="../shared/utils/constants.js"></script>
-  <script src="../shared/utils/dom.js"></script>
-  <script src="../shared/utils/formatters.js"></script>
-  <script src="../shared/ui/feedback.js"></script>
-  <script src="../features/barang/barang-state.js"></script>
-  <script src="../features/barang/barang-service.js"></script>
-  <script src="../features/barang/barang-view.js"></script>
-  <script src="../features/barang/barang-page.js"></script>
-  <script src="../main.js"></script>
+  </div><!-- /page-body -->
+
+  <!-- ============================================================
+       URUTAN SCRIPT: JANGAN DIUBAH
+       ============================================================ -->
+  <script src="supabase.js"></script>
+  <script src="shared/auth/auth-guard.js"></script>
+  <script src="nav.js"></script>
+
+  <!-- Shared utils & UI -->
+  <script src="shared/utils/constants.js"></script>
+  <script src="shared/utils/dom.js"></script>
+  <script src="shared/utils/formatters.js"></script>
+  <script src="shared/ui/feedback.js"></script>
+
+  <!-- Modul barang -->
+  <script src="features/barang/barang-state.js"></script>
+  <script src="features/barang/barang-service.js"></script>
+  <script src="features/barang/barang-view.js"></script>
+  <script src="features/barang/barang-page.js"></script>
+
+  <!-- Entry point -->
+  <script src="main.js"></script>
+
 </body>
 </html>
