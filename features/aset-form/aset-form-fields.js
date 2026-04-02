@@ -1,16 +1,14 @@
 // ============================================
 // features/aset-form/aset-form-fields.js
-// fillForm, getFormData, toggleKIBFields, initHargaFormat
 // ============================================
 
 const FIELDS_TEXT = [
   'kib','kode_barang','id_barang','no_register','nama_barang','merk_type',
-  'ukuran_cc','bahan','cara_perolehan','sumber_dana','jumlah','kondisi',
-  'status_barang','status_aset','lokasi','penggunaan','keterangan','no_bast',
-  'id_penerimaan','nama_penanggungjawab','penanggungjawab_id',
+  'ukuran_cc','bahan','cara_perolehan','sumber_dana','kondisi',
+  'status_barang','status_aset','lokasi','penggunaan','keterangan',
+  'no_bast','id_penerimaan','penanggung_jawab_id','nama_penanggung_jawab',
   // KIB A
-  'letak_alamat','status_tanah','no_urut_sertifikat','tgl_sertifikat',
-  'no_sertifikat','penggunaan_tanah',
+  'letak_alamat','status_tanah','no_urut_sertifikat','no_sertifikat','penggunaan_tanah',
   // KIB B
   'no_pabrik','no_rangka','no_mesin','no_polisi','no_bpkb',
   // KIB C
@@ -23,14 +21,14 @@ const FIELDS_TEXT = [
 ];
 
 const FIELDS_NUMBER = [
-  { id: 'harga',               key: 'harga',               parse: v => parseInt(v.replace(/\./g, '')) || 0    },
-  { id: 'jumlah',              key: 'jumlah',              parse: v => parseInt(v)                  || 1    },
-  { id: 'tahun_perolehan',     key: 'tahun_perolehan',     parse: v => parseInt(v)                  || null },
-  { id: 'luas_tanah',          key: 'luas_tanah',          parse: v => parseFloat(v)                || null },
-  { id: 'luas_lantai',         key: 'luas_lantai',         parse: v => parseFloat(v)                || null },
-  { id: 'jumlah_lantai',       key: 'jumlah_lantai',       parse: v => parseInt(v)                  || null },
-  { id: 'tahun_perolehan_tanah',key:'tahun_perolehan_tanah',parse: v => parseInt(v)                  || null },
-  { id: 'tahun_cetak',         key: 'tahun_cetak',         parse: v => parseInt(v)                  || null },
+  { id: 'harga',                key: 'harga',                parse: v => parseInt(v.replace(/\./g, '')) || 0    },
+  { id: 'jumlah',               key: 'jumlah',               parse: v => parseInt(v)                  || 1    },
+  { id: 'tahun_perolehan',      key: 'tahun_perolehan',      parse: v => parseInt(v)                  || null },
+  { id: 'luas_tanah',           key: 'luas_tanah',           parse: v => parseFloat(v)                || null },
+  { id: 'luas_lantai',          key: 'luas_lantai',          parse: v => parseFloat(v)                || null },
+  { id: 'jumlah_lantai',        key: 'jumlah_lantai',        parse: v => parseInt(v)                  || null },
+  { id: 'tahun_perolehan_tanah',key: 'tahun_perolehan_tanah',parse: v => parseInt(v)                  || null },
+  { id: 'tahun_cetak',          key: 'tahun_cetak',          parse: v => parseInt(v)                  || null },
 ];
 
 const FIELDS_DATE = ['tgl_buku','tgl_bast','tgl_imb','tgl_sertifikat'];
