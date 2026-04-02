@@ -6,12 +6,9 @@
 
 document.documentElement.style.visibility = 'hidden';
 
-const SUPABASE_URL = 'https://ibektroxjjibniwidmpk.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_b-oL0WNdkqDjUFhepAkADw_uy9coRD6';
-
 window._appReady = (async function () {
   try {
-    window._authClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    window._authClient = window.createSupabaseClient();
 
     const { data: { session } } = await Promise.race([
       window._authClient.auth.getSession(),

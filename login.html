@@ -321,11 +321,7 @@
 <!-- Supabase -->
 <script src="supabase.js"></script>
 <script>
-  const SUPABASE_URL = 'https://ibektroxjjibniwidmpk.supabase.co';
-  const SUPABASE_KEY = 'sb_publishable_b-oL0WNdkqDjUFhepAkADw_uy9coRD6';
-
-  const { createClient } = supabase;
-  const authClient = createClient(SUPABASE_URL, SUPABASE_KEY);
+  const authClient = window.createSupabaseClient();
 
   // Jika sudah login, langsung ke index
   // FIX: disable tombol dulu selama cek session, cegah klik sebelum redirect
@@ -348,7 +344,6 @@
   toggleBtn.addEventListener('click', () => {
     const isHidden = pwInput.type === 'password';
     pwInput.type = isHidden ? 'text' : 'password';
-    // FIX: update icon sesuai state
     toggleBtn.textContent = isHidden ? '🙈' : '👁️';
     toggleBtn.title = isHidden ? 'Sembunyikan password' : 'Tampilkan password';
   });
@@ -364,7 +359,6 @@
 
   async function doLogin() {
     const email    = document.getElementById('email').value.trim();
-    // FIX: trim password untuk cegah validasi lolos dengan spasi saja
     const password = document.getElementById('password').value.trim();
     const btn      = document.getElementById('btn-login');
     const errorEl  = document.getElementById('error-msg');
@@ -378,25 +372,23 @@
     btn.classList.add('loading');
     errorEl.classList.remove('show');
 
-    // Kirim password asli (tanpa trim) ke Supabase — trim hanya untuk validasi kosong
     const passwordAsli = document.getElementById('password').value;
     const { data, error } = await authClient.auth.signInWithPassword({ email, password: passwordAsli });
 
     if (error) {
       btn.disabled = false;
       btn.classList.remove('loading');
-      // FIX: cek error.code (Supabase v2 baru) DAN error.message (lama)
+
       const pesanError = {
-        // error.code (Supabase versi baru)
-        'invalid_credentials':    'Email atau password salah.',
-        'email_not_confirmed':    'Email belum dikonfirmasi. Cek inbox email Anda.',
-        'over_request_rate_limit':'Terlalu banyak percobaan. Tunggu beberapa menit.',
-        'user_not_found':         'Akun tidak ditemukan.',
-        // error.message (Supabase versi lama — fallback)
+        'invalid_credentials': 'Email atau password salah.',
+        'email_not_confirmed': 'Email belum dikonfirmasi. Cek inbox email Anda.',
+        'over_request_rate_limit': 'Terlalu banyak percobaan. Tunggu beberapa menit.',
+        'user_not_found': 'Akun tidak ditemukan.',
         'Invalid login credentials': 'Email atau password salah.',
-        'Email not confirmed':        'Email belum dikonfirmasi. Cek inbox email Anda.',
-        'Too many requests':          'Terlalu banyak percobaan. Tunggu beberapa menit.',
+        'Email not confirmed': 'Email belum dikonfirmasi. Cek inbox email Anda.',
+        'Too many requests': 'Terlalu banyak percobaan. Tunggu beberapa menit.',
       };
+
       const kunci = error.code || error.message;
       showError(pesanError[kunci] || `Error: ${error.message}`);
       document.querySelector('.card').classList.add('shake');
