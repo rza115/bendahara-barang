@@ -130,40 +130,6 @@ function renderDetail(data) {
   set('d-ukuranaset',   data.ukuran_aset);
   set('d-tahuncetak',   data.tahun_cetak);
 
-  // Dokumen pengadaan
-  const DOK_LABELS_LOCAL = {
-    dok_spk_url:       'SPK / Surat Pesanan',
-    dok_penawaran_url: 'Surat Penawaran',
-    dok_baphp_url:     'BAPHP',
-    dok_bast_url:      'BAST',
-    dok_kuitansi_url:  'Kuitansi',
-  };
-  const dokGrid    = document.getElementById('dokumen-grid');
-  const dokSection = document.getElementById('section-dokumen');
-  if (dokGrid && dokSection) {
-    const items = Object.entries(DOK_LABELS_LOCAL)
-      .filter(([key]) => data[key])
-      .map(([key, label]) => {
-        const url = data[key];
-        const ext = url.split('?')[0].split('.').pop().toLowerCase();
-        const isImage = ['jpg','jpeg','png','webp','gif'].includes(ext);
-        const fileName = decodeURIComponent(url.split('/').pop().split('?')[0]);
-        const preview = isImage
-          ? `<img src="${escapeHtml(url)}" alt="${escapeHtml(label)}" class="dok-img">`
-          : `<a href="${escapeHtml(url)}" target="_blank" rel="noopener" class="dok-link">
-               <span>📎</span><span>${escapeHtml(fileName)}</span>
-             </a>`;
-        return `<div class="detail-item">
-                  <span class="detail-label">${escapeHtml(label)}</span>
-                  ${preview}
-                </div>`;
-      });
-    if (items.length) {
-      dokGrid.innerHTML = items.join('');
-      dokSection.style.display = 'block';
-    }
-  }
-
   // Penanggung jawab — tabel: penanggung_jawab, FK: penanggung_jawab_id
   if (data.penanggung_jawab_id) {
     db.from('penanggung_jawab')
@@ -184,4 +150,53 @@ function renderDetail(data) {
   // Tampilkan konten
   const content = document.getElementById('detail-content');
   if (content) content.style.display = 'block';
+}
+
+const DOK_PJ_JENIS = new Set([
+  'Pakta Integritas',
+  'SPTJM (Surat Pertanggungjawaban Mutlak)',
+  'Berita Acara Serah Terima',
+  'Lainnya'
+]);
+
+async function renderDokumenDetail(asetId) {
+  const { data, error } = await db.from('dokumen_aset')
+    .select('*')
+    .eq('aset_id', asetId)
+    .order('created_at');
+  if (error || !data?.length) return;
+
+  const pengadaan = data.filter(d => !DOK_PJ_JENIS.has(d.jenis_dokumen));
+  const pj        = data.filter(d =>  DOK_PJ_JENIS.has(d.jenis_dokumen));
+
+  function buildItems(list) {
+    return list.map(d => {
+      const ext = d.file_path.split('.').pop().toLowerCase();
+      const url = db.storage.from('dokumen-pengadaan').getPublicUrl(d.file_path).data.publicUrl;
+      const isImage = ['jpg','jpeg','png','webp','gif'].includes(ext);
+      const preview = isImage
+        ? `<img src="${escapeHtml(url)}" alt="${escapeHtml(d.jenis_dokumen)}" class="dok-img">`
+        : `<a href="${escapeHtml(url)}" target="_blank" rel="noopener" class="dok-link">
+             <span>📎</span><span>${escapeHtml(d.nama_file)}</span>
+           </a>`;
+      return `<div class="detail-item">
+                <span class="detail-label">${escapeHtml(d.jenis_dokumen)}</span>
+                ${preview}
+              </div>`;
+    }).join('');
+  }
+
+  const dokGrid    = document.getElementById('dokumen-grid');
+  const dokSection = document.getElementById('section-dokumen');
+  if (dokGrid && dokSection && pengadaan.length) {
+    dokGrid.innerHTML = buildItems(pengadaan);
+    dokSection.style.display = 'block';
+  }
+
+  const pjGrid    = document.getElementById('dokumen-pj-grid');
+  const pjSection = document.getElementById('section-dokumen-pj');
+  if (pjGrid && pjSection && pj.length) {
+    pjGrid.innerHTML = buildItems(pj);
+    pjSection.style.display = 'block';
+  }
 }

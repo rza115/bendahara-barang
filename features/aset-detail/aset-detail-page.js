@@ -16,6 +16,7 @@ async function initDetailPage() {
     if (error) throw error;
     if (!data) throw new Error('Data tidak ditemukan');
     renderDetail(data);
+    renderDokumenDetail(data.id);
   } catch (err) {
     const errEl = document.getElementById('detail-error');
     if (errEl) errEl.style.display = 'block';
