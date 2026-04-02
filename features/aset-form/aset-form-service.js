@@ -16,7 +16,7 @@ async function saveAset(isEdit, id, data) {
 }
 
 async function loadPenanggungJawabDropdown(selectedId = null) {
-  const sel = document.getElementById('penanggungjawab_id');
+  const sel = document.getElementById('penanggung_jawab_id');
   if (!sel) return;
   try {
     const { data, error } = await db.from('penanggungjawab')
