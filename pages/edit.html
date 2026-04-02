@@ -304,9 +304,27 @@
   <div class="form-section-title">📷 Foto Aset</div>
   <div class="form-grid">
     <div class="form-group form-col-full">
-      <label>Pilih Foto Baru (Bisa lebih dari 1, maks 2MB/file)</label>
-      <input type="file" id="foto_aset" accept=".jpg,.jpeg,.png,.webp" multiple>
-      <div id="foto-preview-container" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;"></div>
+
+      <!-- Foto existing (saat edit) -->
+      <div id="foto-existing-wrap" style="display:none;margin-bottom:10px">
+        <img id="foto-existing" src="" alt="Foto saat ini"
+          style="max-width:200px;max-height:200px;border-radius:8px;border:1px solid #e2e8f0;display:block;margin-bottom:6px">
+        <span style="font-size:12px;color:#64748b">Foto saat ini</span>
+      </div>
+
+      <label>Upload Foto Baru</label>
+      <input type="file" id="foto_file" accept="image/*">
+
+      <div id="foto-preview-wrap" style="margin-top:10px;display:none">
+        <img id="foto-preview" src="" alt="Preview"
+          style="max-width:200px;max-height:200px;border-radius:8px;border:1px solid #e2e8f0;">
+        <button type="button" id="btn-hapus-foto"
+          style="display:block;margin-top:6px;color:#ef4444;background:none;border:none;cursor:pointer;font-size:13px;">
+          ✕ Hapus foto
+        </button>
+      </div>
+
+      <p style="font-size:12px;color:#94a3b8;margin-top:6px;">Format: JPG/PNG/WEBP · Maks. 2 MB</p>
     </div>
   </div>
 </div>

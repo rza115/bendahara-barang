@@ -65,7 +65,7 @@ async function initEditPage() {
   showLoading(true);
   try {
     const data = await fetchAsetById(id);
-    await loadPenanggungJawabDropdown(data.penanggungjawab_id);
+    await loadPenanggungJawabDropdown(data.penanggung_jawab_id);
     fillForm(data);
     initFotoUpload(data.foto_url);
     initDokumenPreview(data);
