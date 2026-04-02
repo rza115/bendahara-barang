@@ -154,7 +154,7 @@ function renderDetail(data) {
 
 const DOK_PJ_JENIS = new Set([
   'Pakta Integritas',
-  'SPTJM (Surat Pertanggungjawaban Mutlak)',
+  'SPTJM',
   'Berita Acara Serah Terima',
   'Lainnya'
 ]);
