@@ -95,11 +95,11 @@ window.initBarcodePage = async function () {
   // ── GENERATE KODE ──────────────────────────────────
   function getKodeValue(aset) {
     const opt = document.getElementById('opt-data-kode').value;
-    const base = window.location.origin + window.location.pathname.replace('barcode.html', '');
+    const base = window.location.origin + '/general/view.html';
     if (opt === 'kode' || opt === 'lengkap') {
-      return `${base}../general/view.html?kode=${encodeURIComponent(aset.kode_barang || aset.id)}`;
+      return `${base}?kode=${encodeURIComponent(aset.kode_barang || aset.id)}`;
     }
-    return `${base}../general/view.html?id=${aset.id}`;
+    return `${base}?id=${aset.id}`;
   }
 
   function buatQR(container, value) {
