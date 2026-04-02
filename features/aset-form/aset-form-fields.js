@@ -56,6 +56,12 @@ function fillForm(data) {
     hargaEl.value = parseInt(data.harga).toLocaleString('id-ID');
   }
 
+  FIELDS_NUMBER.forEach(({ id, key }) => {
+    if (id === 'harga') return;
+    const el = document.getElementById(id);
+    if (el && data[key] != null) el.value = data[key];
+  });
+
   FIELDS_DATE.forEach(f => {
     const el = document.getElementById(f);
     if (el) el.value = data[f] ?? '';
