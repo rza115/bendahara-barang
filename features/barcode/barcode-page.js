@@ -97,9 +97,9 @@ window.initBarcodePage = async function () {
     const opt = document.getElementById('opt-data-kode').value;
     const base = window.location.origin + window.location.pathname.replace('barcode.html', '');
     if (opt === 'kode' || opt === 'lengkap') {
-      return `${base}public/detail.html?kode=${encodeURIComponent(aset.kode_barang || aset.id)}`;
+      return `${base}../general/view.html?kode=${encodeURIComponent(aset.kode_barang || aset.id)}`;
     }
-    return `${base}public/detail.html?id=${aset.id}`;
+    return `${base}../general/view.html?id=${aset.id}`;
   }
 
   function buatQR(container, value) {
