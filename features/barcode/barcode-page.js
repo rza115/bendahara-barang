@@ -140,7 +140,7 @@ window.initBarcodePage = async function () {
     wrap.innerHTML = `
       <div class="label-inner">
         <div class="label-col1">
-          <img class="label-logo" src="logo-bogor.png">
+          <img class="label-logo" src="../assets/images/logo-bogor.png" crossorigin="anonymous">
           <div class="label-tahun-inv">INVENTARISASI<br>BMD TAHUN<br>${tahun}</div>
         </div>
         <div class="label-col2">
