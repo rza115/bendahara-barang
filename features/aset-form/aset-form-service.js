@@ -19,7 +19,7 @@ async function loadPenanggungJawabDropdown(selectedId = null) {
   const sel = document.getElementById('penanggung_jawab_id');
   if (!sel) return;
   try {
-    const { data, error } = await db.from('penanggungjawab')
+    const { data, error } = await db.from('penanggung_jawab')
       .select('id, nama, jabatan, unit_kerja')
       .neq('aktif', false)
       .order('nama', { ascending: true });
