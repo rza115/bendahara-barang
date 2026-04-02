@@ -21,7 +21,7 @@ window._appReady = (async function () {
     ]);
 
     if (!session) {
-      window.location.replace('login.html');
+      window.location.replace('../login.html');
       return false;
     }
 
@@ -32,19 +32,19 @@ window._appReady = (async function () {
 
     window.logoutAdmin = async function () {
       await window._authClient.auth.signOut();
-      window.location.replace('login.html');
+      window.location.replace('../login.html');
     };
 
     window._authClient.auth.onAuthStateChange((event, currentSession) => {
       if (event === 'SIGNED_OUT' || (event === 'TOKEN_REFRESHED' && !currentSession)) {
-        window.location.replace('login.html');
+        window.location.replace('../login.html');
       }
     });
 
     return true;
   } catch (err) {
     console.error('[auth-guard.js] Error:', err.message);
-    window.location.replace('login.html');
+    window.location.replace('../login.html');
     return false;
   }
 })();
