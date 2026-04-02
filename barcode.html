@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cetak Label Barcode — Inventaris Kecamatan Tenjo</title>
-  >
-  >
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="sidebar.css">
   <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -235,7 +235,7 @@
 
     <div class="barcode-toolbar">
       <div class="toolbar-group">
-        abel>Jenis Kode:</label>
+        <label>Jenis Kode:</label>
         <select id="opt-jenis-kode">
           <option value="qrcode">QR Code</option>
           <option value="barcode">Barcode (Code128)</option>
@@ -243,12 +243,12 @@
       </div>
       <div class="toolbar-sep"></div>
       <div class="toolbar-group">
-        abel>Tahun Inventarisasi:</label>
+        <label>Tahun Inventarisasi:</label>
         <input type="number" id="opt-tahun" value="" min="2000" max="2099" style="width:80px">
       </div>
       <div class="toolbar-sep"></div>
       <div class="toolbar-group">
-        abel>Data pada kode:</label>
+        <label>Data pada kode:</label>
         <select id="opt-data-kode">
           <option value="id">ID Barang</option>
           <option value="kode">Kode Barang</option>
