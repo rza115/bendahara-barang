@@ -94,10 +94,10 @@ function getFormData() {
 function toggleKIBFields() {
   const kib = document.getElementById('kib')?.value;
   const sections = {
-    'section-tanah':    kib === 'KIB A',
-    'section-kendaraan':kib === 'KIB B',
-    'section-gedung':   kib === 'KIB C',
-    'section-lainnya':  kib === 'KIB E',
+    'section-kib-a': kib === 'KIB A',
+    'section-kib-b': kib === 'KIB B',
+    'section-kib-c': kib === 'KIB C',
+    'section-kib-e': kib === 'KIB E',
   };
   Object.entries(sections).forEach(([id, show]) => {
     const el = document.getElementById(id);
