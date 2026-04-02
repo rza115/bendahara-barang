@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Peminjaman — Inventaris Kecamatan Tenjo</title>
+  <link rel="stylesheet" href="../assets/styles/sidebar.css">
+  <style>
+    /* ── Ringkasan cards ── */
+    .pm-summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .pm-stat {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 14px 16px;
+      text-align: center;
+    }
+    .pm-stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: #1e293b;
+      line-height: 1.1;
+    }
+    .pm-stat-label {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-top: 4px;
+    }
+    .pm-stat.terlambat .pm-stat-value { color: #dc2626; }
+    .pm-stat.aktif     .pm-stat-value { color: #a16207; }
+    .pm-stat.kembali   .pm-stat-value { color: #16a34a; }
+
+    /* ── Filter bar ── */
+    .filter-bar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .filter-bar select {
+      padding: 7px 12px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 13px;
+      background: #fff;
+      color: #374151;
+      cursor: pointer;
+    }
+
+    /* ── Tabel ── */
+    .pm-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .pm-table thead th {
+      padding: 10px 12px;
+      text-align: left;
+      font-size: 12px;
+      font-weight: 600;
+      color: #64748b;
+      background: #f8fafc;
+      border-bottom: 1px solid #e2e8f0;
+      white-space: nowrap;
+    }
+    .pm-table tbody tr:hover { background: #f8fafc; }
+
+    /* ── Modal ── */
+    .modal-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.45);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal-box {
+      background: #fff;
+      border-radius: 14px;
+      padding: 28px;
+      width: 100%;
+      max-width: 520px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .modal-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 20px;
+    }
+    .field-group { margin-bottom: 14px; }
+    .field-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: #374151;
+      margin-bottom: 5px;
+    }
+    .field-input, .field-select, .field-textarea {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 14px;
+      color: #111827;
+      background: #fff;
+      transition: border-color .15s;
+    }
+    .field-input:focus, .field-select:focus, .field-textarea:focus {
+      outline: none;
+      border-color: #01696f;
+      box-shadow: 0 0 0 3px rgba(1,105,111,.12);
+    }
+    .field-textarea { resize: vertical; min-height: 72px; }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    /* ── Buttons ── */
+    .btn { padding: 9px 18px; border: none; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; transition: background .15s; }
+    .btn-primary  { background: #01696f; color: #fff; }
+    .btn-primary:hover  { background: #0c4e54; }
+    .btn-secondary { background: #f1f5f9; color: #374151; border: 1px solid #e2e8f0; }
+    .btn-secondary:hover { background: #e2e8f0; }
+
+    /* ── Page header ── */
+    .page-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 20px; flex-wrap: wrap; gap: 10px;
+    }
+    .page-header h1 { font-size: 20px; font-weight: 700; color: #1e293b; }
+
+    /* ── Form card ── */
+    .form-card {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 20px;
+      overflow-x: auto;
+    }
+
+    /* ── Loading & alert ── */
+    .loading-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(255,255,255,.7);
+      z-index: 9999; align-items: center; justify-content: center;
+    }
+    .loading-spinner {
+      width: 36px; height: 36px;
+      border: 3px solid #e2e8f0;
+      border-top-color: #01696f;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .alert {
+      display: none; position: fixed; top: 20px; right: 20px;
+      padding: 12px 20px; border-radius: 10px; font-size: 14px;
+      font-weight: 500; z-index: 9998; max-width: 360px;
+      box-shadow: 0 4px 16px rgba(0,0,0,.12);
+    }
+    .alert-success { background: #dcfce7; color: #166534; }
+    .alert-error   { background: #fee2e2; color: #991b1b; }
+  </style>
+</head>
+<body data-page="peminjaman">
+  <div class="loading-overlay" id="loading"><div class="loading-spinner"></div></div>
+  <div class="alert" id="alert-box"></div>
+
+  <div id="page-body">
+
+    <!-- ── Modal Tambah Peminjaman ── -->
+    <div class="modal-overlay" id="modal-peminjaman">
+      <div class="modal-box">
+        <div class="modal-title">📋 Catat Peminjaman Baru</div>
+
+        <div class="field-group">
+          <label class="field-label" for="pm-aset-id">Aset yang Dipinjam <span style="color:red">*</span></label>
+          <select class="field-select" id="pm-aset-id">
+            <option value="">Pilih Aset</option>
+          </select>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="pm-namapeminjam">Nama Peminjam <span style="color:red">*</span></label>
+          <input class="field-input" id="pm-namapeminjam" type="text" placeholder="Nama lengkap peminjam">
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="pm-unitkerja">Unit Kerja</label>
+          <input class="field-input" id="pm-unitkerja" type="text" placeholder="Instansi / unit kerja">
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="pm-keperluan">Keperluan</label>
+          <input class="field-input" id="pm-keperluan" type="text" placeholder="Tujuan peminjaman">
+        </div>
+
+        <div class="field-row">
+          <div class="field-group">
+            <label class="field-label" for="pm-tanggal-pinjam">Tanggal Pinjam <span style="color:red">*</span></label>
+            <input class="field-input" id="pm-tanggal-pinjam" type="date">
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="pm-batas-kembali">Batas Kembali</label>
+            <input class="field-input" id="pm-batas-kembali" type="date">
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="pm-keterangan">Keterangan</label>
+          <textarea class="field-textarea" id="pm-keterangan" placeholder="Catatan tambahan (opsional)"></textarea>
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn btn-secondary" id="btn-batal-peminjaman">Batal</button>
+          <button class="btn btn-primary"   id="btn-simpan-peminjaman">💾 Simpan</button>
+        </div>
+      </div>
+    </div>
+    <!-- ── End Modal ── -->
+
+    <!-- ── Header ── -->
+    <div class="page-header">
+      <h1>📋 Peminjaman Aset</h1>
+      <button class="btn btn-primary" id="btn-tambah-peminjaman">+ Catat Peminjaman</button>
+    </div>
+
+    <!-- ── Ringkasan ── -->
+    <div class="pm-summary">
+      <div class="pm-stat">
+        <div class="pm-stat-value" id="pm-total">-</div>
+        <div class="pm-stat-label">Total Transaksi</div>
+      </div>
+      <div class="pm-stat aktif">
+        <div class="pm-stat-value" id="pm-aktif">-</div>
+        <div class="pm-stat-label">Sedang Dipinjam</div>
+      </div>
+      <div class="pm-stat kembali">
+        <div class="pm-stat-value" id="pm-kembali">-</div>
+        <div class="pm-stat-label">Dikembalikan</div>
+      </div>
+      <div class="pm-stat terlambat">
+        <div class="pm-stat-value" id="pm-terlambat">-</div>
+        <div class="pm-stat-label">Terlambat Kembali</div>
+      </div>
+    </div>
+
+    <!-- ── Filter ── -->
+    <div class="filter-bar">
+      <select id="filter-pm-aset">
+        <option value="">Semua Aset</option>
+      </select>
+      <select id="filter-pm-status">
+        <option value="">Semua Status</option>
+        <option value="dipinjam">Sedang Dipinjam</option>
+        <option value="dikembalikan">Dikembalikan</option>
+      </select>
+    </div>
+
+    <!-- ── Tabel ── -->
+    <div class="form-card" style="max-width:100%">
+      <table class="pm-table">
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Aset</th>
+            <th>Peminjam</th>
+            <th>Unit Kerja</th>
+            <th>Tgl Pinjam</th>
+            <th>Batas Kembali</th>
+            <th>Tgl Kembali</th>
+            <th>Status</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="pm-tbody">
+          <tr><td colspan="9" style="text-align:center;padding:40px;color:#94a3b8">Memuat data...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div><!-- #page-body -->
+
+  <script src="../supabase.js"></script>
+  <script src="../shared/auth/auth-guard.js"></script>
+  <script src="../nav.js"></script>
+  <script src="../shared/utils/constants.js"></script>
+  <script src="../shared/utils/dom.js"></script>
+  <script src="../shared/utils/formatters.js"></script>
+  <script src="../shared/ui/feedback.js"></script>
+  <script src="../features/peminjaman/peminjaman-service.js"></script>
+  <script src="../features/peminjaman/peminjaman-page.js"></script>
+  <script src="../main.js"></script>
+</body>
+</html>
