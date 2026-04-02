@@ -5,12 +5,19 @@
 
 async function saveAset(isEdit, id, data) {
   if (isEdit) {
+    console.error('Payload dikirim:', JSON.stringify(data, null, 2)); // ganti jadi error
     const { error } = await db.from('aset').update(data).eq('id', id);
-    if (error) throw error;
+    if (error) {
+      console.error('Supabase error:', error.message, error.details, error.hint);
+      throw error;
+    }
     return id;
   } else {
     const { data: inserted, error } = await db.from('aset').insert(data).select('id').single();
-    if (error) throw error;
+    if (error) {
+      console.error('Supabase error:', error.message, error.details, error.hint);
+      throw error;
+    }
     return inserted.id;
   }
 }
