@@ -3,6 +3,7 @@
 // Tabel PJ: penanggung_jawab  |  FK: penanggung_jawab_id
 
 function renderDetail(data) {
+
   // Header
   const elNama = document.getElementById('detail-nama');
   if (elNama) elNama.textContent = data.nama_barang;
@@ -129,6 +130,40 @@ function renderDetail(data) {
   set('d-jenisaset',    data.jenis_aset);
   set('d-ukuranaset',   data.ukuran_aset);
   set('d-tahuncetak',   data.tahun_cetak);
+
+// Dokumen pengadaan — dari kolom tabel aset
+  const DOK_LABELS_LOCAL = {
+    dok_spk_url:       'SPK / Surat Pesanan',
+    dok_penawaran_url: 'Surat Penawaran',
+    dok_baphp_url:     'BAPHP',
+    dok_bast_url:      'BAST',
+    dok_kuitansi_url:  'Kuitansi',
+  };
+  const dokGrid    = document.getElementById('dokumen-grid');
+  const dokSection = document.getElementById('section-dokumen');
+  if (dokGrid && dokSection) {
+    const items = Object.entries(DOK_LABELS_LOCAL)
+      .filter(([key]) => data[key])
+      .map(([key, label]) => {
+        const url = data[key];
+        const ext = url.split('?')[0].split('.').pop().toLowerCase();
+        const isImage = ['jpg','jpeg','png','webp','gif'].includes(ext);
+        const fileName = decodeURIComponent(url.split('/').pop().split('?')[0]);
+        const preview = isImage
+          ? `<img src="${escapeHtml(url)}" alt="${escapeHtml(label)}" class="dok-img">`
+          : `<a href="${escapeHtml(url)}" target="_blank" rel="noopener" class="dok-link">
+               <span>📎</span><span>${escapeHtml(fileName)}</span>
+             </a>`;
+        return `<div class="detail-item">
+                  <span class="detail-label">${escapeHtml(label)}</span>
+                  ${preview}
+                </div>`;
+      });
+    if (items.length) {
+      dokGrid.innerHTML = items.join('');
+      dokSection.style.display = 'block';
+    }
+  }
 
   // Penanggung jawab — tabel: penanggung_jawab, FK: penanggung_jawab_id
   if (data.penanggung_jawab_id) {
