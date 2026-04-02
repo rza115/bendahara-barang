@@ -335,7 +335,7 @@
   (async () => {
     const { data: { session } } = await authClient.auth.getSession();
     if (session) {
-      window.location.replace('index.html');
+      window.location.replace('pages/index.html');
     } else {
       _btn.disabled = false;
       _btn.classList.remove('loading');
@@ -402,7 +402,7 @@
       document.querySelector('.card').classList.add('shake');
       setTimeout(() => document.querySelector('.card').classList.remove('shake'), 400);
     } else {
-      window.location.replace('index.html');
+      window.location.replace('pages/index.html');
     }
   }
 
