@@ -510,6 +510,7 @@ body.page-transitioning .topbar-page {
   background: rgba(0,0,0,0.45);
   z-index: 190;
   opacity: 0;
+  pointer-events: none;   /* FIX: tidak intersep klik saat tidak aktif */
   transition: opacity var(--t);
 }
 
@@ -535,7 +536,7 @@ body.page-transitioning .topbar-page {
   }
 
   .sidebar-backdrop { display: block; }
-  .sidebar-backdrop.active { opacity: 1; }
+  .sidebar-backdrop.active { opacity: 1; pointer-events: auto; }
 
   .topbar-username { display: none; }
   .main-content { padding: 16px; }
