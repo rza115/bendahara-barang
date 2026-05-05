@@ -1,10 +1,130 @@
 // nav.js — Dark Sidebar + Page Transition untuk SiAset
-// FIX: Class HTML disesuaikan dengan sidebar.css
+// FIX: Mobile layout, overflow reset, click-through overlay
 (function () {
   'use strict';
 
   const PT_DURATION = 280;
   const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+
+  /* ================================================================
+     FIX #1 — INJECT CRITICAL MOBILE CSS
+     Memastikan layout mobile benar tanpa bergantung penuh pada sidebar.css
+  ================================================================ */
+  (function injectMobileStyles() {
+    const style = document.createElement('style');
+    style.id = 'nav-mobile-critical';
+    style.textContent = `
+      /* ── Layout dasar ── */
+      .app-layout {
+        display: flex;
+        width: 100%;
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+      .sidebar-main {
+        flex: 1;
+        min-width: 0;          /* penting: cegah flexbox overflow */
+        display: flex;
+        flex-direction: column;
+      }
+      .main-content {
+        flex: 1;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      /* ── Sidebar default (desktop) ── */
+      .sidebar {
+        flex-shrink: 0;
+        width: var(--sidebar-width, 220px);
+        transition: width 0.25s ease, transform 0.25s ease;
+        overflow: hidden;
+      }
+      .app-layout.sidebar-collapsed .sidebar {
+        width: var(--sidebar-collapsed-width, 60px);
+      }
+
+      /* ── Mobile: sidebar menjadi overlay ── */
+      @media (max-width: 768px) {
+        html, body {
+          overflow-x: hidden;
+          max-width: 100vw;
+        }
+        .sidebar {
+          position: fixed !important;
+          top: 0;
+          left: 0;
+          height: 100%;
+          width: 240px !important;
+          z-index: 300;
+          transform: translateX(-100%);
+          transition: transform 0.25s ease;
+          box-shadow: none;
+        }
+        .app-layout.sidebar-open .sidebar {
+          transform: translateX(0);
+          box-shadow: 4px 0 24px rgba(0,0,0,0.35);
+        }
+        /* sidebar-main harus penuh saat sidebar tertutup */
+        .sidebar-main {
+          width: 100% !important;
+          margin-left: 0 !important;
+        }
+        /* collapsed tidak berlaku di mobile */
+        .app-layout.sidebar-collapsed .sidebar {
+          width: 240px !important;
+          transform: translateX(-100%);
+        }
+        .app-layout.sidebar-collapsed.sidebar-open .sidebar {
+          transform: translateX(0);
+        }
+        /* Topbar full width */
+        .topbar {
+          width: 100% !important;
+        }
+      }
+
+      /* ── Backdrop ── */
+      .sidebar-backdrop {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.45);
+        z-index: 299;
+        backdrop-filter: blur(2px);
+        -webkit-backdrop-filter: blur(2px);
+      }
+      .sidebar-backdrop.active {
+        display: block;
+      }
+
+      /* ── Page transition overlay ── */
+      #page-transition-overlay {
+        position: fixed;
+        inset: 0;
+        background: var(--color-bg, #0f1117);
+        z-index: 9999;
+        pointer-events: none;
+        opacity: 0;
+        transform: translateX(0);
+      }
+      #page-transition-overlay.is-entering {
+        animation: ptEnter ${PT_DURATION}ms ease forwards;
+      }
+      #page-transition-overlay.is-leaving {
+        animation: ptLeave ${PT_DURATION}ms ease forwards;
+      }
+      @keyframes ptEnter {
+        from { opacity: 0; }
+        to   { opacity: 1; }
+      }
+      @keyframes ptLeave {
+        from { opacity: 1; }
+        to   { opacity: 0; }
+      }
+    `;
+    document.head.appendChild(style);
+  })();
 
   /* ================================================================
      DATA NAVIGASI
@@ -23,10 +143,6 @@
 
   /* ================================================================
      BANGUN LAYOUT (jika belum ada)
-     CLASS disesuaikan dengan sidebar.css:
-     - .sidebar (bukan .app-sidebar)
-     - .sidebar-main (bukan .main-wrapper)
-     - .topbar-toggle (bukan .sidebar-toggle)
   ================================================================ */
   let sidebar = document.querySelector('.sidebar');
   if (!sidebar) {
@@ -34,7 +150,6 @@
     const existingContent = pageBody ? pageBody.innerHTML : '';
     pageBody?.remove();
 
-    // Hapus utility elements agar tidak dobel setelah rebuild
     document.querySelectorAll('.loading-overlay, .alert').forEach(el => el.remove());
 
     const layout = document.createElement('div');
@@ -73,7 +188,6 @@
 
   /* ================================================================
      RENDER SIDEBAR
-     Gunakan struktur class yang benar sesuai sidebar.css
   ================================================================ */
   function renderNavItem(link) {
     const isActive = currentPage === link.href;
@@ -120,7 +234,6 @@
   const toggleBtn = document.getElementById('sidebar-toggle');
   const appLayout = document.querySelector('.app-layout');
 
-  // Backdrop untuk mobile
   let backdrop = document.querySelector('.sidebar-backdrop');
   if (!backdrop) {
     backdrop = document.createElement('div');
@@ -152,7 +265,6 @@
 
   backdrop.addEventListener('click', closeMobileSidebar);
 
-  // Reset layout saat resize
   window.addEventListener('resize', () => {
     if (isMobile()) {
       appLayout?.classList.remove('sidebar-collapsed');
@@ -165,7 +277,6 @@
     }
   });
 
-  // Restore collapsed state (desktop only)
   if (!isMobile() && localStorage.getItem('sidebar-collapsed') === '1') {
     appLayout?.classList.add('sidebar-collapsed');
   }
@@ -180,16 +291,20 @@
     document.body.appendChild(overlay);
   }
 
+  // FIX #2 — resetPageState yang benar-benar membersihkan semua state
   function resetPageState() {
     overlay.className = '';
     overlay.style.cssText = '';
+    overlay.style.opacity = '0';
+    overlay.style.pointerEvents = 'none';
     document.body.classList.remove('page-transitioning');
-    document.body.style.minHeight = '';
     document.body.style.overflow = '';
+    document.body.style.minHeight = '';
     document.body.style.pointerEvents = '';
   }
 
-  overlay.addEventListener('animationend', () => {
+  // FIX #3 — gunakan animationend DAN timeout singkat sebagai jaga-jaga
+  overlay.addEventListener('animationend', (e) => {
     if (overlay.classList.contains('is-leaving')) {
       resetPageState();
     }
@@ -205,6 +320,7 @@
     const clickedItem = document.querySelector(`.sidebar-item[href="${url}"]`);
     clickedItem?.classList.add('is-navigating');
     document.body.classList.add('page-transitioning');
+    overlay.style.pointerEvents = 'none'; // overlay tidak boleh blokir klik
     overlay.className = 'is-entering';
 
     setTimeout(() => {
@@ -233,23 +349,26 @@
   function playPageEnter() {
     closeMobileSidebar();
 
-    document.body.style.overflow = 'hidden';
-    const mainContent = document.querySelector('.main-content');
-
-    overlay.style.cssText = 'opacity:1;transform:translateX(0);transition:none;pointer-events:none';
+    // FIX #4 — JANGAN set overflow:hidden saat enter; hanya set opacity overlay
+    overlay.style.cssText = 'opacity:1;pointer-events:none;transition:none;';
 
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        overlay.style.cssText = 'pointer-events:none';
         overlay.className = 'is-leaving';
-        mainContent?.classList.add('page-content');
+        document.querySelector('.main-content')?.classList.add('page-content');
 
-        // Hard reset fallback untuk mobile
-        setTimeout(resetPageState, PT_DURATION + 400);
+        // Fallback: paksa reset jika animationend tidak terpicu (umum di mobile)
+        const fallback = setTimeout(resetPageState, PT_DURATION + 200);
+
+        overlay.addEventListener('animationend', function onEnd() {
+          clearTimeout(fallback);
+          resetPageState();
+          overlay.removeEventListener('animationend', onEnd);
+        }, { once: true });
       });
     });
 
-    // Safety reset saat tab kembali aktif
+    // Safety: reset saat tab kembali aktif
     document.addEventListener('visibilitychange', function onVisible() {
       if (!document.hidden) {
         resetPageState();
