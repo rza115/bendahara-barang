@@ -551,16 +551,59 @@ tbody td { padding: 12px 14px; font-size: 13px; vertical-align: middle; }
 /* ——— RESPONSIVE ——— */
 @media (max-width: 768px) {
   .main-content { padding: 18px 16px; }
-  .stats-grid   { grid-template-columns: repeat(2, 1fr); }
+
+  /* Stats: 2 kolom */
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+
+  /* Form: 1 kolom */
   .form-grid,
   .form-grid.cols-3 { grid-template-columns: 1fr; }
-  .page-header  { flex-direction: column; }
-  .table-wrap   { overflow-x: auto; }
-  table         { min-width: 700px; }
+
+  /* Page header: stack vertikal, tombol full width */
+  .page-header { flex-direction: column; align-items: stretch; }
+  .page-header .btn,
+  .page-header a.btn {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+
+  /* Filter bar: stack vertikal, semua elemen full width */
+  .filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding: 12px 16px;
+  }
+  .filter-bar .search-wrap {
+    min-width: 0;    /* hapus min-width: 200px agar bisa menyusut */
+    width: 100%;
+  }
+  /* !important untuk override inline style="width:auto" di HTML */
+  .filter-bar select,
+  .filter-bar input[type="text"] {
+    width: 100% !important;
+    box-sizing: border-box;
+  }
+
+  /* Table: scroll horizontal */
+  .table-wrap {
+    overflow: auto;  /* override base overflow:hidden — lebih aman dari overflow-x saja */
+    -webkit-overflow-scrolling: touch;
+  }
+  /* Kolom aksi sticky di kanan */
+  .table-wrap th:last-child,
+  .table-wrap td:last-child {
+    position: sticky;
+    right: 0;
+    background: inherit;
+    box-shadow: -2px 0 6px rgba(0,0,0,0.08);
+  }
+  table { min-width: 700px; }
 
   .header-inner { height: 56px; padding: 0 14px; }
 
-  /* Slide-in drawer dari kanan */
+  /* Slide-in drawer dari kanan (header lama — dinonaktifkan oleh nav.js tapi dibiarkan) */
   .header-nav {
     display: none;
     position: fixed;
@@ -578,21 +621,16 @@ tbody td { padding: 12px 14px; font-size: 13px; vertical-align: middle; }
     margin-left: 0;
   }
   .header-nav.nav-open { display: flex; }
-
   .header-nav a { padding: 10px 14px; font-size: 14px; border-radius: 8px; color: #cbd5e1; gap: 10px; }
   .header-nav a:hover  { background: rgba(255,255,255,0.08); color: white; }
   .header-nav a.active { background: var(--accent); color: white; }
-
   .nav-user   { margin-top: 8px; padding: 10px 14px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 13px; }
   .btn-logout { margin: 4px 0 0; width: 100%; text-align: left; padding: 10px 14px; border-radius: 8px; }
-
   .burger-btn { display: flex; }
 }
 
 @media (max-width: 480px) {
-  .stats-grid  { grid-template-columns: 1fr 1fr; }
-  .filter-bar  { flex-direction: column; }
-  .filter-bar select { width: 100%; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
   .header-logo-text .subtitle { display: none; }
 }
 
