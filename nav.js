@@ -118,8 +118,8 @@
     const isActive = currentPage === link.href;
     return `
       <a href="${link.href}"
-         class="sidebar-item${isSubItem ? ' sidebar-sub-item' : ''}${isActive ? ' active' : ''}"
-         title="${link.label}">
+        class="sidebar-item${isSubItem ? ' sidebar-sub-item' : ''}${isActive ? ' active' : ''}"
+        title="${link.label}">
         <span class="sidebar-item-icon">${link.icon}</span>
         <span class="sidebar-item-label">${link.label}</span>
         ${isActive ? '<span class="sidebar-item-dot"></span>' : ''}
@@ -167,8 +167,8 @@
      SIDEBAR TOGGLE
      Satu listener, bedakan mobile vs desktop di dalam.
   ================================================================ */
-  const toggleBtn  = document.getElementById('sidebar-toggle');
-  const appLayout  = document.querySelector('.app-layout');
+  const toggleBtn = document.getElementById('sidebar-toggle');
+  const appLayout = document.querySelector('.app-layout');
 
   // Buat backdrop (sekali)
   const backdrop = document.createElement('div');
@@ -203,11 +203,19 @@
   /* ================================================================
      PAGE TRANSITION
   ================================================================ */
-
   // Buat overlay (sekali)
   const overlay = document.createElement('div');
   overlay.id = 'page-transition-overlay';
   document.body.appendChild(overlay);
+
+  // FIX MOBILE: Safety reset — jika animationend tidak ter-trigger
+  // (mis. browser mobile throttle), pastikan overlay tidak stuck
+  overlay.addEventListener('animationend', () => {
+    if (overlay.classList.contains('is-entering')) {
+      overlay.className = '';
+      overlay.style.cssText = '';
+    }
+  });
 
   function navigateTo(url) {
     // Abaikan link kosong, anchor, atau halaman yang sama
@@ -248,37 +256,51 @@
     });
   }
 
-function playPageEnter() {
-  // 1. Kunci viewport height SEBELUM apapun terlihat
-  document.body.style.minHeight = '100vh';
-  document.body.style.overflow = 'hidden'; // cegah scrollbar shift
-
-  // 2. Tambah .page-content SEKARANG, sebelum overlay mulai fade
-  const mainContent = document.querySelector('.main-content');
-  mainContent?.classList.add('page-content');
-
-  // 3. Pastikan overlay solid dulu
-  overlay.style.cssText = 'opacity:1;transform:translateX(0);transition:none';
-
-requestAnimationFrame(() => {
-  requestAnimationFrame(() => {
-    overlay.style.cssText = '';
-    overlay.className = 'is-leaving';
-
-    // Delay sedikit agar overlap antara overlay out & content in
-    setTimeout(() => {
-      mainContent?.classList.add('page-content');
-    }, 40); // 40ms overlap sudah cukup
-
-    setTimeout(() => {
+  function playPageEnter() {
+    // FIX MOBILE: Fungsi reset terpusat agar bisa dipanggil dari mana saja
+    function resetPageState() {
       overlay.className = '';
+      overlay.style.cssText = '';
       document.body.classList.remove('page-transitioning');
       document.body.style.minHeight = '';
       document.body.style.overflow = '';
-    }, PT_DURATION);
-  });
-});
-}
+    }
+
+    // 1. Kunci viewport height SEBELUM apapun terlihat
+    document.body.style.minHeight = '100vh';
+    document.body.style.overflow = 'hidden'; // cegah scrollbar shift
+
+    // 2. Tambah .page-content SEKARANG, sebelum overlay mulai fade
+    const mainContent = document.querySelector('.main-content');
+    mainContent?.classList.add('page-content');
+
+    // 3. Pastikan overlay solid dulu
+    overlay.style.cssText = 'opacity:1;transform:translateX(0);transition:none';
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        overlay.style.cssText = '';
+        overlay.className = 'is-leaving';
+
+        // Delay sedikit agar overlap antara overlay out & content in
+        setTimeout(() => {
+          mainContent?.classList.add('page-content');
+        }, 40); // 40ms overlap sudah cukup
+
+        // Reset state setelah animasi selesai
+        setTimeout(resetPageState, PT_DURATION);
+      });
+    });
+
+    // FIX MOBILE: Safety fallback — reset jika tab kembali aktif
+    // (mencegah overflow:hidden permanen akibat browser throttle)
+    document.addEventListener('visibilitychange', function onVisible() {
+      if (!document.hidden) {
+        resetPageState();
+        document.removeEventListener('visibilitychange', onVisible);
+      }
+    });
+  }
 
   // Sidebar sudah dirender sync di atas, langsung bind — tidak perlu DOMContentLoaded
   bindSidebarLinks();
