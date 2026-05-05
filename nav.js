@@ -121,7 +121,7 @@
 
   backdrop.addEventListener('click', closeMobileSidebar);
 
-  // FIX: Reset layout saat resize dari mobile ke desktop (atau sebaliknya)
+  // FIX: Reset layout saat resize
   window.addEventListener('resize', () => {
     if (isMobile()) {
       appLayout?.classList.remove('sidebar-collapsed');
