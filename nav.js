@@ -1,4 +1,5 @@
 // nav.js — Dark Sidebar + Page Transition untuk SiAset
+// FIX: Class HTML disesuaikan dengan sidebar.css
 (function () {
   'use strict';
 
@@ -22,63 +23,89 @@
 
   /* ================================================================
      BANGUN LAYOUT (jika belum ada)
+     CLASS disesuaikan dengan sidebar.css:
+     - .sidebar (bukan .app-sidebar)
+     - .sidebar-main (bukan .main-wrapper)
+     - .topbar-toggle (bukan .sidebar-toggle)
   ================================================================ */
-  let sidebar = document.getElementById('app-sidebar');
+  let sidebar = document.querySelector('.sidebar');
   if (!sidebar) {
     const pageBody = document.getElementById('page-body');
-    const existingContent = pageBody ? pageBody.outerHTML : '';
+    const existingContent = pageBody ? pageBody.innerHTML : '';
     pageBody?.remove();
-    document.body.innerHTML = `
-      <div class="app-layout">
-        <aside class="app-sidebar" id="app-sidebar"></aside>
-        <div class="main-wrapper">
-          <header class="topbar">
-            <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="3" y1="6" x2="21" y2="6"/>
-                <line x1="3" y1="12" x2="21" y2="12"/>
-                <line x1="3" y1="18" x2="21" y2="18"/>
-              </svg>
-            </button>
-            <span class="topbar-title">SiAset &nbsp;›&nbsp; <span id="topbar-page-name"></span></span>
-            <div class="topbar-right">
+
+    // Hapus utility elements agar tidak dobel setelah rebuild
+    document.querySelectorAll('.loading-overlay, .alert').forEach(el => el.remove());
+
+    const layout = document.createElement('div');
+    layout.className = 'app-layout';
+    layout.innerHTML = `
+      <aside class="sidebar" id="app-sidebar"></aside>
+      <div class="sidebar-main">
+        <header class="topbar">
+          <button class="topbar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="3" y1="6" x2="21" y2="6"/>
+              <line x1="3" y1="12" x2="21" y2="12"/>
+              <line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+          </button>
+          <div class="topbar-breadcrumb">
+            <span class="topbar-app">SiAset</span>
+            <span class="topbar-sep">›</span>
+            <span class="topbar-page" id="topbar-page-name"></span>
+          </div>
+          <div class="topbar-right">
+            <div class="topbar-user">
               <div class="topbar-avatar">AD</div>
-              <button class="topbar-logout">Keluar</button>
+              <span class="topbar-username">Admin</span>
             </div>
-          </header>
-          <main class="main-content" id="page-body">
-            ${existingContent}
-          </main>
-        </div>
+            <button class="topbar-logout">Keluar</button>
+          </div>
+        </header>
+        <main class="main-content" id="page-body">${existingContent}</main>
       </div>`;
+
+    document.body.appendChild(layout);
     sidebar = document.getElementById('app-sidebar');
   }
 
   /* ================================================================
      RENDER SIDEBAR
+     Gunakan struktur class yang benar sesuai sidebar.css
   ================================================================ */
   function renderNavItem(link) {
     const isActive = currentPage === link.href;
-    return `<a href="${link.href}" class="sidebar-item${isActive ? ' active' : ''}">
-      ${link.icon}
-      <span>${link.label}</span>
-      ${isActive ? '<span class="active-dot"></span>' : ''}
+    return `<a href="${link.href}" class="sidebar-item${isActive ? ' active' : ''}" title="${link.label}">
+      <span class="sidebar-item-icon">${link.icon}</span>
+      <span class="sidebar-item-label">${link.label}</span>
+      ${isActive ? '<span class="sidebar-item-dot"></span>' : ''}
     </a>`;
   }
 
   sidebar.innerHTML = `
-    <div class="sidebar-brand">SiAset</div>
+    <div class="sidebar-logo">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6366F1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      <span class="sidebar-logo-text">SiAset</span>
+    </div>
     <nav class="sidebar-nav">
-      ${mainLinks.map(l => renderNavItem(l)).join('')}
+      <div class="sidebar-section">
+        ${mainLinks.map(l => renderNavItem(l)).join('')}
+      </div>
+      <div class="sidebar-divider"></div>
       <div class="sidebar-section-label">Kelola</div>
-      ${kelolaLinks.map(l => renderNavItem(l)).join('')}
+      <div class="sidebar-section">
+        ${kelolaLinks.map(l => renderNavItem(l)).join('')}
+      </div>
     </nav>
     <div class="sidebar-footer">
-      <div class="sidebar-avatar">AD</div>
       <div class="sidebar-user-info">
-        <span class="sidebar-user-name">Admin</span>
-        <span class="sidebar-user-role">Administrator</span>
+        <div class="sidebar-avatar">AD</div>
+        <div class="sidebar-user-text">
+          <span class="sidebar-user-name">Admin</span>
+          <span class="sidebar-user-role">Administrator</span>
+        </div>
       </div>
     </div>`;
 
@@ -93,9 +120,13 @@
   const toggleBtn = document.getElementById('sidebar-toggle');
   const appLayout = document.querySelector('.app-layout');
 
-  const backdrop = document.createElement('div');
-  backdrop.className = 'sidebar-backdrop';
-  document.body.appendChild(backdrop);
+  // Backdrop untuk mobile
+  let backdrop = document.querySelector('.sidebar-backdrop');
+  if (!backdrop) {
+    backdrop = document.createElement('div');
+    backdrop.className = 'sidebar-backdrop';
+    document.body.appendChild(backdrop);
+  }
 
   function isMobile() {
     return window.innerWidth <= 768;
@@ -121,7 +152,7 @@
 
   backdrop.addEventListener('click', closeMobileSidebar);
 
-  // FIX: Reset layout saat resize
+  // Reset layout saat resize
   window.addEventListener('resize', () => {
     if (isMobile()) {
       appLayout?.classList.remove('sidebar-collapsed');
@@ -142,9 +173,12 @@
   /* ================================================================
      PAGE TRANSITION
   ================================================================ */
-  const overlay = document.createElement('div');
-  overlay.id = 'page-transition-overlay';
-  document.body.appendChild(overlay);
+  let overlay = document.getElementById('page-transition-overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'page-transition-overlay';
+    document.body.appendChild(overlay);
+  }
 
   function resetPageState() {
     overlay.className = '';
@@ -152,13 +186,11 @@
     document.body.classList.remove('page-transitioning');
     document.body.style.minHeight = '';
     document.body.style.overflow = '';
-    // FIX: Pastikan konten selalu bisa diklik setelah transisi
     document.body.style.pointerEvents = '';
-    overlay.style.pointerEvents = 'none';
   }
 
   overlay.addEventListener('animationend', () => {
-    if (overlay.classList.contains('is-entering')) {
+    if (overlay.classList.contains('is-leaving')) {
       resetPageState();
     }
   });
@@ -168,7 +200,6 @@
     const targetPage = url.split('/').pop();
     if (targetPage === currentPage) return;
 
-    // FIX: Tutup sidebar mobile sebelum navigasi
     closeMobileSidebar();
 
     const clickedItem = document.querySelector(`.sidebar-item[href="${url}"]`);
@@ -200,32 +231,25 @@
   }
 
   function playPageEnter() {
-    // FIX: Reset backdrop/sidebar mobile saat halaman baru dimuat
     closeMobileSidebar();
 
-    document.body.style.minHeight = '100vh';
     document.body.style.overflow = 'hidden';
-
     const mainContent = document.querySelector('.main-content');
-    mainContent?.classList.add('page-content');
 
-    overlay.style.cssText = 'opacity:1;transform:translateX(0);transition:none';
+    overlay.style.cssText = 'opacity:1;transform:translateX(0);transition:none;pointer-events:none';
 
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        overlay.style.cssText = '';
+        overlay.style.cssText = 'pointer-events:none';
         overlay.className = 'is-leaving';
+        mainContent?.classList.add('page-content');
 
-        setTimeout(() => {
-          mainContent?.classList.add('page-content');
-        }, 40);
-
-        // FIX: Hard reset — buffer tambahan 300ms untuk browser mobile lambat
-        setTimeout(resetPageState, PT_DURATION + 300);
+        // Hard reset fallback untuk mobile
+        setTimeout(resetPageState, PT_DURATION + 400);
       });
     });
 
-    // FIX: Safety reset saat tab kembali aktif (browser mobile throttle)
+    // Safety reset saat tab kembali aktif
     document.addEventListener('visibilitychange', function onVisible() {
       if (!document.hidden) {
         resetPageState();
