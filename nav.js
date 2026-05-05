@@ -2,70 +2,22 @@
 (function () {
   'use strict';
 
-  /* ================================================================
-     KONSTANTA & STATE
-  ================================================================ */
-  const PT_DURATION = 280; // harus sesuai --pt-duration di sidebar.css
+  const PT_DURATION = 280;
   const currentPage = window.location.pathname.split('/').pop() || 'index.html';
 
   /* ================================================================
      DATA NAVIGASI
   ================================================================ */
   const mainLinks = [
-    {
-      href: 'index.html',
-      label: 'Daftar Aset',
-      icon: `<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="3"  y="3"  width="6" height="6" rx="1.5" fill="currentColor" opacity=".9"/>
-        <rect x="11" y="3"  width="6" height="6" rx="1.5" fill="currentColor" opacity=".5"/>
-        <rect x="3"  y="11" width="6" height="6" rx="1.5" fill="currentColor" opacity=".5"/>
-        <rect x="11" y="11" width="6" height="6" rx="1.5" fill="currentColor" opacity=".3"/>
-      </svg>`,
-    },
-    {
-      href: 'tambah.html',
-      label: 'Tambah',
-      icon: `<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.5"/>
-        <path d="M10 7v6M7 10h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-      </svg>`,
-    },
-    {
-      href: 'barcode.html',
-      label: 'Barcode',
-      icon: `<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="3"  y="4" width="2" height="12" rx="0.5" fill="currentColor"/>
-        <rect x="7"  y="4" width="1" height="12" rx="0.5" fill="currentColor"/>
-        <rect x="10" y="4" width="2" height="12" rx="0.5" fill="currentColor"/>
-        <rect x="14" y="4" width="1" height="12" rx="0.5" fill="currentColor"/>
-        <rect x="16" y="4" width="1" height="12" rx="0.5" fill="currentColor"/>
-      </svg>`,
-    },
+    { href: 'index.html', label: 'Daftar Aset', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>` },
+    { href: 'tambah.html', label: 'Tambah', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>` },
+    { href: 'barcode.html', label: 'Barcode', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="8" y1="7" x2="8" y2="17"/><line x1="12" y1="7" x2="12" y2="17"/><line x1="16" y1="7" x2="16" y2="17"/></svg>` },
   ];
 
   const kelolaLinks = [
-    {
-      href: 'peminjaman.html',
-      label: 'Peminjaman',
-      icon: `<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M3 10h14M13 6l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>`,
-    },
-    {
-      href: 'penanggung-jawab.html',
-      label: 'PJ Barang',
-      icon: `<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="10" cy="7" r="3" stroke="currentColor" stroke-width="1.5"/>
-        <path d="M4 17c0-3.314 2.686-5 6-5s6 1.686 6 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-      </svg>`,
-    },
-    {
-      href: 'pemindahtanganan.html',
-      label: 'Pindahtangan',
-      icon: `<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M4 10h12M4 10l3-3M4 10l3 3M16 10l-3-3M16 10l-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>`,
-    },
+    { href: 'peminjaman.html', label: 'Peminjaman', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>` },
+    { href: 'penanggung-jawab.html', label: 'PJ Barang', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>` },
+    { href: 'pemindahtanganan.html', label: 'Pindahtangan', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>` },
   ];
 
   /* ================================================================
@@ -78,86 +30,58 @@
     pageBody?.remove();
     document.body.innerHTML = `
       <div class="app-layout">
-        <aside id="app-sidebar" class="sidebar"></aside>
-        <div class="sidebar-main">
+        <aside class="app-sidebar" id="app-sidebar"></aside>
+        <div class="main-wrapper">
           <header class="topbar">
-            <button id="sidebar-toggle" class="topbar-toggle" aria-label="Toggle sidebar">
-              <svg viewBox="0 0 20 20" fill="none" width="18" height="18">
-                <path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="3" y1="6" x2="21" y2="6"/>
+                <line x1="3" y1="12" x2="21" y2="12"/>
+                <line x1="3" y1="18" x2="21" y2="18"/>
               </svg>
             </button>
-            <div class="topbar-breadcrumb">
-              <span class="topbar-app">SiAset</span>
-              <span class="topbar-sep">›</span>
-              <span class="topbar-page" id="topbar-page-name"></span>
-            </div>
+            <span class="topbar-title">SiAset &nbsp;›&nbsp; <span id="topbar-page-name"></span></span>
             <div class="topbar-right">
-              <div class="topbar-user">
-                <div class="topbar-avatar" id="topbar-avatar">AD</div>
-                <span class="topbar-username" id="admin-user"></span>
-              </div>
-              <button onclick="logoutAdmin()" class="topbar-logout" title="Keluar">
-                <svg viewBox="0 0 20 20" fill="none" width="16" height="16">
-                  <path d="M13 3h4v14h-4M9 14l4-4-4-4M13 10H5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-                Keluar
-              </button>
+              <div class="topbar-avatar">AD</div>
+              <button class="topbar-logout">Keluar</button>
             </div>
           </header>
-          <main class="main-content" id="main-content">${existingContent}</main>
+          <main class="main-content" id="page-body">
+            ${existingContent}
+          </main>
         </div>
-      </div>
-    `;
+      </div>`;
     sidebar = document.getElementById('app-sidebar');
   }
 
   /* ================================================================
      RENDER SIDEBAR
   ================================================================ */
-  function renderNavItem(link, isSubItem) {
+  function renderNavItem(link) {
     const isActive = currentPage === link.href;
-    return `
-      <a href="${link.href}"
-        class="sidebar-item${isSubItem ? ' sidebar-sub-item' : ''}${isActive ? ' active' : ''}"
-        title="${link.label}">
-        <span class="sidebar-item-icon">${link.icon}</span>
-        <span class="sidebar-item-label">${link.label}</span>
-        ${isActive ? '<span class="sidebar-item-dot"></span>' : ''}
-      </a>`;
+    return `<a href="${link.href}" class="sidebar-item${isActive ? ' active' : ''}">
+      ${link.icon}
+      <span>${link.label}</span>
+      ${isActive ? '<span class="active-dot"></span>' : ''}
+    </a>`;
   }
 
   sidebar.innerHTML = `
-    <div class="sidebar-logo">
-      <svg viewBox="0 0 24 24" fill="none" width="22" height="22">
-        <rect x="3"  y="3"  width="8" height="8" rx="2" fill="white" opacity="0.9"/>
-        <rect x="13" y="3"  width="8" height="8" rx="2" fill="white" opacity="0.5"/>
-        <rect x="3"  y="13" width="8" height="8" rx="2" fill="white" opacity="0.5"/>
-        <rect x="13" y="13" width="8" height="8" rx="2" fill="white" opacity="0.25"/>
-      </svg>
-      <span class="sidebar-logo-text">SiAset</span>
-    </div>
+    <div class="sidebar-brand">SiAset</div>
     <nav class="sidebar-nav">
-      <div class="sidebar-section">
-        ${mainLinks.map(l => renderNavItem(l, false)).join('')}
-      </div>
-      <div class="sidebar-divider"></div>
-      <div class="sidebar-section">
-        <p class="sidebar-section-label">Kelola</p>
-        ${kelolaLinks.map(l => renderNavItem(l, true)).join('')}
-      </div>
+      ${mainLinks.map(l => renderNavItem(l)).join('')}
+      <div class="sidebar-section-label">Kelola</div>
+      ${kelolaLinks.map(l => renderNavItem(l)).join('')}
     </nav>
     <div class="sidebar-footer">
+      <div class="sidebar-avatar">AD</div>
       <div class="sidebar-user-info">
-        <div class="sidebar-avatar" id="sidebar-avatar">AD</div>
-        <div class="sidebar-user-text">
-          <span class="sidebar-user-name" id="sidebar-user-name">Admin</span>
-          <span class="sidebar-user-role">Administrator</span>
-        </div>
+        <span class="sidebar-user-name">Admin</span>
+        <span class="sidebar-user-role">Administrator</span>
       </div>
-    </div>
-  `;
+    </div>`;
 
-  // Breadcrumb — set nama halaman aktif
   const allLinks = [...mainLinks, ...kelolaLinks];
   const activePage = allLinks.find(l => l.href === currentPage);
   const pageNameEl = document.getElementById('topbar-page-name');
@@ -165,17 +89,22 @@
 
   /* ================================================================
      SIDEBAR TOGGLE
-     Satu listener, bedakan mobile vs desktop di dalam.
   ================================================================ */
   const toggleBtn = document.getElementById('sidebar-toggle');
   const appLayout = document.querySelector('.app-layout');
 
-  // Buat backdrop (sekali)
   const backdrop = document.createElement('div');
   backdrop.className = 'sidebar-backdrop';
   document.body.appendChild(backdrop);
 
-  function isMobile() { return window.innerWidth <= 768; }
+  function isMobile() {
+    return window.innerWidth <= 768;
+  }
+
+  function closeMobileSidebar() {
+    appLayout?.classList.remove('sidebar-open');
+    backdrop.classList.remove('active');
+  }
 
   toggleBtn?.addEventListener('click', () => {
     if (isMobile()) {
@@ -190,12 +119,22 @@
     }
   });
 
-  backdrop.addEventListener('click', () => {
-    appLayout?.classList.remove('sidebar-open');
-    backdrop.classList.remove('active');
+  backdrop.addEventListener('click', closeMobileSidebar);
+
+  // FIX: Reset layout saat resize dari mobile ke desktop (atau sebaliknya)
+  window.addEventListener('resize', () => {
+    if (isMobile()) {
+      appLayout?.classList.remove('sidebar-collapsed');
+      closeMobileSidebar();
+    } else {
+      closeMobileSidebar();
+      if (localStorage.getItem('sidebar-collapsed') === '1') {
+        appLayout?.classList.add('sidebar-collapsed');
+      }
+    }
   });
 
-  // Restore state collapsed (desktop only)
+  // Restore collapsed state (desktop only)
   if (!isMobile() && localStorage.getItem('sidebar-collapsed') === '1') {
     appLayout?.classList.add('sidebar-collapsed');
   }
@@ -203,44 +142,49 @@
   /* ================================================================
      PAGE TRANSITION
   ================================================================ */
-  // Buat overlay (sekali)
   const overlay = document.createElement('div');
   overlay.id = 'page-transition-overlay';
   document.body.appendChild(overlay);
 
-  // FIX MOBILE: Safety reset — jika animationend tidak ter-trigger
-  // (mis. browser mobile throttle), pastikan overlay tidak stuck
+  function resetPageState() {
+    overlay.className = '';
+    overlay.style.cssText = '';
+    document.body.classList.remove('page-transitioning');
+    document.body.style.minHeight = '';
+    document.body.style.overflow = '';
+    // FIX: Pastikan konten selalu bisa diklik setelah transisi
+    document.body.style.pointerEvents = '';
+    overlay.style.pointerEvents = 'none';
+  }
+
   overlay.addEventListener('animationend', () => {
     if (overlay.classList.contains('is-entering')) {
-      overlay.className = '';
-      overlay.style.cssText = '';
+      resetPageState();
     }
   });
 
   function navigateTo(url) {
-    // Abaikan link kosong, anchor, atau halaman yang sama
     if (!url || url === '#') return;
-
-    // Bandingkan hanya nama file (tanpa path penuh)
     const targetPage = url.split('/').pop();
     if (targetPage === currentPage) return;
 
-    // Feedback visual pada item yang diklik
+    // FIX: Tutup sidebar mobile sebelum navigasi
+    closeMobileSidebar();
+
     const clickedItem = document.querySelector(`.sidebar-item[href="${url}"]`);
     clickedItem?.classList.add('is-navigating');
-
     document.body.classList.add('page-transitioning');
     overlay.className = 'is-entering';
 
-    setTimeout(() => { window.location.href = url; }, PT_DURATION);
+    setTimeout(() => {
+      window.location.href = url;
+    }, PT_DURATION);
   }
 
   function bindSidebarLinks() {
     document.querySelectorAll('.sidebar-item[href]').forEach(link => {
       link.addEventListener('click', function (e) {
         const href = this.getAttribute('href');
-
-        // Biarkan link eksternal / tab baru / modifier key lewat normal
         if (
           !href ||
           href.startsWith('http') ||
@@ -249,7 +193,6 @@
           this.target === '_blank' ||
           e.ctrlKey || e.metaKey || e.shiftKey
         ) return;
-
         e.preventDefault();
         navigateTo(href);
       });
@@ -257,24 +200,15 @@
   }
 
   function playPageEnter() {
-    // FIX MOBILE: Fungsi reset terpusat agar bisa dipanggil dari mana saja
-    function resetPageState() {
-      overlay.className = '';
-      overlay.style.cssText = '';
-      document.body.classList.remove('page-transitioning');
-      document.body.style.minHeight = '';
-      document.body.style.overflow = '';
-    }
+    // FIX: Reset backdrop/sidebar mobile saat halaman baru dimuat
+    closeMobileSidebar();
 
-    // 1. Kunci viewport height SEBELUM apapun terlihat
     document.body.style.minHeight = '100vh';
-    document.body.style.overflow = 'hidden'; // cegah scrollbar shift
+    document.body.style.overflow = 'hidden';
 
-    // 2. Tambah .page-content SEKARANG, sebelum overlay mulai fade
     const mainContent = document.querySelector('.main-content');
     mainContent?.classList.add('page-content');
 
-    // 3. Pastikan overlay solid dulu
     overlay.style.cssText = 'opacity:1;transform:translateX(0);transition:none';
 
     requestAnimationFrame(() => {
@@ -282,18 +216,16 @@
         overlay.style.cssText = '';
         overlay.className = 'is-leaving';
 
-        // Delay sedikit agar overlap antara overlay out & content in
         setTimeout(() => {
           mainContent?.classList.add('page-content');
-        }, 40); // 40ms overlap sudah cukup
+        }, 40);
 
-        // Reset state setelah animasi selesai
-        setTimeout(resetPageState, PT_DURATION);
+        // FIX: Hard reset — buffer tambahan 300ms untuk browser mobile lambat
+        setTimeout(resetPageState, PT_DURATION + 300);
       });
     });
 
-    // FIX MOBILE: Safety fallback — reset jika tab kembali aktif
-    // (mencegah overflow:hidden permanen akibat browser throttle)
+    // FIX: Safety reset saat tab kembali aktif (browser mobile throttle)
     document.addEventListener('visibilitychange', function onVisible() {
       if (!document.hidden) {
         resetPageState();
@@ -302,12 +234,8 @@
     });
   }
 
-  // Sidebar sudah dirender sync di atas, langsung bind — tidak perlu DOMContentLoaded
   bindSidebarLinks();
   playPageEnter();
 
-  /* ================================================================
-     API PUBLIK
-  ================================================================ */
   window.SiAsetNav = { go: navigateTo };
 })();
