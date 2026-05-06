@@ -21,17 +21,18 @@ const FIELDS_TEXT = [
 ];
 
 const FIELDS_NUMBER = [
-  { id: 'harga',                key: 'harga',                parse: v => parseInt(v.replace(/\./g, '')) || 0    },
-  { id: 'jumlah',               key: 'jumlah',               parse: v => parseInt(v)                  || 1    },
-  { id: 'tahun_perolehan',      key: 'tahun_perolehan',      parse: v => parseInt(v)                  || null },
-  { id: 'luas_tanah',           key: 'luas_tanah',           parse: v => parseFloat(v)                || null },
-  { id: 'luas_lantai',          key: 'luas_lantai',          parse: v => parseFloat(v)                || null },
-  { id: 'jumlah_lantai',        key: 'jumlah_lantai',        parse: v => parseInt(v)                  || null },
-  { id: 'tahun_perolehan_tanah',key: 'tahun_perolehan_tanah',parse: v => parseInt(v)                  || null },
-  { id: 'tahun_cetak',          key: 'tahun_cetak',          parse: v => parseInt(v)                  || null },
+  { id: 'harga',               key: 'harga',               parse: v => parseInt(v.replace(/\./g, '')) || 0    },
+  { id: 'jumlah',              key: 'jumlah',              parse: v => parseInt(v)                || 1    },
+  { id: 'tahun_perolehan',     key: 'tahun_perolehan',     parse: v => parseInt(v)                || null },
+  { id: 'luas_tanah',          key: 'luas_tanah',          parse: v => parseFloat(v)              || null },
+  { id: 'luas_lantai',         key: 'luas_lantai',         parse: v => parseFloat(v)              || null },
+  { id: 'jumlah_lantai',       key: 'jumlah_lantai',       parse: v => parseInt(v)                || null },
+  { id: 'tahun_perolehan_tanah',key: 'tahun_perolehan_tanah',parse: v => parseInt(v)              || null },
+  { id: 'tahun_cetak',         key: 'tahun_cetak',         parse: v => parseInt(v)                || null },
 ];
 
-const FIELDS_DATE = ['tgl_buku','tgl_bast','tgl_imb','tgl_sertifikat'];
+// FIX Bug #4: tambah tgl_bpkb yang sebelumnya tidak tercakup
+const FIELDS_DATE = ['tgl_buku','tgl_bast','tgl_imb','tgl_sertifikat','tgl_bpkb'];
 
 function fillForm(data) {
   FIELDS_TEXT.forEach(f => {
@@ -70,32 +71,30 @@ function fillForm(data) {
 
 function getFormData() {
   const result = {};
-
   FIELDS_TEXT.forEach(f => {
     const el = document.getElementById(f);
     if (el) result[f] = el.value.trim() || null;
   });
-
   FIELDS_NUMBER.forEach(({ id, key, parse }) => {
     const el = document.getElementById(id);
     if (el) result[key] = parse(el.value);
   });
-
   FIELDS_DATE.forEach(f => {
     const el = document.getElementById(f);
     result[f] = el?.value || null;
   });
-
   return result;
 }
 
+// FIX Bug #1: ID section di tambah.html adalah section-tanah, section-kendaraan,
+// section-gedung, section-lainnya — bukan section-kib-a/b/c/e
 function toggleKIBFields() {
   const kib = document.getElementById('kib')?.value;
   const sections = {
-    'section-kib-a': kib === 'KIB A',
-    'section-kib-b': kib === 'KIB B',
-    'section-kib-c': kib === 'KIB C',
-    'section-kib-e': kib === 'KIB E',
+    'section-tanah':     kib === 'KIB A',
+    'section-kendaraan': kib === 'KIB B',
+    'section-gedung':    kib === 'KIB C',
+    'section-lainnya':   kib === 'KIB E',
   };
   Object.entries(sections).forEach(([id, show]) => {
     const el = document.getElementById(id);
