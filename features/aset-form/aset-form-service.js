@@ -5,7 +5,7 @@
 
 async function saveAset(isEdit, id, data) {
   if (isEdit) {
-    console.error('Payload dikirim:', JSON.stringify(data, null, 2)); // ganti jadi error
+    // FIX Bug #3: hapus console.error debug yang muncul sebagai error merah di console
     const { error } = await db.from('aset').update(data).eq('id', id);
     if (error) {
       console.error('Supabase error:', error.message, error.details, error.hint);
