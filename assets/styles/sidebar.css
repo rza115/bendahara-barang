@@ -510,7 +510,7 @@ body.page-transitioning .topbar-page {
   background: rgba(0,0,0,0.45);
   z-index: 190;
   opacity: 0;
-  pointer-events: none;   /* FIX: tidak intersep klik saat tidak aktif */
+  pointer-events: none;
   transition: opacity var(--t);
 }
 
@@ -536,7 +536,11 @@ body.page-transitioning .topbar-page {
   }
 
   .sidebar-backdrop { display: block; }
-  .sidebar-backdrop.active { opacity: 1; pointer-events: auto; }
+  .sidebar-backdrop.active {
+    opacity: 1;
+    pointer-events: auto;
+    left: var(--sidebar-w);   /* hanya tutup area kanan sidebar, bukan seluruh layar */
+  }
 
   .topbar-username { display: none; }
   .main-content { padding: 16px; }
