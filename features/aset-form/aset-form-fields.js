@@ -90,15 +90,17 @@ function getFormData() {
 // section-gedung, section-lainnya — bukan section-kib-a/b/c/e
 function toggleKIBFields() {
   const kib = document.getElementById('kib')?.value;
-  const sections = {
-    'section-tanah':     kib === 'KIB A',
-    'section-kendaraan': kib === 'KIB B',
-    'section-gedung':    kib === 'KIB C',
-    'section-lainnya':   kib === 'KIB E',
-  };
-  Object.entries(sections).forEach(([id, show]) => {
-    const el = document.getElementById(id);
-    if (el) el.style.display = show ? 'block' : 'none';
+  const sectionGroups = [
+    { ids: ['section-tanah', 'section-kib-a'], show: kib === 'KIB A' },
+    { ids: ['section-kendaraan', 'section-kib-b'], show: kib === 'KIB B' },
+    { ids: ['section-gedung', 'section-kib-c'], show: kib === 'KIB C' },
+    { ids: ['section-lainnya', 'section-kib-e'], show: kib === 'KIB E' },
+  ];
+  sectionGroups.forEach(({ ids, show }) => {
+    ids.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = show ? 'block' : 'none';
+    });
   });
 }
 

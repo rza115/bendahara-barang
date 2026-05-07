@@ -12,8 +12,9 @@ async function uploadDokumen(file, jenisDok) {
 
 async function uploadDokumenPJ(asetId) {
   const uploads = [];
-  for (const { id, jenis } of DOK_PJ_INPUTS) {
-    const file = document.getElementById(id)?.files?.[0];
+  for (const { ids = [], jenis } of DOK_PJ_INPUTS) {
+    const input = ids.map(id => document.getElementById(id)).find(Boolean);
+    const file = input?.files?.[0];
     if (!file) continue;
     if (file.size > 5 * 1024 * 1024) {
       showAlert(`File "${jenis}" melebihi 5 MB, dilewati.`, 'error');

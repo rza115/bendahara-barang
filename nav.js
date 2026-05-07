@@ -30,7 +30,10 @@
     const existingContent = pageBody ? pageBody.innerHTML : '';
     pageBody?.remove();
 
-    document.querySelectorAll('.loading-overlay, .alert').forEach(el => el.remove());
+    // Preserve utility elements used by shared feedback helpers.
+    const utilityElements = Array.from(
+      document.querySelectorAll('.loading-overlay, .alert')
+    );
 
     const layout = document.createElement('div');
     layout.className = 'app-layout';
@@ -63,6 +66,7 @@
       </div>`;
 
     document.body.appendChild(layout);
+    utilityElements.forEach(el => document.body.appendChild(el));
     sidebar = document.getElementById('app-sidebar');
   }
 
@@ -107,6 +111,18 @@
   const activePage = allLinks.find(l => l.href === currentPage);
   const pageNameEl = document.getElementById('topbar-page-name');
   if (pageNameEl && activePage) pageNameEl.textContent = activePage.label;
+
+  function bindLogout() {
+    document.querySelectorAll('.topbar-logout').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        if (typeof window.logoutAdmin === 'function') {
+          await window.logoutAdmin();
+          return;
+        }
+        window.location.replace('../login.html');
+      });
+    });
+  }
 
   /* ================================================================
      SIDEBAR TOGGLE
@@ -258,6 +274,7 @@
   }
 
   bindSidebarLinks();
+  bindLogout();
   playPageEnter();
 
   window.SiAsetNav = { go: navigateTo };

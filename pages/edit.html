@@ -84,10 +84,18 @@
           <div class="form-group">
             <label>Status Barang</label>
             <select id="status_barang">
-              <option value="Tersedia">Tersedia</option>
-              <option value="Dipinjam">Dipinjam</option>
-              <option value="Diperbaiki">Diperbaiki</option>
-              <option value="Dihapus">Dihapus</option>
+              <option value="Inventaris">Inventaris</option>
+              <option value="Pinjaman">Pinjaman</option>
+              <option value="Titipan">Titipan</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Status Aset</label>
+            <select id="status_aset">
+              <option value="Aset Tetap">Aset Tetap</option>
+              <option value="Aset Tidak Berwujud">Aset Tidak Berwujud</option>
+              <option value="Ekstra Komptabel">Ekstra Komptabel</option>
+              <option value="Penghapusan">Penghapusan</option>
             </select>
           </div>
         </div>
@@ -140,6 +148,10 @@
               <option value="">— Pilih Penanggung Jawab —</option>
             </select>
             <p style="font-size:11px;color:#94a3b8;margin-top:4px">Catatan: Mengubah di sini tidak akan tercatat di Riwayat Pemindahtanganan.</p>
+          </div>
+          <div class="form-group">
+            <label>Nama Penanggung Jawab <span style="color:#94a3b8">(manual/fallback)</span></label>
+            <input type="text" id="nama_penanggung_jawab" placeholder="Isi jika tidak ada di daftar">
           </div>
         </div>
       </div>
@@ -204,6 +216,10 @@
           <div class="form-group">
             <label>No. BPKB</label>
             <input type="text" id="no_bpkb">
+          </div>
+          <div class="form-group">
+            <label>Tanggal BPKB</label>
+            <input type="date" id="tgl_bpkb">
           </div>
         </div>
       </div>
@@ -335,18 +351,34 @@
     <div class="form-group">
       <label>Surat Pengantar</label>
       <input type="file" id="dok_pengantar" accept=".pdf,.jpg,.jpeg,.png">
+      <div id="dok_spk_new_preview" style="margin-top:8px;display:none"></div>
+      <div id="dok_spk_existing" style="margin-top:8px;display:none">
+        <div id="dok_spk_preview"></div>
+      </div>
     </div>
     <div class="form-group">
       <label>Surat Pemesanan</label>
       <input type="file" id="dok_pemesanan" accept=".pdf,.jpg,.jpeg,.png">
+      <div id="dok_penawaran_new_preview" style="margin-top:8px;display:none"></div>
+      <div id="dok_penawaran_existing" style="margin-top:8px;display:none">
+        <div id="dok_penawaran_preview"></div>
+      </div>
     </div>
     <div class="form-group">
       <label>Dok. Kewajaran Harga</label>
       <input type="file" id="dok_kewajaran" accept=".pdf,.jpg,.jpeg,.png">
+      <div id="dok_baphp_new_preview" style="margin-top:8px;display:none"></div>
+      <div id="dok_baphp_existing" style="margin-top:8px;display:none">
+        <div id="dok_baphp_preview"></div>
+      </div>
     </div>
     <div class="form-group">
       <label>Ringkasan Kontrak</label>
       <input type="file" id="dok_ringkasan" accept=".pdf,.jpg,.jpeg,.png">
+      <div id="dok_bast_new_preview" style="margin-top:8px;display:none"></div>
+      <div id="dok_bast_existing" style="margin-top:8px;display:none">
+        <div id="dok_bast_preview"></div>
+      </div>
     </div>
     <div class="form-group">
       <label>BAP (Berita Acara Pembayaran)</label>
@@ -355,12 +387,19 @@
     <div class="form-group">
       <label>Kwitansi</label>
       <input type="file" id="dok_kwitansi" accept=".pdf,.jpg,.jpeg,.png">
+      <div id="dok_kuitansi_new_preview" style="margin-top:8px;display:none"></div>
+      <div id="dok_kuitansi_existing" style="margin-top:8px;display:none">
+        <div id="dok_kuitansi_preview"></div>
+      </div>
     </div>
   </div>
 </div>
 
 <div class="form-section">
   <div class="form-section-title">📎 Dokumen Penanggung Jawab</div>
+  <div id="dok-pj-existing" style="display:none;margin-bottom:12px">
+    <div id="dok-pj-list"></div>
+  </div>
   <div class="form-grid">
     <div class="form-group">
       <label>SK Penunjukan</label>

@@ -203,6 +203,18 @@
         <div class="form-section-title">🏢 Data Gedung (KIB C)</div>
         <div class="form-grid">
           <div class="form-group">
+            <label>Kondisi Bangunan</label>
+            <input type="text" id="kondisi_bangunan" placeholder="Permanen / Semi Permanen / dll">
+          </div>
+          <div class="form-group">
+            <label>Konstruksi Bertingkat</label>
+            <input type="text" id="konstruksi_bertingkat" placeholder="Ya / Tidak">
+          </div>
+          <div class="form-group">
+            <label>Konstruksi Beton</label>
+            <input type="text" id="konstruksi_beton" placeholder="Ya / Tidak">
+          </div>
+          <div class="form-group">
             <label>Luas Lantai (m²)</label>
             <input type="number" id="luas_lantai" placeholder="120">
           </div>
@@ -220,7 +232,7 @@
           </div>
           <div class="form-group form-col-full">
             <label>Letak / Alamat Gedung</label>
-            <input type="text" id="letak_gedung" placeholder="Kp. ..., Desa ..., Kec. Tenjo, Kab. Bogor">
+            <input type="text" id="letak_bangunan" placeholder="Kp. ..., Desa ..., Kec. Tenjo, Kab. Bogor">
           </div>
           <div class="form-group">
             <label>Status Tanah</label>
@@ -231,6 +243,18 @@
               <option>Pinjam Pakai</option>
               <option>Milik Pihak Lain</option>
             </select>
+          </div>
+          <div class="form-group">
+            <label>Status Sertifikat Tanah</label>
+            <input type="text" id="status_sertifikat_tanah" placeholder="SHM / HGB / dll">
+          </div>
+          <div class="form-group">
+            <label>No Kode Tanah</label>
+            <input type="text" id="no_kode_tanah" placeholder="Kode tanah terkait">
+          </div>
+          <div class="form-group">
+            <label>ID Awal Tanah</label>
+            <input type="text" id="id_awal_tanah" placeholder="ID aset tanah induk">
           </div>
           <div class="form-group">
             <label>Luas Tanah (m²)</label>
@@ -310,22 +334,27 @@
           <div class="form-group">
             <label>1. SPK / Surat Pesanan / Dokumen Kontrak</label>
             <input type="file" id="dok_spk_file" accept=".pdf,.jpg,.jpeg,.png">
+            <div id="dok_spk_new_preview" style="margin-top:8px;display:none"></div>
           </div>
           <div class="form-group">
             <label>2. Surat Penawaran dari Penyedia</label>
             <input type="file" id="dok_penawaran_file" accept=".pdf,.jpg,.jpeg,.png">
+            <div id="dok_penawaran_new_preview" style="margin-top:8px;display:none"></div>
           </div>
           <div class="form-group">
             <label>3. Berita Acara Pemeriksaan / Penerimaan (BAPHP)</label>
             <input type="file" id="dok_baphp_file" accept=".pdf,.jpg,.jpeg,.png">
+            <div id="dok_baphp_new_preview" style="margin-top:8px;display:none"></div>
           </div>
           <div class="form-group">
             <label>4. Berita Acara Serah Terima (BAST)</label>
             <input type="file" id="dok_bast_file" accept=".pdf,.jpg,.jpeg,.png">
+            <div id="dok_bast_new_preview" style="margin-top:8px;display:none"></div>
           </div>
           <div class="form-group">
             <label>5. Kuitansi / Faktur / Nota Pembelian</label>
             <input type="file" id="dok_kuitansi_file" accept=".pdf,.jpg,.jpeg,.png">
+            <div id="dok_kuitansi_new_preview" style="margin-top:8px;display:none"></div>
           </div>
         </div>
       </div>

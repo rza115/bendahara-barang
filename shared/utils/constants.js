@@ -26,11 +26,11 @@ const KONDISI_BADGE = {
 };
 
 const DOK_INPUTS = [
-  { id: 'dok_spk_file',      key: 'dok_spk_url',      previewId: 'dok_spk_new_preview'      },
-  { id: 'dok_penawaran_file',key: 'dok_penawaran_url', previewId: 'dok_penawaran_new_preview' },
-  { id: 'dok_baphp_file',    key: 'dok_baphp_url',    previewId: 'dok_baphp_new_preview'    },
-  { id: 'dok_bast_file',     key: 'dok_bast_url',     previewId: 'dok_bast_new_preview'     },
-  { id: 'dok_kuitansi_file', key: 'dok_kuitansi_url', previewId: 'dok_kuitansi_new_preview' },
+  { ids: ['dok_spk_file', 'dok_pengantar'], key: 'dok_spk_url',       previewId: 'dok_spk_new_preview'       },
+  { ids: ['dok_penawaran_file', 'dok_pemesanan'], key: 'dok_penawaran_url', previewId: 'dok_penawaran_new_preview' },
+  { ids: ['dok_baphp_file', 'dok_kewajaran'], key: 'dok_baphp_url',     previewId: 'dok_baphp_new_preview'     },
+  { ids: ['dok_bast_file', 'dok_ringkasan'], key: 'dok_bast_url',      previewId: 'dok_bast_new_preview'      },
+  { ids: ['dok_kuitansi_file', 'dok_kwitansi', 'dok_kwitansi_file'], key: 'dok_kuitansi_url',  previewId: 'dok_kuitansi_new_preview'  },
 ];
 
 const DOK_FIELDS = [
@@ -42,10 +42,10 @@ const DOK_FIELDS = [
 ];
 
 const DOK_PJ_INPUTS = [
-  { id: 'dok_pj_pakta',   jenis: 'Pakta Integritas'          },
-  { id: 'dok_pj_sptjm',   jenis: 'SPTJM'                     },
-  { id: 'dok_pj_bast',    jenis: 'Berita Acara Serah Terima' },
-  { id: 'dok_pj_lainnya', jenis: 'Lainnya'                   },
+  { ids: ['dok_pj_pakta', 'dok_pj_sk'], jenis: 'Pakta Integritas'          },
+  { ids: ['dok_pj_sptjm'], jenis: 'SPTJM'                     },
+  { ids: ['dok_pj_bast'], jenis: 'Berita Acara Serah Terima' },
+  { ids: ['dok_pj_lainnya'], jenis: 'Lainnya'                   },
 ];
 
 const DOK_LABELS = {

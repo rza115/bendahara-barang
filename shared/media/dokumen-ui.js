@@ -6,6 +6,14 @@
 // State dokumen yang akan diupload (diisi oleh event listener)
 const _uploadedDokumen = {};
 
+function getFirstExistingElement(ids = []) {
+  for (const id of ids) {
+    const el = document.getElementById(id);
+    if (el) return el;
+  }
+  return null;
+}
+
 function renderDokPreview(wrap, file) {
   if (!wrap) return;
   const isImage = file.type.startsWith('image/');
@@ -29,8 +37,8 @@ function renderDokPreview(wrap, file) {
 }
 
 function initDokumenUpload() {
-  DOK_INPUTS.forEach(({ id, key, previewId }) => {
-    const input = document.getElementById(id);
+  DOK_INPUTS.forEach(({ ids = [], key, previewId }) => {
+    const input = getFirstExistingElement(ids);
     if (!input) return;
     input.addEventListener('change', function () {
       const file = this.files[0];
