@@ -7,7 +7,7 @@ window.initBarcodePage = async function () {
   if (!ready) return;
   db = window._authClient;
 
-  const SKPD = 'Kecamatan Tenjo';
+  const SKPD = 'Dinas Kebudayaan';
   let semuaAset = [];
   let selectedIds = new Set();
 
