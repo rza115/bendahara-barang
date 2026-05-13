@@ -523,19 +523,33 @@ body.page-transitioning .topbar-page {
     grid-template-columns: 0 1fr;
   }
 
+  /* Timpa state desktop sidebar-collapsed: tanpa ini grid bisa 64px + 1fr dan sidebar width 64px,
+     drawer terlihat seperti tidak muncul / hanya garis tipis. */
+  .app-layout.sidebar-collapsed {
+    grid-template-columns: 0 1fr;
+  }
+  .app-layout.sidebar-collapsed .sidebar {
+    width: var(--sidebar-w);
+  }
+
   .sidebar {
     position: fixed;
     inset: 0 auto 0 0;
     width: var(--sidebar-w);
     transform: translateX(-100%);
     transition: transform var(--t);
+    /* Di atas #page-transition-overlay (9999) agar drawer tidak tertutup saat / setelah transisi halaman */
+    z-index: 10050;
   }
 
   .app-layout.sidebar-open .sidebar {
     transform: translateX(0);
   }
 
-  .sidebar-backdrop { display: block; }
+  .sidebar-backdrop {
+    display: block;
+    z-index: 10040; /* di atas konten & #page-transition-overlay agar area redup + tap tutup bekerja */
+  }
   .sidebar-backdrop.active {
     opacity: 1;
     pointer-events: auto;

@@ -137,8 +137,27 @@
     document.body.appendChild(backdrop);
   }
 
+  /** Selaras dengan @media (max-width: 768px) — innerWidth saja bisa beda dari viewport CSS (devtools, zoom). */
+  const mqMobile = window.matchMedia('(max-width: 768px)');
+
   function isMobile() {
-    return window.innerWidth <= 768;
+    try {
+      return mqMobile.matches;
+    } catch (e) {
+      return window.innerWidth <= 768;
+    }
+  }
+
+  function syncLayoutForViewport() {
+    if (isMobile()) {
+      appLayout?.classList.remove('sidebar-collapsed');
+      closeMobileSidebar();
+    } else {
+      closeMobileSidebar();
+      if (localStorage.getItem('sidebar-collapsed') === '1') {
+        appLayout?.classList.add('sidebar-collapsed');
+      }
+    }
   }
 
   function closeMobileSidebar() {
@@ -161,20 +180,19 @@
 
   backdrop.addEventListener('click', closeMobileSidebar);
 
-  window.addEventListener('resize', () => {
-    if (isMobile()) {
-      appLayout?.classList.remove('sidebar-collapsed');
-      closeMobileSidebar();
-    } else {
-      closeMobileSidebar();
-      if (localStorage.getItem('sidebar-collapsed') === '1') {
-        appLayout?.classList.add('sidebar-collapsed');
-      }
-    }
-  });
+  window.addEventListener('resize', syncLayoutForViewport);
+  if (typeof mqMobile.addEventListener === 'function') {
+    mqMobile.addEventListener('change', syncLayoutForViewport);
+  } else if (typeof mqMobile.addListener === 'function') {
+    mqMobile.addListener(syncLayoutForViewport);
+  }
 
   if (!isMobile() && localStorage.getItem('sidebar-collapsed') === '1') {
     appLayout?.classList.add('sidebar-collapsed');
+  }
+  /* Pastikan mode mobile tidak membawa class collapsed dari sesi desktop (edge case devtools / resize). */
+  if (isMobile()) {
+    appLayout?.classList.remove('sidebar-collapsed');
   }
 
   /* ================================================================
