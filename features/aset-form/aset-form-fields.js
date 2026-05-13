@@ -29,6 +29,7 @@ const FIELDS_NUMBER = [
   { id: 'jumlah_lantai',       key: 'jumlah_lantai',       parse: v => parseInt(v)                || null },
   { id: 'tahun_perolehan_tanah',key: 'tahun_perolehan_tanah',parse: v => parseInt(v)              || null },
   { id: 'tahun_cetak',         key: 'tahun_cetak',         parse: v => parseInt(v)                || null },
+  { id: 'luas_tanah_gedung',   key: 'luas_tanah_gedung',   parse: v => parseFloat(v)              || null },
 ];
 
 // FIX Bug #4: tambah tgl_bpkb yang sebelumnya tidak tercakup

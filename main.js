@@ -12,6 +12,7 @@
 
   if (page === 'index')             { initBarangPage();           }
   if (page === 'tambah')            { initTambahPage();           }
+  if (page === 'bulk-tambah')      { initBulkTambahPage();       }
   if (page === 'edit')              { initEditPage();             }
   if (page === 'detail')            { initDetailPage();           }
   if (page === 'pemindahtanganan')  { initPemindahtangananPage(); }

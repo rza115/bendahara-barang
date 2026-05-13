@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Impor Massal Aset — Inventaris Kecamatan Tenjo</title>
+  <link rel="stylesheet" href="../assets/styles/sidebar.css">
+  <link rel="stylesheet" href="../assets/styles/style.css">
+</head>
+<body data-page="bulk-tambah">
+
+  <div class="loading-overlay" id="loading">
+    <div class="loading-spinner"></div>
+  </div>
+  <div class="alert" id="alert-box"></div>
+
+  <div id="page-body">
+
+    <div class="page-header">
+      <div>
+        <h1>📤 Impor Massal Aset</h1>
+        <p>Unggah CSV atau Excel (.xlsx). Kolom mengikuti form tambah aset; foto dan dokumen tidak diimpor di sini.</p>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <a href="tambah.html" class="btn btn-secondary">Form tambah tunggal</a>
+        <a href="index.html" class="btn btn-secondary">← Daftar aset</a>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-section">
+        <div class="form-section-title">1. Unduh template</div>
+        <p style="font-size:13px;color:#64748b;margin-bottom:12px">
+          Baris pertama berisi nama kolom (snake_case) persis seperti di bawah. Isi satu baris per aset. Kolom opsional boleh dikosongkan.
+        </p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button type="button" id="bulk-btn-template-xlsx" class="btn btn-primary">Unduh template .xlsx</button>
+          <button type="button" id="bulk-btn-template-csv" class="btn btn-secondary">Unduh template .csv</button>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title">2. Unggah berkas</div>
+        <div class="form-group">
+          <label>Pilih berkas</label>
+          <input type="file" id="bulk-file" accept=".csv,.xlsx,.xls">
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:8px">
+          <button type="button" id="bulk-btn-parse" class="btn btn-primary">Baca &amp; pratinjau</button>
+          <button type="button" id="bulk-btn-import" class="btn btn-primary" style="background:#059669;border-color:#059669">Impor ke database</button>
+          <span id="bulk-stat" style="font-size:13px;color:#64748b"></span>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title">Pratinjau</div>
+        <div id="bulk-preview"></div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title">Daftar kolom (sama dengan data di form tambah, tanpa file)</div>
+        <p style="font-size:12px;color:#64748b;margin-bottom:10px">
+          Field khusus KIB A/B/C/E hanya perlu diisi jika relevan. Default: <code>jumlah</code>=1, <code>kondisi</code>=Baik, <code>status_aset</code>=Aset Tetap, <code>status_barang</code>=Inventaris.
+        </p>
+        <div id="bulk-column-list"></div>
+      </div>
+    </div>
+
+  </div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="../supabase.js"></script>
+<script src="../shared/auth/auth-guard.js"></script>
+<script src="../nav.js"></script>
+<script src="../shared/utils/constants.js"></script>
+<script src="../shared/utils/dom.js"></script>
+<script src="../shared/utils/formatters.js"></script>
+<script src="../shared/ui/feedback.js"></script>
+<script src="../features/aset-form/bulk-import-columns.js"></script>
+<script src="../features/aset-form/bulk-import-page.js"></script>
+<script src="../main.js"></script>
+</html>
