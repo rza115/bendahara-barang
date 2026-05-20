@@ -52,7 +52,7 @@ const BULK_IMPORT_COLUMNS = [
   { key: 'status_sertifikat_tanah', label: 'Status Sertifikat Tanah', type: 'text' },
   { key: 'no_kode_tanah', label: 'No Kode Tanah', type: 'text' },
   { key: 'id_awal_tanah', label: 'ID Awal Tanah', type: 'text' },
-  { key: 'luas_bangunan', label: 'Luas Tanah m² (gedung)', type: 'number' },
+  // { key: 'luas_bangunan', label: 'Luas Tanah m² (gedung)', type: 'number' },
   { key: 'tahun_cetak', label: 'Tahun Cetak / Beli (KIB E)', type: 'number' },
   { key: 'ukuran_aset', label: 'Ukuran (KIB E)', type: 'text' },
   { key: 'judul_koleksi', label: 'Judul / Pencipta', type: 'text' },
