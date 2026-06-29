@@ -120,6 +120,10 @@
           await window.logoutAdmin();
           return;
         }
+        // Sign out dari Supabase sebelum redirect
+        if (window.authClient?.auth) {
+          await window.authClient.auth.signOut();
+        }
         window.location.replace('../login.html');
       });
     });

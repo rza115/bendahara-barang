@@ -8,14 +8,12 @@ async function saveAset(isEdit, id, data) {
     // FIX Bug #3: hapus console.error debug yang muncul sebagai error merah di console
     const { error } = await db.from('aset').update(data).eq('id', id);
     if (error) {
-      console.error('Supabase error:', error.message, error.details, error.hint);
       throw error;
     }
     return id;
   } else {
     const { data: inserted, error } = await db.from('aset').insert(data).select('id').single();
     if (error) {
-      console.error('Supabase error:', error.message, error.details, error.hint);
       throw error;
     }
     return inserted.id;

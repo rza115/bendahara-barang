@@ -19,28 +19,6 @@ window.initPeminjaman = async function () {
   }
 
   // ── Helper UI ──────────────────────────────────────────────────────────
-  function showFeedback(msg, type = 'success') {
-    const el = document.getElementById('alert-box');
-    if (!el) return;
-    el.className = 'alert alert-' + type;
-    el.textContent = msg;
-    el.style.display = 'block';
-    setTimeout(() => { el.style.display = 'none'; }, 4000);
-  }
-
-  function showLoading(show = true) {
-    const el = document.getElementById('loading');
-    if (el) el.style.display = show ? 'flex' : 'none';
-  }
-
-  function escapeHtml(str) {
-    if (!str) return '';
-    return String(str)
-      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;').replace(/"/g, '&quot;')
-      .replace(/'/g, '&#39;');
-  }
-
   function formatTgl(tgl) {
     if (!tgl) return '-';
     const [y, m, d] = tgl.split('-');

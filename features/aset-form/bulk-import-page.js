@@ -295,7 +295,7 @@ async function initBulkTambahPage() {
       try {
         let matrix;
         if (name.endsWith('.csv')) {
-          const wb = XLSX.read(new Uint8Array(reader.result), { type: 'array', cellDates: true });
+          const wb = XLSX.read(reader.result, { type: 'string', cellDates: true });
           const sn = wb.SheetNames[0];
           matrix = XLSX.utils.sheet_to_json(wb.Sheets[sn], { header: 1, defval: '', raw: true });
         } else {
@@ -328,7 +328,11 @@ async function initBulkTambahPage() {
       showLoading(false);
       showAlert('Gagal membaca berkas.', 'error');
     };
-    reader.readAsArrayBuffer(f);
+    if (name.endsWith('.csv')) {
+      reader.readAsText(f, 'UTF-8');
+    } else {
+      reader.readAsArrayBuffer(f);
+    }
   });
 
   btnImport?.addEventListener('click', async () => {

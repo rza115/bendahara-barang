@@ -42,7 +42,7 @@ function renderTable(data) {
           ? `<span class="badge ${getKondisiBadge(row.kondisi)}">${escapeHtml(row.kondisi)}</span>`
           : '-'}
       </td>
-      <td>${escapeHtml(row.lokasi || row.penggunaan) || '-'}</td>
+      <td>${escapeHtml(row.lokasi) || '-'}</td>
       <td class="td-action">
         <a href="detail.html?id=${row.id}" class="btn-edit" title="Detail"
            onclick="event.stopPropagation()">🔍</a>
