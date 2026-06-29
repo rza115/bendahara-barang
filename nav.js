@@ -153,16 +153,20 @@
     }
   }
 
+  let resizeTimer;
   function syncLayoutForViewport() {
-    if (isMobile()) {
-      appLayout?.classList.remove('sidebar-collapsed');
-      closeMobileSidebar();
-    } else {
-      closeMobileSidebar();
-      if (localStorage.getItem('sidebar-collapsed') === '1') {
-        appLayout?.classList.add('sidebar-collapsed');
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      if (isMobile()) {
+        appLayout?.classList.remove('sidebar-collapsed');
+        closeMobileSidebar();
+      } else {
+        closeMobileSidebar();
+        if (localStorage.getItem('sidebar-collapsed') === '1') {
+          appLayout?.classList.add('sidebar-collapsed');
+        }
       }
-    }
+    }, 100);
   }
 
   function closeMobileSidebar() {
