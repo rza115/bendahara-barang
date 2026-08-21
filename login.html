@@ -277,7 +277,7 @@
 
 <div class="wrapper">
   <div class="brand">
-    <div class="brand-icon">🏛️</div>
+    <div class="brand-icon"><span class="material-symbols-rounded filled" aria-hidden="true">account_balance</span></div>
     <div class="brand-title">Inventaris Barang</div>
     <div class="brand-subtitle">Kecamatan Tenjo — Kab. Bogor</div>
   </div>
@@ -287,14 +287,14 @@
     <div class="card-desc">Akses terbatas untuk petugas yang berwenang.</div>
 
     <div class="error-msg" id="error-msg">
-      <span>⚠️</span>
+      <span class="material-symbols-rounded" aria-hidden="true">warning</span>
       <span id="error-text">Email atau password salah.</span>
     </div>
 
     <div class="form-group">
       <label>Email</label>
       <div class="input-wrap">
-        <span class="input-icon">✉️</span>
+        <span class="input-icon"><span class="material-symbols-rounded" aria-hidden="true">mail</span></span>
         <input type="email" id="email" placeholder="Masukkan email" autocomplete="email">
       </div>
     </div>
@@ -302,9 +302,9 @@
     <div class="form-group">
       <label>Password</label>
       <div class="input-wrap">
-        <span class="input-icon">🔒</span>
+        <span class="input-icon"><span class="material-symbols-rounded" aria-hidden="true">lock</span></span>
         <input type="password" id="password" placeholder="Masukkan password" autocomplete="current-password">
-        <button class="toggle-pw" id="toggle-pw" type="button" title="Tampilkan password">👁️</button>
+        <button class="toggle-pw" id="toggle-pw" type="button" title="Tampilkan password" aria-label="Tampilkan password"><span class="material-symbols-rounded" aria-hidden="true">visibility</span></button>
       </div>
     </div>
 
@@ -345,8 +345,9 @@
   toggleBtn.addEventListener('click', () => {
     const isHidden = pwInput.type === 'password';
     pwInput.type = isHidden ? 'text' : 'password';
-    toggleBtn.textContent = isHidden ? '🙈' : '👁️';
+    toggleBtn.querySelector('.material-symbols-rounded').textContent = isHidden ? 'visibility_off' : 'visibility';
     toggleBtn.title = isHidden ? 'Sembunyikan password' : 'Tampilkan password';
+    toggleBtn.setAttribute('aria-label', toggleBtn.title);
   });
 
   // Enter key support

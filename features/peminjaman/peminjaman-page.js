@@ -77,10 +77,8 @@ window.initPeminjaman = async function () {
         : `<span style="background:#fef9c3;color:#a16207;padding:2px 10px;border-radius:9999px;font-size:12px;font-weight:500">Dipinjam</span>`;
 
       const aksi = row.status === 'dipinjam'
-        ? `<button onclick="window._kembalikanPeminjaman('${row.id}')"
-             style="padding:3px 10px;font-size:12px;background:#dcfce7;border:1px solid #86efac;
-                    border-radius:6px;cursor:pointer;color:#15803d;margin-right:4px">
-             ↩ Kembalikan</button>`
+        ? `<button class="table-action success" onclick="window._kembalikanPeminjaman('${row.id}')">
+             <span class="material-symbols-rounded" aria-hidden="true">assignment_return</span>Kembalikan</button>`
         : '';
 
       return `<tr style="border-bottom:1px solid #f1f5f9">
@@ -94,9 +92,8 @@ window.initPeminjaman = async function () {
         <td style="padding:10px 12px">${statusBadge}</td>
         <td style="padding:10px 12px;white-space:nowrap">
           ${aksi}
-          <button onclick="window._hapusPeminjaman('${row.id}')"
-            style="padding:3px 8px;font-size:12px;background:#fef2f2;border:1px solid #fecaca;
-                   border-radius:6px;cursor:pointer;color:#dc2626">Hapus</button>
+          <button class="table-action danger" onclick="window._hapusPeminjaman('${row.id}')">
+            <span class="material-symbols-rounded" aria-hidden="true">delete</span>Hapus</button>
         </td>
       </tr>`;
     }).join('');

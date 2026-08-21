@@ -112,12 +112,11 @@ function renderRiwayatPT(data) {
       <td style="padding:10px 12px;font-size:12px;color:#64748b;font-family:monospace">${escapeHtml(row.no_dokumen) || '-'}</td>
       <td style="padding:10px 12px">
         ${row.dokumen_url
-          ? `<a href="${escapeHtml(row.dokumen_url)}" target="_blank" rel="noopener"
-               style="font-size:12px;color:#1d4ed8;margin-right:8px">Dokumen ↗</a>`
+          ? `<a href="${escapeHtml(row.dokumen_url)}" target="_blank" rel="noopener" class="table-action">
+               <span class="material-symbols-rounded" aria-hidden="true">open_in_new</span>Dokumen</a>`
           : ''}
-        <button onclick="hapusPTHandler('${row.id}')"
-          style="padding:3px 8px;font-size:12px;background:#fef2f2;border:1px solid #fecaca;
-                 border-radius:6px;cursor:pointer;color:#dc2626">🗑️ Hapus</button>
+        <button class="table-action danger" onclick="hapusPTHandler('${row.id}')">
+          <span class="material-symbols-rounded" aria-hidden="true">delete</span>Hapus</button>
       </td>
     </tr>`).join('');
 }

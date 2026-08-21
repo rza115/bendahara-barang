@@ -13,10 +13,10 @@ const SORT_MAP = {
 };
 
 const KIB_LABEL = {
-  'KIB A': '🏞️ KIB A – Tanah',
-  'KIB B': '⚙️ KIB B – Peralatan & Mesin',
-  'KIB C': '🏢 KIB C – Gedung & Bangunan',
-  'KIB E': '📦 KIB E – Aset Tetap Lainnya',
+  'KIB A': 'KIB A – Tanah',
+  'KIB B': 'KIB B – Peralatan & Mesin',
+  'KIB C': 'KIB C – Gedung & Bangunan',
+  'KIB E': 'KIB E – Aset Tetap Lainnya',
 };
 
 const KONDISI_BADGE = {

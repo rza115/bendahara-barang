@@ -231,7 +231,7 @@
         <h1>Cetak Label Barcode</h1>
         <p>Pilih aset, atur opsi, lalu cetak atau unduh PDF label inventaris</p>
       </div>
-      <a href="index.html" class="btn btn-secondary">← Kembali</a>
+      <a href="index.html" class="btn btn-secondary"><span class="material-symbols-rounded" aria-hidden="true">arrow_back</span>Kembali</a>
     </div>
 
     <div class="barcode-toolbar">
@@ -260,14 +260,17 @@
 
     <div class="aset-selector">
       <div class="aset-selector-header">
-        <div class="aset-selector-title">📋 Pilih Aset untuk Dicetak</div>
+        <div class="aset-selector-title"><span class="material-symbols-rounded" aria-hidden="true">checklist</span>Pilih Aset untuk Dicetak</div>
         <div class="aset-selector-actions">
           <button class="btn-sm" id="btn-pilih-semua">Pilih Semua</button>
           <button class="btn-sm" id="btn-batal-semua">Batal Semua</button>
         </div>
       </div>
       <div class="search-bar">
-        <input type="text" id="search-aset" placeholder="🔍 Cari nama barang atau kode...">
+        <div class="search-field">
+          <span class="material-symbols-rounded" aria-hidden="true">search</span>
+          <input type="text" id="search-aset" placeholder="Cari nama barang atau kode...">
+        </div>
         <select id="filter-kib">
           <option value="">Semua KIB</option>
           <option value="KIB A">KIB A</option>
@@ -282,17 +285,17 @@
       <div class="selected-count">
         <span>Dipilih: <strong id="jumlah-dipilih">0</strong> aset</span>
         <button class="btn btn-primary" id="btn-generate" style="padding:6px 16px;font-size:13px">
-          🏷️ Generate Label
+          <span class="material-symbols-rounded" aria-hidden="true">sell</span>Generate Label
         </button>
       </div>
     </div>
 
     <div class="preview-section">
       <div class="preview-header">
-        <div class="preview-title">🖨️ Preview Label</div>
+        <div class="preview-title"><span class="material-symbols-rounded" aria-hidden="true">print</span>Preview Label</div>
         <div class="preview-actions">
-          <button class="btn btn-secondary" id="btn-print" style="font-size:13px;padding:7px 14px">🖨️ Cetak</button>
-          <button class="btn btn-primary"   id="btn-pdf"   style="font-size:13px;padding:7px 14px">📄 Download PDF</button>
+          <button class="btn btn-secondary" id="btn-print" style="font-size:13px;padding:7px 14px"><span class="material-symbols-rounded" aria-hidden="true">print</span>Cetak</button>
+          <button class="btn btn-primary"   id="btn-pdf"   style="font-size:13px;padding:7px 14px"><span class="material-symbols-rounded" aria-hidden="true">picture_as_pdf</span>Download PDF</button>
         </div>
       </div>
       <div id="print-area">

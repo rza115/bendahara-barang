@@ -56,12 +56,11 @@ async function loadDokumenPJExisting(asetId) {
     list.innerHTML = data.map(d => `
       <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:#f8fafc;border-radius:8px;margin-bottom:6px;font-size:13px">
         <span>
-          <span style="font-weight:500">📄 ${escapeHtml(d.jenis_dokumen)}</span>
+          <span style="font-weight:500"><span class="material-symbols-rounded" aria-hidden="true">description</span>${escapeHtml(d.jenis_dokumen)}</span>
           <span style="color:#94a3b8;margin-left:8px;font-size:12px">${escapeHtml(d.nama_file)}</span>
         </span>
-        <button onclick="hapusDokumenPJ('${d.id}','${asetId}')"
-          style="padding:3px 8px;font-size:12px;background:#fef2f2;border:1px solid #fecaca;border-radius:6px;cursor:pointer;color:#dc2626">
-          Hapus
+        <button class="table-action danger" onclick="hapusDokumenPJ('${d.id}','${asetId}')">
+          <span class="material-symbols-rounded" aria-hidden="true">delete</span>Hapus
         </button>
       </div>`).join('');
   } catch (_) {}

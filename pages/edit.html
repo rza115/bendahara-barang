@@ -22,13 +22,13 @@
         <h1>Edit Aset</h1>
         <p>Perbarui data aset yang sudah terdaftar</p>
       </div>
-      <a href="index.html" class="btn btn-secondary">← Kembali</a>
+      <a href="index.html" class="btn btn-secondary"><span class="material-symbols-rounded" aria-hidden="true">arrow_back</span>Kembali</a>
     </div>
 
     <div class="form-card">
 
       <div class="form-section">
-        <div class="form-section-title">📋 Identitas Barang</div>
+        <div class="form-section-title"><span class="material-symbols-rounded" aria-hidden="true">inventory_2</span>Identitas Barang</div>
         <div class="form-grid">
           <div class="form-group">
             <label>Kategori KIB <span class="req">*</span></label>
@@ -103,7 +103,7 @@
       </div>
 
       <div class="form-section">
-        <div class="form-section-title">💰 Data Perolehan</div>
+        <div class="form-section-title"><span class="material-symbols-rounded" aria-hidden="true">payments</span>Data Perolehan</div>
         <div class="form-grid">
           <div class="form-group">
             <label>Tahun Perolehan</label>
@@ -141,7 +141,7 @@
       </div>
 
       <div class="form-section">
-        <div class="form-section-title">👤 Penanggung Jawab Barang</div>
+        <div class="form-section-title"><span class="material-symbols-rounded" aria-hidden="true">person_pin</span>Penanggung Jawab Barang</div>
         <div class="form-grid">
           <div class="form-group">
             <label>Penanggung Jawab</label>
@@ -158,7 +158,7 @@
       </div>
 
       <div class="form-section section-kib" id="section-kib-a" style="display:none">
-        <div class="form-section-title">🏞️ Data KIB A (Tanah)</div>
+        <div class="form-section-title"><span class="material-symbols-rounded" aria-hidden="true">landscape</span>Data KIB A (Tanah)</div>
         <div class="form-grid">
           <div class="form-group">
             <label>Luas Tanah (m²)</label>
@@ -196,7 +196,7 @@
       </div>
 
       <div class="form-section section-kib" id="section-kib-b" style="display:none">
-        <div class="form-section-title">⚙️ Data KIB B (Peralatan & Mesin)</div>
+        <div class="form-section-title"><span class="material-symbols-rounded" aria-hidden="true">precision_manufacturing</span>Data KIB B (Peralatan & Mesin)</div>
         <div class="form-grid">
           <div class="form-group">
             <label>No. Pabrik</label>
@@ -226,7 +226,7 @@
       </div>
 
       <div class="form-section section-kib" id="section-kib-c" style="display:none">
-        <div class="form-section-title">🏢 Data KIB C (Gedung & Bangunan)</div>
+        <div class="form-section-title"><span class="material-symbols-rounded" aria-hidden="true">apartment</span>Data KIB C (Gedung & Bangunan)</div>
         <div class="form-grid">
           <div class="form-group">
             <label>Kondisi Bangunan</label>
@@ -280,7 +280,7 @@
       </div>
 
       <div class="form-section section-kib" id="section-kib-e" style="display:none">
-        <div class="form-section-title">📦 Data KIB E (Aset Lainnya)</div>
+        <div class="form-section-title"><span class="material-symbols-rounded" aria-hidden="true">category</span>Data KIB E (Aset Lainnya)</div>
         <div class="form-grid">
           <div class="form-group">
             <label>Judul Koleksi</label>
@@ -318,7 +318,7 @@
       </div>
 
 <div class="form-section">
-  <div class="form-section-title">📷 Foto Aset</div>
+  <div class="form-section-title"><span class="material-symbols-rounded" aria-hidden="true">photo_camera</span>Foto Aset</div>
   <div class="form-grid">
     <div class="form-group form-col-full">
 
@@ -337,7 +337,7 @@
           style="max-width:200px;max-height:200px;border-radius:8px;border:1px solid #e2e8f0;">
         <button type="button" id="btn-hapus-foto"
           style="display:block;margin-top:6px;color:#ef4444;background:none;border:none;cursor:pointer;font-size:13px;">
-          ✕ Hapus foto
+          <span class="material-symbols-rounded" aria-hidden="true">delete</span>Hapus foto
         </button>
       </div>
 
@@ -347,7 +347,7 @@
 </div>
 
 <div class="form-section">
-  <div class="form-section-title">📎 Dokumen Pengadaan & Kontrak</div>
+  <div class="form-section-title"><span class="material-symbols-rounded" aria-hidden="true">attach_file</span>Dokumen Pengadaan & Kontrak</div>
   <div class="form-grid">
     <div class="form-group">
       <label>Surat Pengantar</label>
@@ -397,7 +397,7 @@
 </div>
 
 <div class="form-section">
-  <div class="form-section-title">📎 Dokumen Penanggung Jawab</div>
+  <div class="form-section-title"><span class="material-symbols-rounded" aria-hidden="true">folder_shared</span>Dokumen Penanggung Jawab</div>
   <div id="dok-pj-existing" style="display:none;margin-bottom:12px">
     <div id="dok-pj-list"></div>
   </div>
@@ -421,7 +421,7 @@
   </div>
 </div>
       <div class="form-section">
-        <div class="form-section-title">📍 Lokasi &amp; Keterangan</div>
+        <div class="form-section-title"><span class="material-symbols-rounded" aria-hidden="true">location_on</span>Lokasi &amp; Keterangan</div>
         <div class="form-grid">
           <div class="form-group">
             <label>Lokasi Aset</label>
@@ -439,7 +439,7 @@
       </div>
 
       <div class="form-actions">
-        <button id="btn-simpan" class="btn btn-primary">💾 Simpan Perubahan</button>
+        <button id="btn-simpan" class="btn btn-primary"><span class="material-symbols-rounded" aria-hidden="true">save</span>Simpan Perubahan</button>
         <a href="index.html" class="btn btn-secondary">Batal</a>
       </div>
 

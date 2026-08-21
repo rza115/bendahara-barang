@@ -19,7 +19,7 @@ function renderDetail(data) {
   if (fotoWrap) {
     fotoWrap.innerHTML = data.foto_url
       ? `<img src="${escapeHtml(data.foto_url)}" alt="Foto Barang" class="foto-box">`
-      : `<div class="foto-placeholder"><span>📷</span>Tidak ada foto</div>`;
+      : `<div class="foto-placeholder"><span class="material-symbols-rounded" aria-hidden="true">no_photography</span>Tidak ada foto</div>`;
   }
 
   // Helper — langsung set textContent ke <span id="d-xxx"> yang ada di HTML
@@ -152,7 +152,7 @@ function renderDetail(data) {
         const preview = isImage
           ? `<img src="${escapeHtml(url)}" alt="${escapeHtml(label)}" class="dok-img">`
           : `<a href="${escapeHtml(url)}" target="_blank" rel="noopener" class="dok-link">
-               <span>📎</span><span>${escapeHtml(fileName)}</span>
+               <span class="material-symbols-rounded" aria-hidden="true">attach_file</span><span>${escapeHtml(fileName)}</span>
              </a>`;
         return `<div class="detail-item">
                   <span class="detail-label">${escapeHtml(label)}</span>
@@ -212,7 +212,7 @@ async function renderDokumenDetail(asetId) {
       const preview = isImage
         ? `<img src="${escapeHtml(url)}" alt="${escapeHtml(d.jenis_dokumen)}" class="dok-img">`
         : `<a href="${escapeHtml(url)}" target="_blank" rel="noopener" class="dok-link">
-             <span>📎</span><span>${escapeHtml(d.nama_file)}</span>
+             <span class="material-symbols-rounded" aria-hidden="true">attach_file</span><span>${escapeHtml(d.nama_file)}</span>
            </a>`;
       return `<div class="detail-item">
                 <span class="detail-label">${escapeHtml(d.jenis_dokumen)}</span>

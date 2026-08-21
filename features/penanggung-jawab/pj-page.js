@@ -38,12 +38,8 @@ function renderPJTable(data, jumlahMap) {
         </span>
       </td>
       <td style="padding:10px 12px">
-        <button onclick="editPJ('${pj.id}')" 
-          style="padding:3px 10px;font-size:12px;background:#eff6ff;border:1px solid #bfdbfe;
-                 border-radius:6px;cursor:pointer;color:#1d4ed8;margin-right:4px">✏️ Edit</button>
-        <button onclick="hapusPJHandler('${pj.id}','${escapeHtml(pj.nama)}')"
-          style="padding:3px 10px;font-size:12px;background:#fef2f2;border:1px solid #fecaca;
-                 border-radius:6px;cursor:pointer;color:#dc2626">🗑️</button>
+        <button class="table-action" onclick="editPJ('${pj.id}')"><span class="material-symbols-rounded" aria-hidden="true">edit</span>Edit</button>
+        <button class="table-action danger" onclick="hapusPJHandler('${pj.id}','${escapeHtml(pj.nama)}')" aria-label="Hapus ${escapeHtml(pj.nama)}"><span class="material-symbols-rounded" aria-hidden="true">delete</span></button>
       </td>
     </tr>`).join('');
 }
@@ -129,5 +125,4 @@ async function initPJPage() {
   });
   await loadAndRenderPJ();
 }
-
 

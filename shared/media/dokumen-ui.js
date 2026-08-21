@@ -29,7 +29,7 @@ function renderDokPreview(wrap, file) {
   } else {
     wrap.innerHTML = `
       <div style="display:inline-flex;align-items:center;gap:8px;padding:8px 12px;background:#f1f5f9;border-radius:8px;border:1px solid #e2e8f0">
-        <span style="font-size:20px">📎</span>
+        <span class="material-symbols-rounded" aria-hidden="true">attach_file</span>
         <span style="font-size:13px;color:#334155">${escapeHtml(file.name)}</span>
       </div>`;
     wrap.style.display = 'block';
@@ -75,7 +75,7 @@ function initDokumenPreview(data) {
         <a href="${escapeHtml(url)}" target="_blank" rel="noopener"
           style="display:inline-flex;align-items:center;gap:8px;padding:8px 14px;background:#f1f5f9;
                  border-radius:8px;border:1px solid #cbd5e1;text-decoration:none;color:#1e40af;font-size:13px">
-          <span style="font-size:18px">📎</span>
+          <span class="material-symbols-rounded" aria-hidden="true">attach_file</span>
           <span>${escapeHtml(fileName)}</span>
           <span style="font-size:11px;color:#64748b">Buka</span>
         </a>`;

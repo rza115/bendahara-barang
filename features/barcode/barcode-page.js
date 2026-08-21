@@ -31,7 +31,7 @@ window.initBarcodePage = async function () {
   function renderList(data) {
     const container = document.getElementById('aset-list');
     if (!data.length) {
-      container.innerHTML = '<div style="padding:40px;text-align:center;color:#94a3b8">📭 Tidak ada aset ditemukan.</div>';
+      container.innerHTML = '<div class="empty-state"><span class="material-symbols-rounded" aria-hidden="true">inventory_2</span><p>Tidak ada aset ditemukan.</p></div>';
       return;
     }
     container.innerHTML = data.map(a => `
@@ -183,7 +183,7 @@ window.initBarcodePage = async function () {
       codeWrap.appendChild(codeText);
     });
 
-    showAlert(`✅ ${dipilih.length} label berhasil digenerate!`);
+    showAlert(`${dipilih.length} label berhasil dibuat!`);
     document.getElementById('label-grid').scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 
@@ -225,7 +225,7 @@ window.initBarcodePage = async function () {
       }
       const tahun = document.getElementById('opt-tahun').value || new Date().getFullYear();
       pdf.save(`Label_BMD_${SKPD.replace(/\s+/g, '_')}_${tahun}.pdf`);
-      showAlert('✅ PDF berhasil diunduh!');
+      showAlert('PDF berhasil diunduh!');
     } catch (err) {
       showAlert('Gagal generate PDF: ' + err.message, 'error');
     } finally {

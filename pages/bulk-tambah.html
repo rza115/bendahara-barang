@@ -23,8 +23,8 @@
         <p>Unggah CSV atau Excel (.xlsx). Kolom mengikuti form tambah aset; foto dan dokumen tidak diimpor di sini.</p>
       </div>
       <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
-        <a href="tambah.html" class="btn btn-secondary">Form tambah tunggal</a>
-        <a href="index.html" class="btn btn-secondary">← Daftar aset</a>
+        <a href="tambah.html" class="btn btn-secondary"><span class="material-symbols-rounded" aria-hidden="true">add_box</span>Form tambah tunggal</a>
+        <a href="index.html" class="btn btn-secondary"><span class="material-symbols-rounded" aria-hidden="true">arrow_back</span>Daftar aset</a>
       </div>
     </div>
 
@@ -35,8 +35,8 @@
           Baris pertama berisi nama kolom (snake_case) persis seperti di bawah. Isi satu baris per aset. Kolom opsional boleh dikosongkan.
         </p>
         <div style="display:flex;gap:10px;flex-wrap:wrap">
-          <button type="button" id="bulk-btn-template-xlsx" class="btn btn-primary">Unduh template .xlsx</button>
-          <button type="button" id="bulk-btn-template-csv" class="btn btn-secondary">Unduh template .csv</button>
+          <button type="button" id="bulk-btn-template-xlsx" class="btn btn-primary"><span class="material-symbols-rounded" aria-hidden="true">download</span>Unduh template .xlsx</button>
+          <button type="button" id="bulk-btn-template-csv" class="btn btn-secondary"><span class="material-symbols-rounded" aria-hidden="true">download</span>Unduh template .csv</button>
         </div>
       </div>
 
@@ -47,8 +47,8 @@
           <input type="file" id="bulk-file" accept=".csv,.xlsx,.xls">
         </div>
         <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:8px">
-          <button type="button" id="bulk-btn-parse" class="btn btn-primary">Baca &amp; pratinjau</button>
-          <button type="button" id="bulk-btn-import" class="btn btn-primary" style="background:#059669;border-color:#059669">Impor ke database</button>
+          <button type="button" id="bulk-btn-parse" class="btn btn-primary"><span class="material-symbols-rounded" aria-hidden="true">preview</span>Baca &amp; pratinjau</button>
+          <button type="button" id="bulk-btn-import" class="btn btn-primary" style="background:#059669;border-color:#059669"><span class="material-symbols-rounded" aria-hidden="true">cloud_upload</span>Impor ke database</button>
           <span id="bulk-stat" style="font-size:13px;color:#64748b"></span>
         </div>
       </div>

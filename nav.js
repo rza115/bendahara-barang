@@ -9,16 +9,16 @@
      DATA NAVIGASI
   ================================================================ */
   const mainLinks = [
-    { href: 'index.html', label: 'Daftar Aset', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>` },
-    { href: 'tambah.html', label: 'Tambah', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>` },
-    { href: 'bulk-tambah.html', label: 'Impor CSV/XLSX', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>` },
-    { href: 'barcode.html', label: 'Barcode', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="8" y1="7" x2="8" y2="17"/><line x1="12" y1="7" x2="12" y2="17"/><line x1="16" y1="7" x2="16" y2="17"/></svg>` },
+    { href: 'index.html', label: 'Daftar Aset', icon: 'inventory_2' },
+    { href: 'tambah.html', label: 'Tambah', icon: 'add_box' },
+    { href: 'bulk-tambah.html', label: 'Impor CSV/XLSX', icon: 'upload_file' },
+    { href: 'barcode.html', label: 'Barcode', icon: 'qr_code_2' },
   ];
 
   const kelolaLinks = [
-    { href: 'peminjaman.html', label: 'Peminjaman', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>` },
-    { href: 'penanggung-jawab.html', label: 'PJ Barang', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>` },
-    { href: 'pemindahtanganan.html', label: 'Pindahtangan', icon: `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>` },
+    { href: 'peminjaman.html', label: 'Peminjaman', icon: 'assignment_return' },
+    { href: 'penanggung-jawab.html', label: 'PJ Barang', icon: 'person_pin' },
+    { href: 'pemindahtanganan.html', label: 'Pindahtangan', icon: 'swap_horiz' },
   ];
 
   /* ================================================================
@@ -42,12 +42,7 @@
       <div class="sidebar-main">
         <header class="topbar">
           <button class="topbar-toggle" id="sidebar-toggle" aria-label="Buka atau tutup navigasi">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="3" y1="6" x2="21" y2="6"/>
-              <line x1="3" y1="12" x2="21" y2="12"/>
-              <line x1="3" y1="18" x2="21" y2="18"/>
-            </svg>
+            <span class="material-symbols-rounded" aria-hidden="true">menu</span>
           </button>
           <div class="topbar-breadcrumb">
             <span class="topbar-app">Inventaris</span>
@@ -76,7 +71,7 @@
   function renderNavItem(link) {
     const isActive = currentPage === link.href;
     return `<a href="${link.href}" class="sidebar-item${isActive ? ' active' : ''}" title="${link.label}"${isActive ? ' aria-current="page"' : ''}>
-      <span class="sidebar-item-icon">${link.icon}</span>
+      <span class="sidebar-item-icon"><span class="material-symbols-rounded" aria-hidden="true">${link.icon}</span></span>
       <span class="sidebar-item-label">${link.label}</span>
       ${isActive ? '<span class="sidebar-item-dot"></span>' : ''}
     </a>`;
@@ -84,9 +79,7 @@
 
   sidebar.innerHTML = `
     <div class="sidebar-logo">
-      <span class="sidebar-brand-mark" aria-hidden="true">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.5 12 4l8 4.5v9L12 22l-8-4.5z"/><path d="m4 8.5 8 4.5 8-4.5M12 13v9"/><path d="m8 6.2 8 4.5"/></svg>
-      </span>
+      <span class="sidebar-brand-mark" aria-hidden="true"><span class="material-symbols-rounded filled">inventory_2</span></span>
       <span class="sidebar-logo-text">SiAset<small>Kecamatan Tenjo</small></span>
     </div>
     <nav class="sidebar-nav">

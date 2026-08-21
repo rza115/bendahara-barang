@@ -11,7 +11,7 @@ function renderTable(data) {
     tbody.innerHTML = `
       <tr>
         <td colspan="8" class="empty-state">
-          <div>📭</div>
+          <div><span class="material-symbols-rounded" aria-hidden="true">inventory_2</span></div>
           <p>Belum ada data aset. <a href="tambah.html">Tambah aset pertama</a></p>
         </td>
       </tr>`;
@@ -44,12 +44,12 @@ function renderTable(data) {
       </td>
       <td>${escapeHtml(row.lokasi) || '-'}</td>
       <td class="td-action">
-        <a href="detail.html?id=${row.id}" class="btn-edit" title="Detail"
-           onclick="event.stopPropagation()">🔍</a>
-        <a href="edit.html?id=${row.id}" class="btn-edit" title="Edit"
-           onclick="event.stopPropagation()">✏️</a>
-        <button class="btn-hapus" title="Hapus"
-          onclick="event.stopPropagation(); hapusAsetHandler('${row.id}', '${escapeHtml(row.nama_barang)}')">🗑️</button>
+        <a href="detail.html?id=${row.id}" class="btn-edit" title="Lihat detail" aria-label="Lihat detail"
+           onclick="event.stopPropagation()"><span class="material-symbols-rounded" aria-hidden="true">visibility</span></a>
+        <a href="edit.html?id=${row.id}" class="btn-edit" title="Edit aset" aria-label="Edit aset"
+           onclick="event.stopPropagation()"><span class="material-symbols-rounded" aria-hidden="true">edit</span></a>
+        <button class="btn-hapus" title="Hapus aset" aria-label="Hapus aset"
+          onclick="event.stopPropagation(); hapusAsetHandler('${row.id}', '${escapeHtml(row.nama_barang)}')"><span class="material-symbols-rounded" aria-hidden="true">delete</span></button>
       </td>
     </tr>`).join('');
 
