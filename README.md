@@ -19,7 +19,7 @@ bendahara-barang/
 
 ---
 
-## 🚀 Cara Setup (Langkah per Langkah)
+## 🚀 Cara Setup (Langkah per Langkah) disini
 
 ### 1. Buat Project Supabase
 1. Buka [supabase.com](https://supabase.com) → New Project

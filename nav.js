@@ -1,5 +1,4 @@
-// nav.js — Dark Sidebar + Page Transition untuk SiAset
-// FIX: Mobile layout, overflow reset, click-through overlay
+// nav.js — Shared Material 3 application shell for SiAset
 (function () {
   'use strict';
 
@@ -42,7 +41,7 @@
       <aside class="sidebar" id="app-sidebar"></aside>
       <div class="sidebar-main">
         <header class="topbar">
-          <button class="topbar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
+          <button class="topbar-toggle" id="sidebar-toggle" aria-label="Buka atau tutup navigasi">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="3" y1="6" x2="21" y2="6"/>
@@ -51,7 +50,7 @@
             </svg>
           </button>
           <div class="topbar-breadcrumb">
-            <span class="topbar-app">SiAset</span>
+            <span class="topbar-app">Inventaris</span>
             <span class="topbar-sep">›</span>
             <span class="topbar-page" id="topbar-page-name"></span>
           </div>
@@ -76,7 +75,7 @@
   ================================================================ */
   function renderNavItem(link) {
     const isActive = currentPage === link.href;
-    return `<a href="${link.href}" class="sidebar-item${isActive ? ' active' : ''}" title="${link.label}">
+    return `<a href="${link.href}" class="sidebar-item${isActive ? ' active' : ''}" title="${link.label}"${isActive ? ' aria-current="page"' : ''}>
       <span class="sidebar-item-icon">${link.icon}</span>
       <span class="sidebar-item-label">${link.label}</span>
       ${isActive ? '<span class="sidebar-item-dot"></span>' : ''}
@@ -85,15 +84,17 @@
 
   sidebar.innerHTML = `
     <div class="sidebar-logo">
-      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6366F1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-      <span class="sidebar-logo-text">SiAset</span>
+      <span class="sidebar-brand-mark" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.5 12 4l8 4.5v9L12 22l-8-4.5z"/><path d="m4 8.5 8 4.5 8-4.5M12 13v9"/><path d="m8 6.2 8 4.5"/></svg>
+      </span>
+      <span class="sidebar-logo-text">SiAset<small>Kecamatan Tenjo</small></span>
     </div>
     <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Inventaris</div>
       <div class="sidebar-section">
         ${mainLinks.map(l => renderNavItem(l)).join('')}
       </div>
-      <div class="sidebar-divider"></div>
-      <div class="sidebar-section-label">Kelola</div>
+      <div class="sidebar-section-label">Operasional</div>
       <div class="sidebar-section">
         ${kelolaLinks.map(l => renderNavItem(l)).join('')}
       </div>
@@ -109,9 +110,15 @@
     </div>`;
 
   const allLinks = [...mainLinks, ...kelolaLinks];
+  const utilityPages = {
+    'detail.html': 'Detail Aset',
+    'edit.html': 'Edit Aset',
+  };
   const activePage = allLinks.find(l => l.href === currentPage);
   const pageNameEl = document.getElementById('topbar-page-name');
-  if (pageNameEl && activePage) pageNameEl.textContent = activePage.label;
+  if (pageNameEl) {
+    pageNameEl.textContent = activePage?.label || utilityPages[currentPage] || 'SiAset';
+  }
 
   function bindLogout() {
     document.querySelectorAll('.topbar-logout').forEach(btn => {
