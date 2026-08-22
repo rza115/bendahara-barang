@@ -5,7 +5,7 @@
 // ============================================
 
 async function fetchDaftarAset(filter = {}) {
-  let query = db.from('aset').select('*');
+  let query = db.from('aset').select('*').is('deleted_at', null);
 
   if (filter.kib)    query = query.eq('kib', filter.kib);
   if (filter.kondisi) query = query.eq('kondisi', filter.kondisi);
@@ -27,7 +27,7 @@ async function fetchDaftarAset(filter = {}) {
 }
 
 async function fetchSummaryAset(filter = {}) {
-  let query = db.from('aset').select('kib, harga');
+  let query = db.from('aset').select('kib, harga').is('deleted_at', null);
 
   if (filter.kib)    query = query.eq('kib', filter.kib);
   if (filter.kondisi) query = query.eq('kondisi', filter.kondisi);
@@ -39,12 +39,28 @@ async function fetchSummaryAset(filter = {}) {
 }
 
 async function deleteAset(id) {
-  const { error } = await db.from('aset').delete().eq('id', id);
+  const { data: { user }, error: userError } = await db.auth.getUser();
+  if (userError) throw userError;
+
+  const { data, error } = await db.from('aset')
+    .update({
+      deleted_at: new Date().toISOString(),
+      deleted_by: user?.id || null,
+    })
+    .eq('id', id)
+    .is('deleted_at', null)
+    .select('id')
+    .maybeSingle();
   if (error) throw error;
+  if (!data) throw new Error('Aset tidak ditemukan atau sudah berada di Trash.');
 }
 
 async function fetchAsetById(id) {
-  const { data, error } = await db.from('aset').select('*').eq('id', id).single();
+  const { data, error } = await db.from('aset')
+    .select('*')
+    .eq('id', id)
+    .is('deleted_at', null)
+    .single();
   if (error) throw error;
   return data;
 }

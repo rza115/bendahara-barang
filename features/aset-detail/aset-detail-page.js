@@ -12,6 +12,7 @@ async function initDetailPage() {
       .from('aset')
       .select('*')
       .eq('id', id)
+      .is('deleted_at', null)
       .single();
     if (error) throw error;
     if (!data) throw new Error('Data tidak ditemukan');

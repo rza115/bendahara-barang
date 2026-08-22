@@ -13,6 +13,7 @@
     { href: 'tambah.html', label: 'Tambah', icon: 'add_box' },
     { href: 'bulk-tambah.html', label: 'Impor CSV/XLSX', icon: 'upload_file' },
     { href: 'barcode.html', label: 'Barcode', icon: 'qr_code_2' },
+    { href: 'trash.html', label: 'Trash', icon: 'delete_sweep' },
   ];
 
   const kelolaLinks = [
@@ -106,6 +107,7 @@
   const utilityPages = {
     'detail.html': 'Detail Aset',
     'edit.html': 'Edit Aset',
+    'trash.html': 'Trash Aset',
   };
   const activePage = allLinks.find(l => l.href === currentPage);
   const pageNameEl = document.getElementById('topbar-page-name');

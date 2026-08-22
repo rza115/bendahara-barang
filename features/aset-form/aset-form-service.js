@@ -6,7 +6,10 @@
 async function saveAset(isEdit, id, data) {
   if (isEdit) {
     // FIX Bug #3: hapus console.error debug yang muncul sebagai error merah di console
-    const { error } = await db.from('aset').update(data).eq('id', id);
+    const { error } = await db.from('aset')
+      .update(data)
+      .eq('id', id)
+      .is('deleted_at', null);
     if (error) {
       throw error;
     }

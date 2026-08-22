@@ -12,6 +12,7 @@ window.PeminjamanService = {
     const { data, error } = await _db
       .from('aset')
       .select('id, nama_barang, kode_barang')
+      .is('deleted_at', null)
       .order('nama_barang');
     if (error) throw error;
     return data || [];

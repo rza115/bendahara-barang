@@ -75,8 +75,15 @@ git push -u origin main
 | 🎨 Filter Kondisi | Baik / Rusak Ringan / Rusak Berat |
 | ➕ Tambah Aset | Form lengkap, field dinamis per KIB |
 | ✏️ Edit Aset | Edit data aset yang sudah ada |
-| 🗑️ Hapus Aset | Dengan konfirmasi sebelum hapus |
+| 🗑️ Trash Aset | Soft delete, restore, dan hapus permanen |
 | 📱 Responsive | Bisa diakses dari HP |
+
+### Mengaktifkan fitur Trash
+
+Sebelum menggunakan fitur Trash, jalankan isi
+`database_migration_soft_delete_aset.sql` satu kali melalui **Supabase SQL Editor**.
+Migration ini menambahkan penanda soft delete, fungsi hapus permanen, dan
+memastikan detail aset publik tidak menampilkan data yang berada di Trash.
 
 ---
 

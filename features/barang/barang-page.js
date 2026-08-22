@@ -22,11 +22,11 @@ async function loadAset(filter) {
 }
 
 async function hapusAsetHandler(id, nama) {
-  if (!confirm(`Yakin hapus aset "${nama}"? Ini tidak bisa dibatalkan.`)) return;
+  if (!confirm(`Pindahkan aset "${nama}" ke Trash? Aset masih dapat dipulihkan.`)) return;
   showLoading(true);
   try {
     await deleteAset(id);
-    showAlert(`Aset "${nama}" berhasil dihapus.`);
+    showAlert(`Aset "${nama}" dipindahkan ke Trash.`);
     await loadAset(getActiveFilter());
   } catch (err) {
     showAlert('Gagal menghapus: ' + err.message, 'error');

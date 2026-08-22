@@ -48,13 +48,18 @@ function renderTable(data) {
            onclick="event.stopPropagation()"><span class="material-symbols-rounded" aria-hidden="true">visibility</span></a>
         <a href="edit.html?id=${row.id}" class="btn-edit" title="Edit aset" aria-label="Edit aset"
            onclick="event.stopPropagation()"><span class="material-symbols-rounded" aria-hidden="true">edit</span></a>
-        <button class="btn-hapus" title="Hapus aset" aria-label="Hapus aset"
-          onclick="event.stopPropagation(); hapusAsetHandler('${row.id}', '${escapeHtml(row.nama_barang)}')"><span class="material-symbols-rounded" aria-hidden="true">delete</span></button>
+        <button class="btn-hapus" title="Pindahkan ke Trash" aria-label="Pindahkan ke Trash"
+          data-action="trash" data-id="${row.id}" data-name="${escapeHtml(row.nama_barang)}"><span class="material-symbols-rounded" aria-hidden="true">delete</span></button>
       </td>
     </tr>`).join('');
 
   // Klik baris → buka detail (hanya jika bukan klik pada tombol aksi)
   tbody.onclick = e => {
+    const trashButton = e.target.closest('[data-action="trash"]');
+    if (trashButton) {
+      hapusAsetHandler(trashButton.dataset.id, trashButton.dataset.name);
+      return;
+    }
     if (e.target.closest('.btn-hapus, .btn-edit, a')) return;
     const row = e.target.closest('.row-clickable');
     if (row) window.location.href = `detail.html?id=${row.dataset.id}`;

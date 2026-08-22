@@ -353,8 +353,8 @@
       let list, fetchError;
 
       try {
-        const res = await db.rpc('get_aset_public');
-        list       = res.data;
+        const res = await db.rpc('get_aset_public_aktif');
+        list       = (res.data || []).filter(aset => !aset.deleted_at);
         fetchError = res.error;
       } catch (e) {
         renderError('cloud_off', 'Gagal terhubung ke server', e.message);
@@ -366,7 +366,7 @@
           /JWT|PGRST301/.test(fetchError.message + fetchError.code)
             ? 'API key tidak valid. Periksa konfigurasi SUPABASE_KEY.'
             : fetchError.code === '42883'
-            ? 'Fungsi <code>get_aset_public</code> tidak ditemukan di database.'
+            ? 'Fungsi <code>get_aset_public_aktif</code> tidak ditemukan di database.'
             : fetchError.message;
         renderError('error', 'Gagal memuat data', msg);
         return;

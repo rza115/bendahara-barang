@@ -707,6 +707,42 @@ tbody tr:hover,
 .selected-count strong { color: var(--md-sys-color-primary); }
 .label-grid { background: var(--md-sys-color-surface-container); }
 
+/* ---------- Trash ---------- */
+
+.trash-summary {
+  width: fit-content;
+  min-width: 190px;
+  min-height: 92px;
+  margin-bottom: 16px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border-radius: var(--md-sys-shape-corner-large);
+  background: var(--md-sys-color-error-container);
+  color: var(--md-sys-color-on-error-container);
+}
+.trash-summary > .material-symbols-rounded { font-size: 30px; }
+.trash-summary div { display: flex; flex-direction: column; }
+.trash-summary strong { font-size: 1.65rem; line-height: 1.1; }
+.trash-summary span:not(.material-symbols-rounded) { margin-top: 4px; font-size: .8rem; }
+
+.trash-notice {
+  margin-bottom: 18px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  border-radius: var(--md-sys-shape-corner-medium);
+  background: var(--md-sys-color-tertiary-container);
+  color: var(--md-sys-color-on-tertiary-container);
+}
+.trash-notice .material-symbols-rounded { flex: 0 0 auto; font-size: 21px; }
+.trash-notice p { font-size: .86rem; line-height: 1.5; }
+.trash-date { white-space: nowrap; color: var(--md-sys-color-on-surface-variant); }
+.trash-actions { width: 250px; }
+.trash-actions .table-action + .table-action { margin-left: 6px; }
+
 /* ---------- Login ---------- */
 
 body[data-page='login'] {
@@ -927,7 +963,9 @@ body[data-page='public-detail'] .state-msg code { background: var(--md-sys-color
   .pj-table th:last-child,
   .pj-table td:last-child,
   body[data-page='pemindahtanganan'] table th:last-child,
-  body[data-page='pemindahtanganan'] table td:last-child {
+  body[data-page='pemindahtanganan'] table td:last-child,
+  body[data-page='trash'] .trash-table th:last-child,
+  body[data-page='trash'] .trash-table td:last-child {
     position: sticky;
     right: 0;
     z-index: 1;
@@ -944,6 +982,13 @@ body[data-page='public-detail'] .state-msg code { background: var(--md-sys-color
   .pm-table td:last-child,
   .pj-table td:last-child,
   body[data-page='pemindahtanganan'] table td:last-child {
+    background: var(--md-sys-color-surface-container-lowest);
+  }
+  body[data-page='trash'] .trash-table th:last-child {
+    z-index: 2;
+    background: var(--md-sys-color-surface-container);
+  }
+  body[data-page='trash'] .trash-table td:last-child {
     background: var(--md-sys-color-surface-container-lowest);
   }
 
@@ -1025,6 +1070,7 @@ body[data-page='public-detail'] .state-msg code { background: var(--md-sys-color
   body[data-page='public-detail'] .row-value,
   body[data-page='public-detail'] .state-msg,
   body[data-page='public-detail'] .state-msg code { overflow-wrap: anywhere; }
+  .trash-summary { width: 100%; }
 }
 
 @media (max-width: 520px) {
@@ -1074,6 +1120,8 @@ body[data-page='public-detail'] .state-msg code { background: var(--md-sys-color
   body[data-page='public-detail'] .icon-wrap { width: 42px; height: 42px; }
   body[data-page='public-detail'] .asset-name { font-size: 1.25rem; }
   body[data-page='public-detail'] .row-icon { width: 36px; height: 36px; }
+  .trash-actions .table-action { width: 100%; }
+  .trash-actions .table-action + .table-action { margin: 6px 0 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {

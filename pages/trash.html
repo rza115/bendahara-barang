@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trash Aset — Inventaris Kecamatan Tenjo</title>
+  <link rel="stylesheet" href="../assets/styles/sidebar.css">
+  <link rel="stylesheet" href="../assets/styles/style.css">
+  <link rel="stylesheet" href="../assets/styles/material.css">
+</head>
+<body data-page="trash">
+  <div class="loading-overlay" id="loading"><div class="loading-spinner"></div></div>
+  <div class="alert" id="alert-box"></div>
+
+  <div id="page-body">
+    <div class="page-header">
+      <div>
+        <h1>Trash Aset</h1>
+        <p>Pulihkan aset yang terhapus atau hapus permanen jika sudah tidak diperlukan.</p>
+      </div>
+      <a href="index.html" class="btn btn-secondary">
+        <span class="material-symbols-rounded" aria-hidden="true">arrow_back</span>Kembali
+      </a>
+    </div>
+
+    <div class="trash-summary" role="status">
+      <span class="material-symbols-rounded" aria-hidden="true">delete_sweep</span>
+      <div><strong id="trash-count">0</strong><span>Aset di Trash</span></div>
+    </div>
+
+    <div class="trash-notice">
+      <span class="material-symbols-rounded" aria-hidden="true">info</span>
+      <p>Aset di halaman ini tidak muncul di daftar aktif, barcode, peminjaman, atau pemindahtanganan. Hapus permanen tidak dapat dibatalkan.</p>
+    </div>
+
+    <div class="filter-bar">
+      <div class="search-wrap">
+        <span class="search-icon"></span>
+        <input type="text" id="trash-search" placeholder="Cari nama aset...">
+      </div>
+      <select id="trash-limit" style="width:auto">
+        <option value="50" selected>50 Data</option>
+        <option value="100">100 Data</option>
+        <option value="250">250 Data</option>
+        <option value="500">500 Data</option>
+      </select>
+    </div>
+
+    <div class="table-wrap">
+      <table class="trash-table">
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Nama Barang</th>
+            <th>KIB</th>
+            <th>Tahun</th>
+            <th>Lokasi</th>
+            <th>Dihapus</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="trash-tbody">
+          <tr><td colspan="7" class="empty-state"><p>Memuat data...</p></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="../supabase.js"></script>
+  <script src="../shared/auth/auth-guard.js"></script>
+  <script src="../nav.js"></script>
+  <script src="../shared/utils/constants.js"></script>
+  <script src="../shared/utils/dom.js"></script>
+  <script src="../shared/utils/formatters.js"></script>
+  <script src="../shared/ui/feedback.js"></script>
+  <script src="../features/trash/trash-service.js"></script>
+  <script src="../features/trash/trash-view.js"></script>
+  <script src="../features/trash/trash-page.js"></script>
+  <script src="../main.js"></script>
+</body>
+</html>

@@ -19,4 +19,5 @@
   if (page === 'pj')                { initPJPage();               }
   if (page === 'peminjaman')        { initPeminjaman();           }
   if (page === 'barcode')           { initBarcodePage();          }
+  if (page === 'trash')             { initTrashPage();            }
 })();

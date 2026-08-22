@@ -24,7 +24,8 @@ async function deletePJRecord(id) {
 
 async function fetchJumlahAsetPerPJ() {
   const { data, error } = await db.from('aset')
-    .select('penanggung_jawab_id');
+    .select('penanggung_jawab_id')
+    .is('deleted_at', null);
   if (error) return {};
   const map = {};
   data.forEach(r => {

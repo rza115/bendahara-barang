@@ -19,7 +19,7 @@ async function loadMasterData() {
   try {
     const [resPJ, resAset] = await Promise.all([
       db.from('penanggung_jawab').select('id, nama, jabatan').neq('aktif', false).order('nama'),
-      db.from('aset').select('id, nama_barang, kode_barang').order('nama_barang'),
+      db.from('aset').select('id, nama_barang, kode_barang').is('deleted_at', null).order('nama_barang'),
     ]);
     if (resPJ.error)   throw new Error('Gagal load PJ: '   + resPJ.error.message);
     if (resAset.error) throw new Error('Gagal load aset: ' + resAset.error.message);
@@ -69,6 +69,7 @@ function populatePTDropdowns() {
       const { data } = await db.from('aset')
         .select('penanggung_jawab_id, nama_penanggung_jawab')
         .eq('id', this.value)
+        .is('deleted_at', null)
         .single();
       const pjId = data?.penanggung_jawab_id;
       if (display) display.value = pjId ? getNamaPJ(pjId) : (data?.nama_penanggung_jawab || 'Belum ada PJ');

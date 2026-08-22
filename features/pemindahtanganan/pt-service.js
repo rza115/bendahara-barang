@@ -18,7 +18,8 @@ async function savePT(payload) {
 async function updatePJAset(barangId, kePjId) {
   const { error } = await db.from('aset')
     .update({ penanggung_jawab_id: kePjId })
-    .eq('id', barangId);
+    .eq('id', barangId)
+    .is('deleted_at', null);
   if (error) throw error;
 }
 

@@ -23,6 +23,7 @@
 | Import data aset dari Excel/CSV | 🔲 Belum |
 | Cetak label barang (barcode) | ✅ Selesai |
 | View Scan (barcode) Public | ✅ Selesai |
+| Trash aset (soft delete & restore) | ✅ Selesai |
 
 ---
 
