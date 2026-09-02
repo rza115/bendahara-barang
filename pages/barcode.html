@@ -205,6 +205,57 @@
     .label-code-wrap img,
     .label-code-wrap svg { max-width: 100%; height: auto; }
     .label-code-text { font-size: 7px; color: #64748b; margin-top: 2px; font-family: monospace; }
+    .bpkad-label-card {
+      border: 2px solid #111827;
+      border-radius: 0;
+      color: #111;
+    }
+    .bpkad-label-inner {
+      display: flex;
+      min-height: 132px;
+    }
+    .bpkad-brand {
+      width: 105px;
+      min-width: 105px;
+      border-right: 2px solid #111827;
+      padding: 8px 7px 7px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      gap: 5px;
+    }
+    .bpkad-logo {
+      width: 66px;
+      height: 78px;
+      object-fit: contain;
+    }
+    .bpkad-inventory {
+      font-size: 10px;
+      font-weight: 800;
+      line-height: 1.2;
+      text-align: center;
+      letter-spacing: 0.1px;
+    }
+    .bpkad-details {
+      flex: 1;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+    }
+    .bpkad-row {
+      display: grid;
+      grid-template-columns: 122px 10px minmax(0, 1fr);
+      font-size: 12px;
+      line-height: 1.45;
+      color: #111;
+    }
+    .bpkad-key,
+    .bpkad-value {
+      font-weight: 800;
+    }
+    .bpkad-value { overflow-wrap: anywhere; }
     @media print {
       @page { size: A4 portrait; margin: 10mm; }
       body * { visibility: hidden; }
@@ -236,10 +287,11 @@
 
     <div class="barcode-toolbar">
       <div class="toolbar-group">
-        <label>Jenis Kode:</label>
+        <label>Template Label:</label>
         <select id="opt-jenis-kode">
           <option value="qrcode">QR Code</option>
           <option value="barcode">Barcode (Code128)</option>
+          <option value="bpkad">Identitas Barang (BPKAD)</option>
         </select>
       </div>
       <div class="toolbar-sep"></div>
@@ -247,8 +299,8 @@
         <label>Tahun Inventarisasi:</label>
         <input type="number" id="opt-tahun" value="" min="2000" max="2099" style="width:80px">
       </div>
-      <div class="toolbar-sep"></div>
-      <div class="toolbar-group">
+      <div class="toolbar-sep" id="sep-data-kode"></div>
+      <div class="toolbar-group" id="group-data-kode">
         <label>Data pada kode:</label>
         <select id="opt-data-kode">
           <option value="id">ID Barang</option>

@@ -14,6 +14,15 @@ window.initBarcodePage = async function () {
   // Set tahun default = tahun berjalan
   document.getElementById('opt-tahun').value = new Date().getFullYear();
 
+  function syncKodeOptions() {
+    const isBpkad = document.getElementById('opt-jenis-kode').value === 'bpkad';
+    document.getElementById('group-data-kode').hidden = isBpkad;
+    document.getElementById('sep-data-kode').hidden = isBpkad;
+  }
+
+  document.getElementById('opt-jenis-kode').addEventListener('change', syncKodeOptions);
+  syncKodeOptions();
+
   // ── LOAD ASET ──────────────────────────────────────
   async function loadAset() {
     showLoading(true);
@@ -134,14 +143,37 @@ window.initBarcodePage = async function () {
   }
 
   // ── BUILD LABEL HTML ───────────────────────────────
-  function buildLabel(aset, tahun) {
+  function buildBpkadLabel(aset, tahun) {
+    const wrap = document.createElement('div');
+    wrap.className = 'label-card bpkad-label-card';
+    wrap.innerHTML = `
+      <div class="bpkad-label-inner">
+        <div class="bpkad-brand">
+          <img class="bpkad-logo" src="../assets/images/logo-bogor.png" crossorigin="anonymous" alt="Lambang Kabupaten Bogor">
+          <div class="bpkad-inventory">INVENTARISASI<br>BMD ${escH(tahun)}</div>
+        </div>
+        <div class="bpkad-details">
+          <div class="bpkad-row"><span class="bpkad-key">SKPD</span><span>:</span><span class="bpkad-value">${escH(SKPD).toUpperCase()}</span></div>
+          <div class="bpkad-row"><span class="bpkad-key">NAMA BARANG</span><span>:</span><span class="bpkad-value">${escH(aset.nama_barang || '—')}</span></div>
+          <div class="bpkad-row"><span class="bpkad-key">KODE BARANG</span><span>:</span><span class="bpkad-value">${escH(aset.kode_barang || '—')}</span></div>
+          <div class="bpkad-row"><span class="bpkad-key">ID BARANG</span><span>:</span><span class="bpkad-value">${escH(String(aset.id_barang || '—'))}</span></div>
+          <div class="bpkad-row"><span class="bpkad-key">TAHUN PEROLEHAN</span><span>:</span><span class="bpkad-value">${escH(String(aset.tahun_perolehan || '—'))}</span></div>
+        </div>
+      </div>
+    `;
+    return wrap;
+  }
+
+  function buildLabel(aset, tahun, jenisKode) {
+    if (jenisKode === 'bpkad') return buildBpkadLabel(aset, tahun);
+
     const wrap = document.createElement('div');
     wrap.className = 'label-card';
     wrap.innerHTML = `
       <div class="label-inner">
         <div class="label-col1">
           <img class="label-logo" src="../assets/images/logo-bogor.png" crossorigin="anonymous">
-          <div class="label-tahun-inv">INVENTARISASI<br>BMD TAHUN<br>${tahun}</div>
+          <div class="label-tahun-inv">INVENTARISASI<br>BMD TAHUN<br>${escH(tahun)}</div>
         </div>
         <div class="label-col2">
           <div class="label-data">
@@ -171,8 +203,11 @@ window.initBarcodePage = async function () {
 
     const dipilih = semuaAset.filter(a => selectedIds.has(a.id));
     dipilih.forEach(aset => {
-      const labelEl = buildLabel(aset, tahun);
+      const labelEl = buildLabel(aset, tahun, jenisKode);
       grid.appendChild(labelEl);
+
+      if (jenisKode === 'bpkad') return;
+
       const codeWrap = labelEl.querySelector(`#code-${aset.id}`);
       const kodeVal = getKodeValue(aset);
       if (jenisKode === 'qrcode') buatQR(codeWrap, kodeVal);
@@ -224,7 +259,9 @@ window.initBarcodePage = async function () {
         else { x = margin; y += h + 6; }
       }
       const tahun = document.getElementById('opt-tahun').value || new Date().getFullYear();
-      pdf.save(`Label_BMD_${SKPD.replace(/\s+/g, '_')}_${tahun}.pdf`);
+      const jenisKode = document.getElementById('opt-jenis-kode').value;
+      const namaFile = jenisKode === 'bpkad' ? 'Label_Identitas_BPKAD' : 'Label_BMD';
+      pdf.save(`${namaFile}_${SKPD.replace(/\s+/g, '_')}_${tahun}.pdf`);
       showAlert('PDF berhasil diunduh!');
     } catch (err) {
       showAlert('Gagal generate PDF: ' + err.message, 'error');
