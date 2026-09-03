@@ -8,8 +8,35 @@ window.initBarcodePage = async function () {
   db = window._authClient;
 
   const SKPD = 'Dinas Kebudayaan';
+  const PAPER_SIZES = {
+    a4:    { label: 'A4',       width: 210, height: 297, columns: 2, pdfFormat: 'a4' },
+    folio: { label: 'Folio/F4', width: 210, height: 330, columns: 2, pdfFormat: [210, 330] },
+    a3:    { label: 'A3',       width: 297, height: 420, columns: 3, pdfFormat: 'a3' },
+  };
+  const PAGE_MARGIN = 10;
+  const LABEL_GAP = 6;
   let semuaAset = [];
   let selectedIds = new Set();
+
+  function getPaperSize() {
+    return PAPER_SIZES[document.getElementById('opt-kertas').value] || PAPER_SIZES.a4;
+  }
+
+  function applyPaperSize() {
+    const paper = getPaperSize();
+    let printStyle = document.getElementById('barcode-print-page-style');
+    if (!printStyle) {
+      printStyle = document.createElement('style');
+      printStyle.id = 'barcode-print-page-style';
+      document.head.appendChild(printStyle);
+    }
+    printStyle.textContent = `@media print {
+      @page { size: ${paper.width}mm ${paper.height}mm; margin: ${PAGE_MARGIN}mm; }
+      #print-area { width: ${paper.width - (PAGE_MARGIN * 2)}mm; }
+      .label-grid { grid-template-columns: repeat(${paper.columns}, 1fr); }
+    }`;
+    document.getElementById('label-grid').style.setProperty('--barcode-columns', paper.columns);
+  }
 
   // Set tahun default = tahun berjalan
   document.getElementById('opt-tahun').value = new Date().getFullYear();
@@ -21,7 +48,9 @@ window.initBarcodePage = async function () {
   }
 
   document.getElementById('opt-jenis-kode').addEventListener('change', syncKodeOptions);
+  document.getElementById('opt-kertas').addEventListener('change', applyPaperSize);
   syncKodeOptions();
+  applyPaperSize();
 
   // ── LOAD ASET ──────────────────────────────────────
   async function loadAset() {
@@ -241,27 +270,36 @@ window.initBarcodePage = async function () {
     showLoading(true);
     try {
       const { jsPDF } = window.jspdf;
-      const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+      const paper = getPaperSize();
+      const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: paper.pdfFormat });
       const labels = grid.querySelectorAll('.label-card');
-      const margin = 10;
-      const colW = (210 - margin * 2 - 6) / 2;
-      let x = margin, y = margin;
-      let labelH = 0;
+      const colW = (paper.width - (PAGE_MARGIN * 2) - (LABEL_GAP * (paper.columns - 1))) / paper.columns;
+      let x = PAGE_MARGIN;
+      let y = PAGE_MARGIN;
+      let rowHeight = 0;
       for (let i = 0; i < labels.length; i++) {
         const canvas = await html2canvas(labels[i], { scale: 2, useCORS: true, backgroundColor: '#fff' });
         const imgData = canvas.toDataURL('image/png');
         const ratio = canvas.height / canvas.width;
         const h = colW * ratio;
-        if (labelH === 0) labelH = h;
-        if (y + h > 297 - margin) { pdf.addPage(); y = margin; }
+        const column = i % paper.columns;
+        if (column === 0 && y + h > paper.height - PAGE_MARGIN) {
+          pdf.addPage();
+          y = PAGE_MARGIN;
+          rowHeight = 0;
+        }
+        x = PAGE_MARGIN + (column * (colW + LABEL_GAP));
         pdf.addImage(imgData, 'PNG', x, y, colW, h);
-        if (i % 2 === 0) { x = margin + colW + 6; }
-        else { x = margin; y += h + 6; }
+        rowHeight = Math.max(rowHeight, h);
+        if (column === paper.columns - 1 || i === labels.length - 1) {
+          y += rowHeight + LABEL_GAP;
+          rowHeight = 0;
+        }
       }
       const tahun = document.getElementById('opt-tahun').value || new Date().getFullYear();
       const jenisKode = document.getElementById('opt-jenis-kode').value;
       const namaFile = jenisKode === 'bpkad' ? 'Label_Identitas_BPKAD' : 'Label_BMD';
-      pdf.save(`${namaFile}_${SKPD.replace(/\s+/g, '_')}_${tahun}.pdf`);
+      pdf.save(`${namaFile}_${SKPD.replace(/\s+/g, '_')}_${tahun}_${paper.label.replace('/', '-')}.pdf`);
       showAlert('PDF berhasil diunduh!');
     } catch (err) {
       showAlert('Gagal generate PDF: ' + err.message, 'error');

@@ -147,7 +147,7 @@
     .label-grid {
       padding: 20px;
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(var(--barcode-columns, 2), 1fr);
       gap: 16px;
     }
     .label-empty { padding: 60px 20px; text-align: center; color: #94a3b8; font-size: 14px; }
@@ -287,7 +287,16 @@
 
     <div class="barcode-toolbar">
       <div class="toolbar-group">
-        <label>Template Label:</label>
+        <label for="opt-kertas">Ukuran Kertas:</label>
+        <select id="opt-kertas">
+          <option value="a4">A4 (210 × 297 mm)</option>
+          <option value="folio">Folio/F4 (210 × 330 mm)</option>
+          <option value="a3">A3 (297 × 420 mm)</option>
+        </select>
+      </div>
+      <div class="toolbar-sep"></div>
+      <div class="toolbar-group">
+        <label for="opt-jenis-kode">Template Label:</label>
         <select id="opt-jenis-kode">
           <option value="qrcode">QR Code</option>
           <option value="barcode">Barcode (Code128)</option>
