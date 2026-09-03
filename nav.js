@@ -81,7 +81,7 @@
   sidebar.innerHTML = `
     <div class="sidebar-logo">
       <span class="sidebar-brand-mark" aria-hidden="true"><span class="material-symbols-rounded filled">inventory_2</span></span>
-      <span class="sidebar-logo-text">SiAset<small>Kecamatan Tenjo</small></span>
+      <span class="sidebar-logo-text">SiAset<small>Dinas Kebudayaan</small></span>
     </div>
     <nav class="sidebar-nav">
       <div class="sidebar-section-label">Inventaris</div>
