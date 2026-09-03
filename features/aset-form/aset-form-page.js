@@ -40,7 +40,9 @@ async function simpanAset(isEdit = false, id = null) {
     await uploadDokumenPJ(asetId);
 
     showAlert(isEdit ? 'Aset berhasil diperbarui!' : 'Aset berhasil ditambahkan!');
-    setTimeout(() => { window.location.href = 'pages/index.html'; }, 1500);
+    // Form tambah/edit dimuat dari folder /pages, jadi gunakan path relatif
+    // terhadap halaman aktif agar tidak terbentuk /pages/pages/index.html.
+    setTimeout(() => { window.location.href = 'index.html'; }, 1500);
   } catch (err) {
     showAlert('Gagal menyimpan: ' + err.message, 'error');
   } finally {
