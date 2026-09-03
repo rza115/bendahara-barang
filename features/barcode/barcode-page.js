@@ -9,9 +9,9 @@ window.initBarcodePage = async function () {
 
   const SKPD = 'Dinas Kebudayaan';
   const PAPER_SIZES = {
-    a4:    { label: 'A4',       width: 210, height: 297, columns: 2, pdfFormat: 'a4' },
-    folio: { label: 'Folio/F4', width: 210, height: 330, columns: 2, pdfFormat: [210, 330] },
-    a3:    { label: 'A3',       width: 297, height: 420, columns: 3, pdfFormat: 'a3' },
+    a4:    { label: 'A4',       width: 210, height: 297, columns: 2, orientation: 'portrait',  pdfFormat: 'a4' },
+    folio: { label: 'Folio/F4', width: 210, height: 330, columns: 2, orientation: 'portrait',  pdfFormat: [210, 330] },
+    a3:    { label: 'A3',       width: 420, height: 297, columns: 4, orientation: 'landscape', pdfFormat: 'a3' },
   };
   const PAGE_MARGIN = 10;
   const LABEL_GAP = 6;
@@ -271,7 +271,7 @@ window.initBarcodePage = async function () {
     try {
       const { jsPDF } = window.jspdf;
       const paper = getPaperSize();
-      const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: paper.pdfFormat });
+      const pdf = new jsPDF({ orientation: paper.orientation, unit: 'mm', format: paper.pdfFormat });
       const labels = grid.querySelectorAll('.label-card');
       const colW = (paper.width - (PAGE_MARGIN * 2) - (LABEL_GAP * (paper.columns - 1))) / paper.columns;
       let x = PAGE_MARGIN;
