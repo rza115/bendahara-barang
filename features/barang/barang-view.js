@@ -29,6 +29,9 @@ function renderTable(data) {
         <div class="nama-barang">${escapeHtml(row.nama_barang)}</div>
         ${row.merk_type   ? `<div class="sub-info">${escapeHtml(row.merk_type)}</div>`   : ''}
         ${row.kode_barang ? `<div class="kode-info">${escapeHtml(row.kode_barang)}</div>` : ''}
+        ${row.id_barang !== null && row.id_barang !== undefined && row.id_barang !== ''
+          ? `<div class="kode-info">ID: ${escapeHtml(String(row.id_barang))}</div>`
+          : ''}
       </td>
       <td>
         <span class="kib-badge kib-${row.kib?.replace(/ /g, '-').toLowerCase()}">
