@@ -11,7 +11,7 @@ async function fetchDaftarAset(filter = {}) {
   if (filter.kondisi) query = query.eq('kondisi', filter.kondisi);
   if (filter.search) {
     const search = filter.search.trim();
-    if (search) query = query.or(`nama_barang.ilike.%${search}%,id_barang.ilike.%${search}%`);
+    if (search) query = query.or(`nama_barang.ilike.%${search}%,id_barang.ilike.%${search}%,kode_barang.ilike.%${search}%`);
   }
 
   const sortOpt = SORT_MAP[filter.sort];
@@ -36,7 +36,7 @@ async function fetchSummaryAset(filter = {}) {
   if (filter.kondisi) query = query.eq('kondisi', filter.kondisi);
   if (filter.search) {
     const search = filter.search.trim();
-    if (search) query = query.or(`nama_barang.ilike.%${search}%,id_barang.ilike.%${search}%`);
+    if (search) query = query.or(`nama_barang.ilike.%${search}%,id_barang.ilike.%${search}%,kode_barang.ilike.%${search}%`);
   }
 
   const { data, error } = await query;
