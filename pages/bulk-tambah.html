@@ -30,9 +30,18 @@
 
     <div class="form-card">
       <div class="form-section">
-        <div class="form-section-title">1. Unduh template</div>
+        <div class="form-section-title">1. Pilih KIB dan unduh template</div>
+        <div class="form-group">
+          <label for="bulk-kib">Format KIB</label>
+          <select id="bulk-kib">
+            <option value="KIB A">KIB A ? Tanah</option>
+            <option value="KIB B" selected>KIB B ? Peralatan &amp; Mesin</option>
+            <option value="KIB C">KIB C ? Gedung &amp; Bangunan</option>
+            <option value="KIB E">KIB E ? Aset Tetap Lainnya</option>
+          </select>
+        </div>
         <p style="font-size:13px;color:#64748b;margin-bottom:12px">
-          Baris pertama berisi nama kolom (snake_case) persis seperti di bawah. Isi satu baris per aset. Kolom opsional boleh dikosongkan.
+          Baris pertama berisi nama kolom (snake_case) persis seperti di bawah. Isi satu baris per aset. Kolom opsional boleh dikosongkan. Ganti baris contoh dengan data aset Anda. Kolom <code>kib</code> boleh dikosongkan atau dihapus; kategori otomatis mengikuti pilihan di atas. Jika diisi, nilainya harus sama dengan pilihan KIB.
         </p>
         <div style="display:flex;gap:10px;flex-wrap:wrap">
           <button type="button" id="bulk-btn-template-xlsx" class="btn btn-primary"><span class="material-symbols-rounded" aria-hidden="true">download</span>Unduh template .xlsx</button>
@@ -59,9 +68,9 @@
       </div>
 
       <div class="form-section">
-        <div class="form-section-title">Daftar kolom (sama dengan data di form tambah, tanpa file)</div>
+        <div class="form-section-title">Daftar kolom sesuai format KIB yang dipilih</div>
         <p style="font-size:12px;color:#64748b;margin-bottom:10px">
-          Field khusus KIB A/B/C/E hanya perlu diisi jika relevan. Default: <code>jumlah</code>=1, <code>kondisi</code>=Baik, <code>status_aset</code>=Aset Tetap, <code>status_barang</code>=Inventaris.
+          Template hanya memuat kolom umum dan kolom khusus KIB yang dipilih. Gunakan satu berkas untuk satu kategori KIB. Tanggal diisi YYYY-MM-DD; simpan kode/nomor sebagai teks agar nol di depan tetap utuh. Default: <code>jumlah</code>=1, <code>kondisi</code>=Baik, <code>status_aset</code>=Aset Tetap, <code>status_barang</code>=Inventaris.
         </p>
         <div id="bulk-column-list"></div>
       </div>

@@ -111,17 +111,23 @@ function _stripForInsert(rec) {
   return o;
 }
 
-function parseBulkTable(rows) {
+function parseBulkTable(rows, kib) {
+  const columns = getBulkColumns(kib);
+  const allowedKeys = new Set(columns.map(c => c.key));
   if (!rows?.length) throw new Error('File kosong atau tidak ada lembar data.');
   const headerRow = rows[0];
   const keyByCol = [];
   headerRow.forEach((h, i) => {
     const key = resolveBulkHeader(h);
+    if (key && !allowedKeys.has(key)) {
+      throw new Error(`Kolom "${h}" tidak sesuai format ${kib}. Gunakan template ${kib}.`);
+    }
+    if (key && keyByCol.includes(key)) throw new Error(`Kolom "${key}" muncul lebih dari sekali.`);
     keyByCol[i] = key;
   });
   const usedKeys = keyByCol.filter(Boolean);
-  if (!usedKeys.includes('nama_barang') || !usedKeys.includes('kib')) {
-    throw new Error('Header wajib memuat kolom "nama_barang" dan "kib" (nama kolom baris pertama).');
+  if (!usedKeys.includes('nama_barang')) {
+    throw new Error('Header wajib memuat kolom "nama_barang" (nama kolom baris pertama).');
   }
   const dataRows = [];
   for (let r = 1; r < rows.length; r++) {
@@ -134,6 +140,10 @@ function parseBulkTable(rows) {
       if (!col) return;
       rec[key] = _coerceField(col, line[i]);
     });
+    if (rec.kib && rec.kib !== kib) {
+      throw new Error(`Baris ${r + 1}: kategori "${rec.kib}" tidak sesuai format ${kib}.`);
+    }
+    rec.kib = kib;
     dataRows.push({ sheetRow: r + 1, rec: _applyDefaults(rec) });
   }
   return dataRows;
@@ -150,15 +160,25 @@ function readBulkWorkbook(ab) {
   return XLSX.utils.sheet_to_json(ws, { header: 1, defval: '', raw: true });
 }
 
+function getSelectedBulkKib() {
+  return document.getElementById('bulk-kib')?.value || 'KIB B';
+}
+
+function getBulkSampleName(kib) {
+  return { 'KIB A': 'Contoh: Tanah Kantor', 'KIB B': 'Contoh: Meja Kerja',
+    'KIB C': 'Contoh: Gedung Kantor', 'KIB E': 'Contoh: Buku Koleksi' }[kib];
+}
+
 function downloadBulkTemplateXlsx() {
   if (typeof XLSX === 'undefined') {
     showAlert('Library Excel belum siap. Tunggu sebentar lalu coba lagi.', 'error');
     return;
   }
-  const keys = getBulkTemplateKeys();
+  const kib = getSelectedBulkKib();
+  const keys = getBulkTemplateKeys(kib);
   const sample = keys.map(k => {
-    if (k === 'kib') return 'KIB B';
-    if (k === 'nama_barang') return 'Contoh: Meja Kerja';
+    if (k === 'kib') return kib;
+    if (k === 'nama_barang') return getBulkSampleName(kib);
     if (k === 'jumlah') return 1;
     if (k === 'harga') return 1500000;
     return '';
@@ -166,11 +186,12 @@ function downloadBulkTemplateXlsx() {
   const ws = XLSX.utils.aoa_to_sheet([keys, sample]);
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, 'aset');
-  XLSX.writeFile(wb, 'template-impor-aset.xlsx');
+  XLSX.writeFile(wb, `template-impor-${kib.toLowerCase().replace(' ', '-')}.xlsx`);
 }
 
 function downloadBulkTemplateCsv() {
-  const keys = getBulkTemplateKeys();
+  const kib = getSelectedBulkKib();
+  const keys = getBulkTemplateKeys(kib);
   const esc = v => {
     const s = String(v ?? '');
     if (/[",\n\r]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
@@ -178,8 +199,8 @@ function downloadBulkTemplateCsv() {
   };
   const header = keys.map(esc).join(',');
   const sample = keys.map(k => {
-    if (k === 'kib') return esc('KIB B');
-    if (k === 'nama_barang') return esc('Contoh: Meja Kerja');
+    if (k === 'kib') return esc(kib);
+    if (k === 'nama_barang') return esc(getBulkSampleName(kib));
     if (k === 'jumlah') return '1';
     if (k === 'harga') return esc('1500000');
     return '';
@@ -187,7 +208,7 @@ function downloadBulkTemplateCsv() {
   const blob = new Blob([header + '\n' + sample + '\n'], { type: 'text/csv;charset=utf-8' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'template-impor-aset.csv';
+  a.download = `template-impor-${kib.toLowerCase().replace(' ', '-')}.csv`;
   a.click();
   URL.revokeObjectURL(a.href);
 }
@@ -204,8 +225,8 @@ function renderBulkPreview(container, parsed, errors) {
     container.innerHTML = html + '<p style="color:#64748b">Tidak ada baris data.</p>';
     return;
   }
-  const keys = getBulkTemplateKeys().filter(k => slice.some(row => row.rec[k] != null && row.rec[k] !== ''));
-  const showKeys = ['kib', 'nama_barang', 'jumlah', 'harga', ...keys.filter(k => !['kib', 'nama_barang', 'jumlah', 'harga'].includes(k))].filter((k, i, a) => a.indexOf(k) === i).slice(0, 12);
+  const keys = getBulkTemplateKeys(parsed[0].rec.kib).filter(k => slice.some(row => row.rec[k] != null && row.rec[k] !== ''));
+  const showKeys = ['kib', 'nama_barang', 'jumlah', 'harga', ...keys.filter(k => !['kib', 'nama_barang', 'jumlah', 'harga'].includes(k))].filter((k, i, a) => a.indexOf(k) === i);
   html += `<p style="font-size:13px;color:#64748b;margin-bottom:8px">Pratinjau ${slice.length} dari ${parsed.length} baris${parsed.length > max ? ' (dipotong)' : ''}</p>`;
   html += '<div style="overflow:auto;border:1px solid #e2e8f0;border-radius:8px"><table class="bulk-preview-table" style="font-size:12px;border-collapse:collapse;width:100%"><thead><tr>';
   html += '<th style="padding:8px;border-bottom:1px solid #e2e8f0;text-align:left;background:#f8fafc">#</th>';
@@ -263,22 +284,42 @@ async function initBulkTambahPage() {
   const btnTplCsv = document.getElementById('bulk-btn-template-csv');
   const statEl = document.getElementById('bulk-stat');
   const colList = document.getElementById('bulk-column-list');
-  if (colList && typeof BULK_IMPORT_COLUMNS !== 'undefined') {
+  const kibEl = document.getElementById('bulk-kib');
+  let readVersion = 0;
+  function renderColumns() {
+    if (!colList) return;
     colList.innerHTML =
       '<ul style="font-size:13px;margin:0;padding-left:18px;line-height:1.65;max-height:280px;overflow-y:auto">' +
-      BULK_IMPORT_COLUMNS.map(c => {
+      getBulkColumns(getSelectedBulkKib()).map(c => {
         const req = c.required ? ' <strong style="color:#dc2626">*</strong>' : '';
         return `<li style="margin-bottom:4px"><code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-size:12px">${escapeHtml(c.key)}</code> — ${escapeHtml(c.label)}${req}</li>`;
       }).join('') +
       '</ul>';
   }
 
+  function resetPreview() {
+    readVersion += 1;
+    _bulkParsed = [];
+    _bulkValidErrors = [];
+    if (previewEl) previewEl.innerHTML = '';
+    if (statEl) statEl.textContent = '';
+    if (btnImport) btnImport.disabled = true;
+  }
+  renderColumns();
+  resetPreview();
+  kibEl?.addEventListener('change', () => {
+    resetPreview();
+    renderColumns();
+  });
+  fileEl?.addEventListener('change', resetPreview);
+
   btnTplXlsx?.addEventListener('click', downloadBulkTemplateXlsx);
   btnTplCsv?.addEventListener('click', downloadBulkTemplateCsv);
 
   btnParse?.addEventListener('click', () => {
-    _bulkParsed = [];
-    _bulkValidErrors = [];
+    resetPreview();
+    const version = readVersion;
+    const kib = getSelectedBulkKib();
     const f = fileEl?.files?.[0];
     if (!f) {
       showAlert('Pilih berkas CSV atau XLSX terlebih dahulu.', 'error');
@@ -293,20 +334,22 @@ async function initBulkTambahPage() {
     const reader = new FileReader();
     reader.onload = () => {
       try {
+        if (version !== readVersion) return;
         let matrix;
         if (name.endsWith('.csv')) {
-          const wb = XLSX.read(reader.result, { type: 'string', cellDates: true });
+          const wb = XLSX.read(reader.result, { type: 'string', raw: true });
           const sn = wb.SheetNames[0];
           matrix = XLSX.utils.sheet_to_json(wb.Sheets[sn], { header: 1, defval: '', raw: true });
         } else {
           matrix = readBulkWorkbook(reader.result);
         }
-        _bulkParsed = parseBulkTable(matrix);
+        _bulkParsed = parseBulkTable(matrix, kib);
         _bulkValidErrors = [];
         _bulkParsed.forEach(({ sheetRow, rec }) => {
           const err = _validateRecord(rec, sheetRow);
           if (err) _bulkValidErrors.push(err);
         });
+        if (btnImport) btnImport.disabled = !_bulkParsed.length || !!_bulkValidErrors.length;
         renderBulkPreview(previewEl, _bulkParsed, _bulkValidErrors);
         if (statEl) {
           statEl.textContent = `${_bulkParsed.length} baris siap diproses${_bulkValidErrors.length ? ` · ${_bulkValidErrors.length} baris gagal validasi` : ''}`;

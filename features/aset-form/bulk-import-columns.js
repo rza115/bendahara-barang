@@ -107,6 +107,19 @@ function resolveBulkHeader(h) {
   return null;
 }
 
-function getBulkTemplateKeys() {
-  return BULK_IMPORT_COLUMNS.map(c => c.key);
+const BULK_KIB_FIELDS = {
+  'KIB A': ['luas_tanah', 'tahun_perolehan_tanah', 'letak_alamat', 'status_tanah', 'no_urut_sertifikat', 'tgl_sertifikat', 'no_sertifikat', 'penggunaan_tanah'],
+  'KIB B': ['merk_type', 'ukuran_cc', 'bahan', 'no_pabrik', 'no_rangka', 'no_mesin', 'no_polisi', 'no_bpkb', 'tgl_bpkb'],
+  'KIB C': ['kondisi_bangunan', 'konstruksi_bertingkat', 'konstruksi_beton', 'luas_lantai', 'jumlah_lantai', 'no_imb', 'tgl_imb', 'letak_bangunan', 'status_tanah_gedung', 'status_sertifikat_tanah', 'no_kode_tanah', 'id_awal_tanah'],
+  'KIB E': ['tahun_cetak', 'ukuran_aset', 'judul_koleksi', 'spesifikasi', 'asal_daerah', 'penerbit', 'bahan_aset', 'jenis_aset'],
+};
+
+function getBulkColumns(kib) {
+  if (!BULK_KIB_FIELDS[kib]) throw new Error('Pilih format KIB A, B, C, atau E.');
+  const specific = new Set(Object.values(BULK_KIB_FIELDS).flat());
+  return BULK_IMPORT_COLUMNS.filter(c => !specific.has(c.key) || BULK_KIB_FIELDS[kib].includes(c.key));
+}
+
+function getBulkTemplateKeys(kib) {
+  return getBulkColumns(kib).map(c => c.key);
 }
