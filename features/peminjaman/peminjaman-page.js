@@ -9,7 +9,7 @@ window.initPeminjaman = async function () {
 
   async function loadAsetCache() {
     try { allAset = await window.PeminjamanService.loadAset(); }
-    catch (e) { showFeedback('Gagal memuat daftar aset: ' + e.message, 'error'); }
+    catch (e) { showAlert('Gagal memuat daftar aset: ' + e.message, 'error'); }
   }
 
   function getNamaAset(id) {
@@ -111,7 +111,7 @@ window.initPeminjaman = async function () {
       renderTable(data);
       updateRingkasan(data);
     } catch (e) {
-      showFeedback('Gagal memuat data: ' + e.message, 'error');
+      showAlert('Gagal memuat data: ' + e.message, 'error');
     } finally {
       showLoading(false);
     }
@@ -160,9 +160,9 @@ window.initPeminjaman = async function () {
     const batas_kembali  = document.getElementById('pm-batas-kembali')?.value;
     const keterangan     = document.getElementById('pm-keterangan')?.value?.trim();
 
-    if (!aset_id)        return showFeedback('Pilih aset terlebih dahulu!', 'error');
-    if (!nama_peminjam)  return showFeedback('Nama peminjam wajib diisi!', 'error');
-    if (!tanggal_pinjam) return showFeedback('Tanggal pinjam wajib diisi!', 'error');
+    if (!aset_id)        return showAlert('Pilih aset terlebih dahulu!', 'error');
+    if (!nama_peminjam)  return showAlert('Nama peminjam wajib diisi!', 'error');
+    if (!tanggal_pinjam) return showAlert('Tanggal pinjam wajib diisi!', 'error');
 
     showLoading(true);
     try {
@@ -176,11 +176,11 @@ window.initPeminjaman = async function () {
         keterangan:     keterangan    || null,
         status: 'dipinjam'
       });
-      showFeedback('Peminjaman berhasil dicatat!');
+      showAlert('Peminjaman berhasil dicatat!');
       tutupModal();
       await loadList();
     } catch (e) {
-      showFeedback('Gagal menyimpan: ' + e.message, 'error');
+      showAlert('Gagal menyimpan: ' + e.message, 'error');
     } finally {
       showLoading(false);
     }
@@ -192,10 +192,10 @@ window.initPeminjaman = async function () {
     showLoading(true);
     try {
       await window.PeminjamanService.kembalikan(id);
-      showFeedback('Barang berhasil dikembalikan.');
+      showAlert('Barang berhasil dikembalikan.');
       await loadList();
     } catch (e) {
-      showFeedback('Gagal memperbarui: ' + e.message, 'error');
+      showAlert('Gagal memperbarui: ' + e.message, 'error');
     } finally { showLoading(false); }
   };
 
@@ -205,10 +205,10 @@ window.initPeminjaman = async function () {
     showLoading(true);
     try {
       await window.PeminjamanService.hapus(id);
-      showFeedback('Data peminjaman berhasil dihapus.');
+      showAlert('Data peminjaman berhasil dihapus.');
       await loadList();
     } catch (e) {
-      showFeedback('Gagal menghapus: ' + e.message, 'error');
+      showAlert('Gagal menghapus: ' + e.message, 'error');
     } finally { showLoading(false); }
   };
 
