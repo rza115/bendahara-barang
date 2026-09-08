@@ -138,6 +138,7 @@ function initAsetPreview(tbody, data) {
         ['Merk / Tipe', row.merk_type], ['Tahun Perolehan', row.tahun_perolehan],
         ['Nilai Perolehan', formatRupiah(row.harga)], ['Jumlah', row.jumlah],
         ['Lokasi', row.lokasi], ['Penggunaan', row.penggunaan],
+        ['Penanggung Jawab', row.penanggung_jawab?.nama || row.nama_penanggung_jawab],
       ];
       panel.innerHTML = `
         <div class="aset-preview-heading">

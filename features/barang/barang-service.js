@@ -5,7 +5,9 @@
 // ============================================
 
 async function fetchDaftarAset(filter = {}) {
-  let query = db.from('aset').select('*').is('deleted_at', null);
+  let query = db.from('aset')
+    .select('*, penanggung_jawab:penanggung_jawab!penanggung_jawab_id(nama)')
+    .is('deleted_at', null);
 
   if (filter.kib)    query = query.eq('kib', filter.kib);
   if (filter.kondisi) query = query.eq('kondisi', filter.kondisi);
