@@ -1,0 +1,119 @@
+/* Shared appearance control; page CSS stays outside the HTML. */
+.theme-picker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  color: var(--md-sys-color-on-surface);
+  font-size: 13px;
+  text-transform: none;
+  letter-spacing: normal;
+}
+.theme-picker select {
+  width: auto;
+  min-height: 44px;
+  padding: 8px 10px;
+  border: 1px solid var(--md-sys-color-outline);
+  border-radius: 12px;
+  background: var(--md-sys-color-surface-container-lowest);
+  color: var(--md-sys-color-on-surface);
+  font: inherit;
+  cursor: pointer;
+}
+.theme-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  max-width: 680px;
+  margin: 0 auto 20px;
+}
+body[data-page='public-detail'] > .theme-toolbar { padding: 16px 20px 0; }
+@media (max-width: 600px) {
+  .topbar .theme-picker { gap: 4px; }
+  .topbar .theme-picker-label,
+  .topbar .theme-picker > .material-symbols-rounded { display: none; }
+  .topbar .theme-picker select { max-width: 94px; }
+}
+
+/* Screen-only colors keep printed inventories and barcode exports light. */
+@media screen {
+  :root[data-theme='dark'] {
+    color-scheme: dark;
+    --md-sys-color-primary: #81d5c2;
+    --md-sys-color-on-primary: #00382f;
+    --md-sys-color-primary-container: #005046;
+    --md-sys-color-on-primary-container: #9df2dd;
+    --md-sys-color-secondary: #b3ccc3;
+    --md-sys-color-on-secondary: #1f352e;
+    --md-sys-color-secondary-container: #354c44;
+    --md-sys-color-on-secondary-container: #cee9df;
+    --md-sys-color-tertiary: #a9cbe2;
+    --md-sys-color-on-tertiary: #103448;
+    --md-sys-color-tertiary-container: #294b5f;
+    --md-sys-color-on-tertiary-container: #c5e7ff;
+    --md-sys-color-error: #ffb4ab;
+    --md-sys-color-on-error: #690005;
+    --md-sys-color-error-container: #93000a;
+    --md-sys-color-on-error-container: #ffdad6;
+    --md-sys-color-surface: #101512;
+    --md-sys-color-surface-dim: #101512;
+    --md-sys-color-surface-bright: #363b38;
+    --md-sys-color-surface-container-lowest: #0b100d;
+    --md-sys-color-surface-container-low: #181d1a;
+    --md-sys-color-surface-container: #1c211e;
+    --md-sys-color-surface-container-high: #272c29;
+    --md-sys-color-surface-container-highest: #323733;
+    --md-sys-color-on-surface: #dfe4df;
+    --md-sys-color-on-surface-variant: #bec9c2;
+    --md-sys-color-outline: #89938d;
+    --md-sys-color-outline-variant: #3f4943;
+    --md-sys-color-inverse-surface: #dfe4df;
+    --md-sys-color-inverse-on-surface: #2d312f;
+    --md-sys-color-inverse-primary: #006b5d;
+    --accent-hover: #9df2dd;
+    --text-muted: #a5b1aa;
+    --text-dim: #a5b1aa;
+    --border-light: #3f4943;
+    --green: #94d5b0;
+    --gold: #e9ce7b;
+    --orange: #ffb877;
+  }
+  html[data-theme='dark'] .btn-primary:hover {
+    background: var(--md-sys-color-on-primary-container) !important;
+  }
+  html[data-theme='dark'] body[data-page='login'] .btn-login:hover {
+    background: var(--md-sys-color-on-primary-container);
+  }
+  html[data-theme='dark'] body[data-page='login'] input:focus {
+    background: var(--md-sys-color-surface-container-high);
+  }
+  html[data-theme='dark'] input:autofill {
+    box-shadow: 0 0 0 1000px var(--md-sys-color-surface-container-high) inset;
+    -webkit-text-fill-color: var(--md-sys-color-on-surface);
+  }
+  html[data-theme='dark'] .stat-card.gold { background: #574500; }
+  html[data-theme='dark'] .pm-stat.aktif .pm-stat-value { color: var(--gold); }
+  html[data-theme='dark'] .pm-stat.kembali .pm-stat-value { color: var(--green); }
+  html[data-theme='dark'] :is(.text-muted-light, .field-hint, .field-warning,
+    .photo-format-hint, .existing-photo-caption, .form-section-description,
+    .asset-category-description, .text-help, .bulk-description, .bulk-status,
+    .bulk-column-description, .table-loading, .barcode-loading, .transfer-table-heading) {
+    color: var(--md-sys-color-on-surface-variant);
+  }
+  html[data-theme='dark'] :is(.readonly-field, .transfer-asset-filter, .transfer-person-filter) {
+    background: var(--md-sys-color-surface-container-high);
+    color: var(--md-sys-color-on-surface);
+    border-color: var(--md-sys-color-outline);
+  }
+  html[data-theme='dark'] :is(.field-required, .photo-remove-button) { color: var(--md-sys-color-error); }
+  html[data-theme='dark'] :is(.photo-preview-image, .existing-photo-image,
+    .transfer-table-heading, .asset-category-description) { border-color: var(--md-sys-color-outline-variant); }
+  html[data-theme='dark'] .lokasi-error {
+    background: var(--md-sys-color-error-container);
+    color: var(--md-sys-color-on-error-container);
+    border-color: var(--md-sys-color-error);
+  }
+}
+@media print {
+  .theme-picker, .theme-toolbar { display: none !important; }
+}
