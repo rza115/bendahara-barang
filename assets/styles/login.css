@@ -139,6 +139,9 @@
 
     .input-icon {
       position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       left: 14px;
       top: 50%;
       transform: translateY(-50%);
@@ -172,6 +175,9 @@
 
     .toggle-pw {
       position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       right: 12px;
       top: 50%;
       transform: translateY(-50%);
