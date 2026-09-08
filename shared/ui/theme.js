@@ -1,4 +1,4 @@
-// Apply the saved appearance before rendering, then mount the shared selector.
+// Apply the saved appearance before rendering, then mount the shared icon button.
 (function () {
   'use strict';
   const storageKey = 'siaset-theme';
@@ -11,46 +11,43 @@
     if (valid(saved)) preference = saved;
   } catch (_) { /* Appearance remains usable when storage is unavailable. */ }
 
+  let control;
+  let icon;
+
   function applyTheme() {
     root.dataset.theme = preference === 'system'
       ? (systemTheme.matches ? 'dark' : 'light') : preference;
+    if (control) {
+      const isDark = root.dataset.theme === 'dark';
+      icon.textContent = isDark ? 'light_mode' : 'dark_mode';
+      const label = isDark ? 'Aktifkan tema terang' : 'Aktifkan tema gelap';
+      control.setAttribute('aria-label', label);
+      control.title = label;
+    }
   }
   applyTheme();
   systemTheme.addEventListener('change', applyTheme);
 
-  let select;
   window.addEventListener('storage', event => {
     if (event.key !== storageKey && event.key !== null) return;
     preference = valid(event.newValue) ? event.newValue : 'system';
     applyTheme();
-    if (select) select.value = preference;
   });
 
-  function mountSelector() {
-    const control = document.createElement('label');
-    control.className = 'theme-picker';
-    const icon = document.createElement('span');
+  function mountToggle() {
+    control = document.createElement('button');
+    control.type = 'button';
+    control.className = 'theme-toggle';
+    icon = document.createElement('span');
     icon.className = 'material-symbols-rounded';
     icon.setAttribute('aria-hidden', 'true');
-    icon.textContent = 'contrast';
-    const caption = document.createElement('span');
-    caption.className = 'theme-picker-label';
-    caption.textContent = 'Tema';
-    select = document.createElement('select');
-    select.setAttribute('aria-label', 'Tema tampilan');
-    for (const [value, text] of [['light', 'Terang'], ['dark', 'Gelap'], ['system', 'Sistem']]) {
-      const option = document.createElement('option');
-      option.value = value;
-      option.textContent = text;
-      select.appendChild(option);
-    }
-    select.value = preference;
-    select.addEventListener('change', () => {
-      preference = select.value;
+    control.appendChild(icon);
+    applyTheme();
+    control.addEventListener('click', () => {
+      preference = root.dataset.theme === 'dark' ? 'light' : 'dark';
       applyTheme();
       try { localStorage.setItem(storageKey, preference); } catch (_) { /* Session only. */ }
     });
-    control.append(icon, caption, select);
     const topbar = document.querySelector('.topbar-right');
     if (topbar) topbar.prepend(control);
     else {
@@ -60,6 +57,6 @@
       (document.querySelector('.wrapper') || document.body).prepend(toolbar);
     }
   }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mountSelector, { once: true });
-  else mountSelector();
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mountToggle, { once: true });
+  else mountToggle();
 })();

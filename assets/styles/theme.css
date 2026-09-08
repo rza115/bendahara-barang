@@ -1,24 +1,26 @@
 /* Shared appearance control; page CSS stays outside the HTML. */
-.theme-picker {
+.theme-toggle {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  padding: 0;
   margin: 0;
-  color: var(--md-sys-color-on-surface);
-  font-size: 13px;
-  text-transform: none;
-  letter-spacing: normal;
-}
-.theme-picker select {
-  width: auto;
-  min-height: 44px;
-  padding: 8px 10px;
   border: 1px solid var(--md-sys-color-outline);
-  border-radius: 12px;
-  background: var(--md-sys-color-surface-container-lowest);
+  border-radius: 50%;
+  background: transparent;
   color: var(--md-sys-color-on-surface);
-  font: inherit;
   cursor: pointer;
+}
+.theme-toggle:hover {
+  background: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
+}
+.theme-toggle:focus-visible {
+  outline: 3px solid var(--md-sys-color-primary);
+  outline-offset: 2px;
 }
 .theme-toolbar {
   display: flex;
@@ -28,13 +30,6 @@
   margin: 0 auto 20px;
 }
 body[data-page='public-detail'] > .theme-toolbar { padding: 16px 20px 0; }
-@media (max-width: 600px) {
-  .topbar .theme-picker { gap: 4px; }
-  .topbar .theme-picker-label,
-  .topbar .theme-picker > .material-symbols-rounded { display: none; }
-  .topbar .theme-picker select { max-width: 94px; }
-}
-
 /* Screen-only colors keep printed inventories and barcode exports light. */
 @media screen {
   :root[data-theme='dark'] {
@@ -115,5 +110,5 @@ body[data-page='public-detail'] > .theme-toolbar { padding: 16px 20px 0; }
   }
 }
 @media print {
-  .theme-picker, .theme-toolbar { display: none !important; }
+  .theme-toggle, .theme-toolbar { display: none !important; }
 }

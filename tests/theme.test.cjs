@@ -35,54 +35,55 @@ function setup({ saved = null, dark = false, blocked = false } = {}) {
   vm.runInNewContext(source, { document, window, localStorage });
   return { document, media, handlers, stored, elements, topbar,
     theme: () => document.documentElement.dataset.theme,
-    mount() { handlers.DOMContentLoaded(); return elements.find(el => el.tag === 'select'); },
+    mount() { handlers.DOMContentLoaded(); return elements.find(el => el.tag === 'button'); },
   };
 }
 
-test('saved preference applies before the selector mounts and persists changes', () => {
+test('saved preference applies before the button mounts and persists changes', () => {
   const app = setup({ saved: 'dark' });
   assert.equal(app.theme(), 'dark');
-  const select = app.mount();
-  assert.equal(select.value, 'dark');
-  assert.equal(select['aria-label'], 'Tema tampilan');
-  select.value = 'light';
-  select.handlers.change();
+  const button = app.mount();
+  assert.equal(button.type, 'button');
+  assert.equal(button['aria-label'], 'Aktifkan tema terang');
+  assert.equal(button.children[0].textContent, 'light_mode');
+  assert.equal(app.elements.some(el => el.tag === 'select'), false);
+  button.handlers.click();
   assert.equal(app.theme(), 'light');
   assert.equal(app.stored.get('siaset-theme'), 'light');
+  assert.equal(button.children[0].textContent, 'dark_mode');
+  assert.equal(button['aria-label'], 'Aktifkan tema gelap');
   assert.equal(setup({ saved: app.stored.get('siaset-theme'), dark: true }).theme(), 'light');
 });
 
 test('system preference follows OS changes while explicit choices stay fixed', () => {
   const app = setup({ saved: 'invalid', dark: true });
   assert.equal(app.theme(), 'dark');
-  const select = app.mount();
-  assert.equal(select.value, 'system');
+  const button = app.mount();
+  assert.equal(button['aria-label'], 'Aktifkan tema terang');
   app.media.matches = false;
   app.handlers.system();
   assert.equal(app.theme(), 'light');
-  select.value = 'dark';
-  select.handlers.change();
+  button.handlers.click();
   app.handlers.system();
   assert.equal(app.theme(), 'dark');
 });
 
 test('unavailable storage does not prevent selecting a theme', () => {
   const app = setup({ blocked: true });
-  const select = app.mount();
-  select.value = 'dark';
-  assert.doesNotThrow(() => select.handlers.change());
+  const button = app.mount();
+  assert.doesNotThrow(() => button.handlers.click());
   assert.equal(app.theme(), 'dark');
 });
 
 test('storage changes synchronize open pages and reset to system on clear', () => {
   const app = setup({ saved: 'light' });
-  const select = app.mount();
+  const button = app.mount();
   app.handlers.storage({ key: 'siaset-theme', newValue: 'dark' });
-  assert.equal(select.value, 'dark');
+  assert.equal(button['aria-label'], 'Aktifkan tema terang');
   assert.equal(app.theme(), 'dark');
   app.handlers.storage({ key: 'unrelated', newValue: 'light' });
   assert.equal(app.theme(), 'dark');
   app.handlers.storage({ key: null, newValue: null });
-  assert.equal(select.value, 'system');
+  assert.equal(button['aria-label'], 'Aktifkan tema gelap');
   assert.equal(app.theme(), 'light');
 });
