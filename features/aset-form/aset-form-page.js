@@ -4,6 +4,10 @@
 // ============================================
 
 async function simpanAset(isEdit = false, id = null) {
+  if (document.getElementById('lokasi')?.dataset.ready !== 'true') {
+    showAlert('Master lokasi belum siap. Muat ulang halaman sebelum menyimpan aset.', 'error');
+    return;
+  }
   const data = getFormData();
 
   if (!data.nama_barang) { showAlert('Nama barang wajib diisi!', 'error'); return; }
@@ -51,15 +55,30 @@ async function simpanAset(isEdit = false, id = null) {
 }
 
 async function initTambahPage() {
+  const saveButton = document.getElementById('btn-simpan');
+  if (saveButton) saveButton.disabled = true;
+  try {
+    await loadLokasiDropdown();
+  } catch (error) {
+    showAlert(error.message, 'error');
+    const hint = document.createElement('p');
+    hint.textContent = error.message;
+    hint.setAttribute('role', 'alert');
+    document.getElementById('lokasi')?.after(hint);
+    return;
+  }
   await loadPenanggungJawabDropdown();
   initFotoUpload();
   initDokumenUpload();
   initHargaFormat();
   document.getElementById('kib')?.addEventListener('change', toggleKIBFields);
   document.getElementById('btn-simpan')?.addEventListener('click', () => simpanAset(false));
+  if (saveButton) saveButton.disabled = false;
 }
 
 async function initEditPage() {
+  const saveButton = document.getElementById('btn-simpan');
+  if (saveButton) saveButton.disabled = true;
   const params = new URLSearchParams(window.location.search);
   const id = params.get('id');
   if (!id) { showAlert('ID aset tidak ditemukan.', 'error'); return; }
@@ -67,6 +86,7 @@ async function initEditPage() {
   showLoading(true);
   try {
     const data = await fetchAsetById(id);
+    await loadLokasiDropdown(data.lokasi);
     await loadPenanggungJawabDropdown(data.penanggung_jawab_id);
     fillForm(data);
     initFotoUpload(data.foto_url);
@@ -76,6 +96,7 @@ async function initEditPage() {
     await loadDokumenPJExisting(id);
     document.getElementById('kib')?.addEventListener('change', toggleKIBFields);
     document.getElementById('btn-simpan')?.addEventListener('click', () => simpanAset(true, id));
+    if (saveButton) saveButton.disabled = false;
   } catch (err) {
     showAlert('Gagal memuat data aset: ' + err.message, 'error');
   } finally {

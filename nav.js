@@ -17,6 +17,7 @@
   ];
 
   const kelolaLinks = [
+    { href: 'lokasi.html', label: 'Master Lokasi & KIR', icon: 'meeting_room' },
     { href: 'peminjaman.html', label: 'Peminjaman', icon: 'assignment_return' },
     { href: 'penanggung-jawab.html', label: 'PJ Barang', icon: 'person_pin' },
     { href: 'pemindahtanganan.html', label: 'Pindahtangan', icon: 'swap_horiz' },

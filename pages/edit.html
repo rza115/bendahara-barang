@@ -425,7 +425,8 @@
         <div class="form-grid">
           <div class="form-group">
             <label>Lokasi Aset</label>
-            <input type="text" id="lokasi">
+            <select id="lokasi" disabled><option value="">Memuat master lokasi...</option></select>
+            <small>Pilih ruangan dari <a href="lokasi.html" target="_blank" rel="noopener">Master Lokasi &amp; KIR</a>. Muat ulang halaman setelah menambah lokasi.</small>
           </div>
           <div class="form-group">
             <label>Penggunaan</label>
@@ -460,6 +461,7 @@
 <script src="../shared/media/dokumen-ui.js"></script>
 <script src="../features/barang/barang-service.js"></script>
 <script src="../features/aset-form/aset-form-service.js"></script>
+<script src="../features/lokasi/lokasi-service.js"></script>
 <script src="../features/aset-form/aset-form-fields.js"></script>
 <script src="../features/aset-form/aset-form-page.js"></script>
 <script src="../main.js"></script>

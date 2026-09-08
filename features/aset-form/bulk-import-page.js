@@ -247,6 +247,8 @@ function renderBulkPreview(container, parsed, errors) {
 }
 
 async function runBulkImport(parsed) {
+  // Validasi seluruh lokasi sebelum insert pertama agar typo tidak menyebabkan impor parsial.
+  parsed = mapBulkLokasi(parsed, await fetchMasterLokasi());
   const errors = [];
   let ok = 0;
   const rows = parsed.map(({ sheetRow, rec }) => ({ sheetRow, payload: _stripForInsert(rec) }));

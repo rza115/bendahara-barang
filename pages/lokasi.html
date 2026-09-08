@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Master Lokasi &amp; Kartu Inventaris Ruangan — SiAset</title>
+  <link rel="stylesheet" href="../assets/styles/sidebar.css">
+  <link rel="stylesheet" href="../assets/styles/style.css">
+  <link rel="stylesheet" href="../assets/styles/material.css">
+  <link rel="stylesheet" href="../assets/styles/lokasi.css">
+</head>
+<body data-page="lokasi">
+  <div class="loading-overlay" id="loading"><div class="loading-spinner"></div></div>
+  <div class="alert" id="alert-box"></div>
+  <div id="page-body">
+    <div class="page-header kir-no-print">
+      <div><h1>Master Lokasi &amp; KIR</h1><p>Kelola ruangan dan cetak kartu inventaris untuk setiap lokasi.</p></div>
+      <button type="button" class="btn btn-secondary" id="lokasi-refresh">Muat ulang</button>
+    </div>
+    <p id="lokasi-error" class="lokasi-error kir-no-print" role="alert" hidden></p>
+    <details class="lokasi-master kir-no-print" open>
+      <summary>Kelola master lokasi / ruangan</summary>
+      <div class="lokasi-master-layout">
+        <form id="lokasi-form">
+          <h2 id="lokasi-form-title">Tambah lokasi</h2>
+          <div class="form-group"><label for="lokasi-nama">Nama lokasi / ruangan *</label><input id="lokasi-nama" required maxlength="200" placeholder="Contoh: Ruang Kepala Dinas"></div>
+          <div class="form-group"><label for="lokasi-gedung">Gedung / lantai</label><input id="lokasi-gedung" maxlength="200" placeholder="Contoh: Gedung A, Lantai 2"></div>
+          <div class="form-group"><label for="lokasi-keterangan">Keterangan lokasi</label><textarea id="lokasi-keterangan" rows="2"></textarea></div>
+          <p class="lokasi-help">Perubahan nama lokasi otomatis berlaku pada seluruh aset di ruangan tersebut.</p>
+          <div class="lokasi-actions"><button class="btn btn-primary" id="lokasi-save" disabled>Simpan lokasi</button><button type="button" class="btn btn-secondary" id="lokasi-cancel" hidden>Batal edit</button></div>
+        </form>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Lokasi / Ruangan</th><th>Gedung / Lantai</th><th>Data Aset</th><th>Aksi</th></tr></thead>
+          <tbody id="lokasi-tbody"><tr><td colspan="4">Memuat lokasi...</td></tr></tbody>
+        </table></div>
+      </div>
+    </details>
+    <div class="filter-bar kir-no-print">
+      <div class="form-group"><label for="kir-lokasi">Kartu inventaris ruangan</label><select id="kir-lokasi" disabled><option value="all">Semua ruangan</option></select></div>
+      <button type="button" class="btn btn-primary" id="kir-print" disabled><span class="material-symbols-rounded" aria-hidden="true">print</span>Cetak kartu</button>
+    </div>
+    <p class="lokasi-help kir-no-print">Pilih ruangan untuk melihat atau mencetak kartunya. Ubah lokasi barang melalui halaman Edit Aset. Setiap aset ditampilkan terpisah agar kode dan kondisinya tetap jelas.</p>
+    <div id="kir-cards" aria-live="polite"></div>
+  </div>
+  <script src="../supabase.js"></script>
+  <script src="../shared/auth/auth-guard.js"></script>
+  <script src="../nav.js"></script>
+  <script src="../shared/utils/formatters.js"></script>
+  <script src="../shared/ui/feedback.js"></script>
+  <script src="../features/lokasi/lokasi-service.js"></script>
+  <script src="../features/lokasi/lokasi-view.js"></script>
+  <script src="../features/lokasi/lokasi-page.js"></script>
+  <script src="../main.js"></script>
+</body>
+</html>

@@ -20,4 +20,5 @@
   if (page === 'peminjaman')        { initPeminjaman();           }
   if (page === 'barcode')           { initBarcodePage();          }
   if (page === 'trash')             { initTrashPage();            }
+  if (page === 'lokasi')            { initLokasiPage();           }
 })();

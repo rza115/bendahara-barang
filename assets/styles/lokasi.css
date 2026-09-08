@@ -1,0 +1,39 @@
+.lokasi-master { padding: 24px; margin-bottom: 24px; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--bg-card); }
+.lokasi-master summary { cursor: pointer; font-size: 16px; font-weight: 600; }
+.lokasi-master-layout { display: grid; grid-template-columns: minmax(240px, 320px) minmax(0, 1fr); align-items: start; gap: 28px; margin-top: 24px; }
+.lokasi-master h2 { font-size: 16px; margin-bottom: 16px; }
+.lokasi-master .form-group { margin-bottom: 14px; }
+.lokasi-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.lokasi-actions [hidden] { display: none; }
+.lokasi-help { color: var(--text-secondary); font-size: 13px; margin-bottom: 16px; }
+.lokasi-error { padding: 16px; margin-bottom: 20px; border: 1px solid #fecaca; border-radius: 8px; background: #fef2f2; color: #991b1b; }
+.kir-card { padding: 28px; margin: 24px 0; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); }
+.kir-header { text-align: center; margin-bottom: 20px; overflow-wrap: anywhere; }
+.kir-header h2 { font-size: 20px; margin: 4px 0; }
+.kir-header h3 { font-size: 17px; }
+.kir-header p { color: var(--text-secondary); }
+.kir-summary { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 14px; font-weight: 600; }
+.kir-table th, .kir-table td { white-space: normal; overflow-wrap: anywhere; }
+.kir-table { min-width: 1000px; }
+.kir-footer { margin-top: 20px; font-size: 12px; }
+.kir-signatures { display: flex; justify-content: space-around; gap: 24px; margin-top: 24px; text-align: center; }
+@media (max-width: 900px) {
+  .lokasi-master-layout { grid-template-columns: 1fr; }
+  .lokasi-master, .kir-card { padding: 16px; }
+}
+@media print {
+  @page { size: A4 landscape; margin: 12mm; }
+  .kir-no-print, .sidebar, .topbar, .sidebar-backdrop, #page-transition-overlay, .loading-overlay, .alert { display: none !important; }
+  html, body, .app-layout, .sidebar-main, .main-content { display: block !important; width: auto !important; max-width: none !important; min-height: 0 !important; height: auto !important; margin: 0 !important; padding: 0 !important; overflow: visible !important; background: white !important; transform: none !important; }
+  .kir-card { padding: 0; margin: 0; border: 0; border-radius: 0; box-shadow: none; break-after: page; color: black; }
+  .kir-card:last-child { break-after: auto; }
+  .kir-card .table-wrap { overflow: visible !important; border: 0; box-shadow: none; }
+  .kir-table { min-width: 0; width: 100%; table-layout: fixed; border-collapse: collapse; }
+  .kir-table th, .kir-table td { border: 1px solid #777; padding: 5px; font-size: 9px; color: black; }
+  .kir-table th:first-child { width: 4%; }
+  .kir-table th:nth-child(2) { width: 17%; }
+  .kir-table th:nth-child(5), .kir-table th:nth-child(6) { width: 6%; }
+  .kir-table thead { display: table-header-group; }
+  .kir-table tr, .kir-header, .kir-summary, .kir-footer { break-inside: avoid; }
+  .kir-header p { color: black; }
+}
