@@ -265,6 +265,8 @@ tbody tr:hover { background: #f8fafc; }
 tbody td { padding: 12px 14px; font-size: 13px; vertical-align: middle; }
 
 .td-no     { color: var(--text-muted); font-family: var(--font-mono); width: 40px; }
+body[data-page="index"] .td-foto { width: 64px; min-width: 64px; text-align: center; vertical-align: middle; }
+.table-aset-photo { display: block; width: 40px; height: 40px; margin: 0 auto; object-fit: cover; border-radius: 4px; }
 .td-harga  { font-family: var(--font-mono); font-size: 12px; color: var(--navy); }
 .td-action { white-space: nowrap; text-align: right; width: 80px; }
 

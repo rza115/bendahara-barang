@@ -11,7 +11,7 @@ function renderTable(data) {
   if (!data?.length) {
     tbody.innerHTML = `
       <tr>
-        <td colspan="8" class="empty-state">
+        <td colspan="9" class="empty-state">
           <div><span class="material-symbols-rounded" aria-hidden="true">inventory_2</span></div>
           <p>Belum ada data aset. <a href="tambah.html">Tambah aset pertama</a></p>
         </td>
@@ -22,11 +22,12 @@ function renderTable(data) {
   tbody.innerHTML = data.map((row, i) => `
     <tr class="row-clickable" data-id="${row.id}" style="cursor:pointer" title="Klik untuk lihat detail">
       <td class="td-no">${i + 1}</td>
-      <td>
+      <td class="td-foto">
         ${row.foto_url
-          ? `<img src="${escapeHtml(row.foto_url)}" alt=""
-              style="width:40px;height:40px;object-fit:cover;border-radius:4px;margin-right:8px;vertical-align:middle">`
+          ? `<img src="${escapeHtml(row.foto_url)}" alt="" class="table-aset-photo" loading="lazy">`
           : ''}
+      </td>
+      <td>
         <div class="nama-barang">${escapeHtml(row.nama_barang)}</div>
         ${row.merk_type   ? `<div class="sub-info">${escapeHtml(row.merk_type)}</div>`   : ''}
         ${row.kode_barang ? `<div class="kode-info">${escapeHtml(row.kode_barang)}</div>` : ''}
