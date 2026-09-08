@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="../assets/styles/sidebar.css">
   <link rel="stylesheet" href="../assets/styles/style.css">
   <link rel="stylesheet" href="../assets/styles/material.css">
+  <link rel="stylesheet" href="../assets/styles/presentation.css">
 </head>
 <body data-page="bulk-tambah">
 
@@ -22,7 +23,7 @@
         <h1>Impor Massal Aset</h1>
         <p>Unggah CSV atau Excel (.xlsx). Kolom mengikuti form tambah aset; foto dan dokumen tidak diimpor di sini.</p>
       </div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <div class="header-actions">
         <a href="tambah.html" class="btn btn-secondary"><span class="material-symbols-rounded" aria-hidden="true">add_box</span>Form tambah tunggal</a>
         <a href="index.html" class="btn btn-secondary"><span class="material-symbols-rounded" aria-hidden="true">arrow_back</span>Daftar aset</a>
       </div>
@@ -40,10 +41,10 @@
             <option value="KIB E">KIB E ? Aset Tetap Lainnya</option>
           </select>
         </div>
-        <p style="font-size:13px;color:#64748b;margin-bottom:12px">
+        <p class="bulk-description">
           Baris pertama berisi nama kolom (snake_case) persis seperti di bawah. Isi satu baris per aset. Kolom opsional boleh dikosongkan. Ganti baris contoh dengan data aset Anda. Kolom <code>kib</code> boleh dikosongkan atau dihapus; kategori otomatis mengikuti pilihan di atas. Jika diisi, nilainya harus sama dengan pilihan KIB.
         </p>
-        <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <div class="bulk-file-actions">
           <button type="button" id="bulk-btn-template-xlsx" class="btn btn-primary"><span class="material-symbols-rounded" aria-hidden="true">download</span>Unduh template .xlsx</button>
           <button type="button" id="bulk-btn-template-csv" class="btn btn-secondary"><span class="material-symbols-rounded" aria-hidden="true">download</span>Unduh template .csv</button>
         </div>
@@ -55,10 +56,10 @@
           <label>Pilih berkas</label>
           <input type="file" id="bulk-file" accept=".csv,.xlsx,.xls">
         </div>
-        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:8px">
+        <div class="bulk-import-actions">
           <button type="button" id="bulk-btn-parse" class="btn btn-primary"><span class="material-symbols-rounded" aria-hidden="true">preview</span>Baca &amp; pratinjau</button>
-          <button type="button" id="bulk-btn-import" class="btn btn-primary" style="background:#059669;border-color:#059669"><span class="material-symbols-rounded" aria-hidden="true">cloud_upload</span>Impor ke database</button>
-          <span id="bulk-stat" style="font-size:13px;color:#64748b"></span>
+          <button type="button" id="bulk-btn-import" class="btn btn-primary bulk-import-button"><span class="material-symbols-rounded" aria-hidden="true">cloud_upload</span>Impor ke database</button>
+          <span id="bulk-stat" class="bulk-status"></span>
         </div>
       </div>
 
@@ -69,11 +70,11 @@
 
       <div class="form-section">
         <div class="form-section-title">Daftar kolom sesuai format KIB yang dipilih</div>
-        <p style="font-size:12px;color:#64748b;margin-bottom:10px">
+        <p class="bulk-column-description">
           Template hanya memuat kolom umum dan kolom khusus KIB yang dipilih. Gunakan satu berkas untuk satu kategori KIB. Tanggal diisi YYYY-MM-DD; simpan kode/nomor sebagai teks agar nol di depan tetap utuh. Default: <code>jumlah</code>=1, <code>kondisi</code>=Baik, <code>status_aset</code>=Aset Tetap, <code>status_barang</code>=Inventaris.
         </p>
         <div id="bulk-column-list"></div>
-        <p style="font-size:13px;margin-top:12px">Kolom <code>lokasi</code> harus menggunakan nama yang terdaftar di <a href="lokasi.html" target="_blank" rel="noopener">Master Lokasi &amp; KIR</a>. Perbedaan huruf besar/kecil dan spasi akan disesuaikan otomatis. Kosongkan jika lokasi belum ditentukan.</p>
+        <p class="bulk-location-hint">Kolom <code>lokasi</code> harus menggunakan nama yang terdaftar di <a href="lokasi.html" target="_blank" rel="noopener">Master Lokasi &amp; KIR</a>. Perbedaan huruf besar/kecil dan spasi akan disesuaikan otomatis. Kosongkan jika lokasi belum ditentukan.</p>
       </div>
     </div>
 

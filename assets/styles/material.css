@@ -943,7 +943,7 @@ body[data-page='public-detail'] .state-msg code { background: var(--md-sys-color
   .table-wrap,
   body[data-page='peminjaman'] .form-card,
   body[data-page='pj'] .form-card > div,
-  body[data-page='pemindahtanganan'] .form-section > div[style*='overflow-x'],
+  body[data-page='pemindahtanganan'] .form-section > .scroll-x,
   #bulk-preview {
     max-width: 100%;
     overflow-x: auto;
@@ -1027,7 +1027,7 @@ body[data-page='public-detail'] .state-msg code { background: var(--md-sys-color
   body[data-page='detail'] #foto-wrap,
   body[data-page='detail'] .foto-box,
   body[data-page='detail'] .foto-placeholder { width: 100%; max-width: none; }
-  body[data-page='detail'] .form-section div[style*='min-width:240px'] {
+  body[data-page='detail'] .form-section .detail-summary-fields {
     width: 100%;
     min-width: 0 !important;
   }

@@ -1,0 +1,16 @@
+.pj-table{width:100%;border-collapse:collapse}
+    .pj-table th{padding:10px 12px;font-size:11px;font-weight:600;text-transform:uppercase;
+      letter-spacing:.06em;color:var(--text-muted);background:var(--bg);
+      border-bottom:2px solid var(--border);text-align:left}
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);
+      z-index:1000;align-items:center;justify-content:center}
+    .modal-box{background:var(--surface);border-radius:var(--radius);
+      padding:28px;width:100%;max-width:480px;box-shadow:0 8px 32px rgba(0,0,0,.18)}
+    .modal-title{font-size:16px;font-weight:700;margin-bottom:20px}
+    .field-group{display:flex;flex-direction:column;gap:4px;margin-bottom:14px}
+    .field-label{font-size:11px;font-weight:600;text-transform:uppercase;
+      letter-spacing:.06em;color:var(--text-muted)}
+    .field-input{padding:8px 12px;border:1px solid var(--border);border-radius:var(--radius);
+      font-size:13px;background:var(--bg);color:var(--text-primary);width:100%}
+    .field-input:focus{outline:none;border-color:var(--accent)}
+    .modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}

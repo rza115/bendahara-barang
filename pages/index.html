@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="../assets/styles/sidebar.css">
   <link rel="stylesheet" href="../assets/styles/style.css">
   <link rel="stylesheet" href="../assets/styles/material.css">
+  <link rel="stylesheet" href="../assets/styles/presentation.css">
 </head>
 <body data-page="index">
 
@@ -37,7 +38,7 @@
       </div>
       <div class="stat-card gold">
         <div class="stat-icon"><span class="material-symbols-rounded" aria-hidden="true">payments</span></div>
-        <div class="stat-value" id="total-nilai" style="font-size:14px"></div>
+        <div class="stat-value stat-currency-value" id="total-nilai"></div>
         <div class="stat-label">Total Nilai</div>
       </div>
       <div class="stat-card">
@@ -68,20 +69,20 @@
         <span class="search-icon"></span>
         <input type="text" id="search-input" placeholder="Cari nama, ID, atau kode barang...">
       </div>
-      <select id="filter-kib" style="width:auto">
+      <select id="filter-kib" class="select-auto-width">
         <option value="">Semua KIB</option>
         <option value="KIB A">KIB A &mdash; Tanah</option>
         <option value="KIB B">KIB B &mdash; Peralatan &amp; Mesin</option>
         <option value="KIB C">KIB C &mdash; Gedung &amp; Bangunan</option>
         <option value="KIB E">KIB E &mdash; Aset Tetap Lainnya</option>
       </select>
-      <select id="filter-kondisi" style="width:auto">
+      <select id="filter-kondisi" class="select-auto-width">
         <option value="">Semua Kondisi</option>
         <option value="Baik">Baik</option>
         <option value="Rusak Ringan">Rusak Ringan</option>
         <option value="Rusak Berat">Rusak Berat</option>
       </select>
-      <select id="sort-by" style="width:auto">
+      <select id="sort-by" class="select-auto-width">
         <option value="">Urutkan</option>
         <option value="terbaru">Tahun Terbaru</option>
         <option value="terlama">Tahun Terlama</option>
@@ -90,7 +91,7 @@
         <option value="nama-az">Nama A&ndash;Z</option>
         <option value="nama-za">Nama Z&ndash;A</option>
       </select>
-      <select id="limit-rows" style="width:auto">
+      <select id="limit-rows" class="select-auto-width">
         <option value="50" selected>50 Data</option>
         <option value="100">100 Data</option>
         <option value="250">250 Data</option>
