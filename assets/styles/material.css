@@ -813,6 +813,9 @@ body[data-page='public-detail'] {
   color: var(--md-sys-color-on-surface);
 }
 body[data-page='public-detail']::before { display: none; }
+body[data-page='public-detail'] .topbar-theme,
+body[data-page='public-detail'] .theme-toolbar,
+body[data-page='public-detail'] .theme-toggle { display: none !important; }
 body[data-page='public-detail'] #app { max-width: 560px; }
 body[data-page='public-detail'] .card,
 body[data-page='public-detail'] .state-wrap {
