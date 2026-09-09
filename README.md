@@ -2,6 +2,8 @@
 
 Aplikasi web pencatatan inventaris aset tetap (KIB) berbasis HTML + Supabase.
 
+Konfigurasi keamanan login: [panduan aktivasi hCaptcha](docs/hcaptcha-login.md).
+
 ---
 
 ## 🗂️ Struktur File
