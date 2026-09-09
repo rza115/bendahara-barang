@@ -105,10 +105,12 @@ window.initBarcodePage = async function () {
 
   // ── FILTER ─────────────────────────────────────────
   function applyFilter() {
-    const q = document.getElementById('search-aset').value.toLowerCase();
+    const q = document.getElementById('search-aset').value.trim().toLowerCase();
     const kib = document.getElementById('filter-kib').value;
     const filtered = semuaAset.filter(a =>
-      (!q || a.nama_barang?.toLowerCase().includes(q) || a.kode_barang?.toLowerCase().includes(q)) &&
+      (!q || [a.nama_barang, a.kode_barang, a.id_barang].some(value =>
+        String(value ?? '').toLowerCase().includes(q)
+      )) &&
       (!kib || a.kib === kib)
     );
     renderList(filtered);
