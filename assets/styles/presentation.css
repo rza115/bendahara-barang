@@ -1,0 +1,277 @@
+/* Shared presentation extracted from HTML. Loaded after the page theme. */
+/* Initial visibility uses normal specificity so JavaScript can still show elements. */
+
+body .is-initially-hidden {
+  display: none;
+}
+
+body .select-auto-width {
+  width: auto;
+}
+
+body .field-required {
+  color: red;
+}
+
+body .card-full-width {
+  max-width: 100%;
+}
+
+body .scroll-x {
+  overflow-x: auto;
+}
+
+body .table-loading {
+  text-align: center;
+  padding: 40px;
+  color: #94a3b8;
+}
+
+body .field-warning {
+  font-size: 11px;
+  color: #94a3b8;
+  margin-top: 4px;
+}
+
+body .text-muted-light {
+  color: #94a3b8;
+}
+
+body .existing-photo-wrap {
+  display: none;
+  margin-bottom: 10px;
+}
+
+body .existing-photo-image {
+  max-width: 200px;
+  max-height: 200px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  display: block;
+  margin-bottom: 6px;
+}
+
+body .text-help {
+  font-size: 12px;
+  color: #64748b;
+}
+
+body .photo-preview-wrap {
+  margin-top: 10px;
+  display: none;
+}
+
+body .photo-preview-image {
+  max-width: 200px;
+  max-height: 200px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+body .photo-remove-button {
+  display: block;
+  margin-top: 6px;
+  color: #ef4444;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+body .photo-format-hint {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-top: 6px;
+}
+
+body .document-preview-wrap {
+  margin-top: 8px;
+  display: none;
+}
+
+body .existing-pj-documents {
+  display: none;
+  margin-bottom: 12px;
+}
+
+body .detail-card {
+  max-width: 100%;
+  margin-bottom: 18px;
+}
+
+body .detail-summary {
+  display: flex;
+  gap: 28px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+body .detail-summary-fields {
+  flex: 1;
+  min-width: 240px;
+}
+
+body .no-bottom-margin {
+  margin-bottom: 0;
+}
+
+body .grid-full-width {
+  grid-column: 1/-1;
+}
+
+body .detail-card-hidden {
+  max-width: 100%;
+  margin-bottom: 18px;
+  display: none;
+}
+
+body .transfer-form-card {
+  margin-bottom: 20px;
+}
+
+body .readonly-field {
+  background: #f8fafc;
+  color: #64748b;
+  cursor: not-allowed;
+}
+
+body .field-hint {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-top: 4px;
+}
+
+body .transfer-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+body .transfer-filters {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+body .transfer-asset-filter {
+  min-width: 200px;
+  padding: 8px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+body .transfer-person-filter {
+  min-width: 180px;
+  padding: 8px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+body .transfer-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+body .transfer-table-heading {
+  padding: 10px 12px;
+  text-align: left;
+  font-size: 12px;
+  color: #64748b;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+body .barcode-year-input {
+  width: 80px;
+}
+
+body .barcode-loading {
+  padding: 40px;
+  text-align: center;
+  color: #94a3b8;
+}
+
+body .barcode-generate-button {
+  padding: 6px 16px;
+  font-size: 13px;
+}
+
+body .barcode-export-button {
+  font-size: 13px;
+  padding: 7px 14px;
+}
+
+body .stat-currency-value {
+  font-size: 14px;
+}
+
+body .header-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+body .bulk-description {
+  font-size: 13px;
+  color: #64748b;
+  margin-bottom: 12px;
+}
+
+body .bulk-file-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+body .bulk-import-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 8px;
+}
+
+body .bulk-import-button {
+  background: #059669;
+  border-color: #059669;
+}
+
+body .bulk-status {
+  font-size: 13px;
+  color: #64748b;
+}
+
+body .bulk-column-description {
+  font-size: 12px;
+  color: #64748b;
+  margin-bottom: 10px;
+}
+
+body .bulk-location-hint {
+  font-size: 13px;
+  margin-top: 12px;
+}
+
+body .asset-category-description {
+  font-size: 12px;
+  color: #64748b;
+  margin-bottom: 16px;
+  padding: 0 0 8px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+body .existing-photo-caption {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-bottom: 4px;
+}
+
+body .form-section-description {
+  font-size: 12px;
+  color: #64748b;
+  margin-bottom: 16px;
+}

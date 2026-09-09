@@ -784,6 +784,7 @@ body[data-page='login'] input[type='email'],
 body[data-page='login'] input[type='password'],
 body[data-page='login'] input[type='text'] {
   min-height: 56px;
+  padding: 12px 48px;
   border: 1px solid var(--md-sys-color-outline);
   border-radius: var(--md-sys-shape-corner-extra-small);
   background: var(--md-sys-color-surface-container-lowest);
@@ -946,7 +947,7 @@ body[data-page='public-detail'] .state-msg code { background: var(--md-sys-color
   .table-wrap,
   body[data-page='peminjaman'] .form-card,
   body[data-page='pj'] .form-card > div,
-  body[data-page='pemindahtanganan'] .form-section > div[style*='overflow-x'],
+  body[data-page='pemindahtanganan'] .form-section > .scroll-x,
   #bulk-preview {
     max-width: 100%;
     overflow-x: auto;
@@ -1030,7 +1031,7 @@ body[data-page='public-detail'] .state-msg code { background: var(--md-sys-color
   body[data-page='detail'] #foto-wrap,
   body[data-page='detail'] .foto-box,
   body[data-page='detail'] .foto-placeholder { width: 100%; max-width: none; }
-  body[data-page='detail'] .form-section div[style*='min-width:240px'] {
+  body[data-page='detail'] .form-section .detail-summary-fields {
     width: 100%;
     min-width: 0 !important;
   }

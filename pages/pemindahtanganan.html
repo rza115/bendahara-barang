@@ -2,11 +2,14 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
+  <script src="../shared/ui/theme.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pemindahtanganan Barang — Inventaris Kecamatan Tenjo</title>
   <link rel="stylesheet" href="../assets/styles/sidebar.css">
   <link rel="stylesheet" href="../assets/styles/style.css">
   <link rel="stylesheet" href="../assets/styles/material.css">
+  <link rel="stylesheet" href="../assets/styles/presentation.css">
+  <link rel="stylesheet" href="../assets/styles/theme.css">
 </head>
 <body data-page="pemindahtanganan">
 
@@ -22,7 +25,7 @@
       <a href="index.html" class="btn btn-secondary"><span class="material-symbols-rounded" aria-hidden="true">arrow_back</span>Kembali</a>
     </div>
 
-    <div class="form-card" style="margin-bottom:20px">
+    <div class="form-card transfer-form-card">
       <div class="form-section">
         <div class="form-section-title" id="form-title"><span class="material-symbols-rounded" aria-hidden="true">add</span>Catat Pemindahtanganan Baru</div>
         <div class="form-grid">
@@ -37,8 +40,7 @@
           <div class="form-group">
             <label>Penanggung Jawab Lama</label>
             <input type="text" id="pt-pj-lama-display" readonly
-              style="background:#f8fafc;color:#64748b;cursor:not-allowed"
-              placeholder="Otomatis dari data barang">
+              placeholder="Otomatis dari data barang" class="readonly-field">
             <input type="hidden" id="pt-dari-pj-id">
           </div>
 
@@ -55,25 +57,25 @@
           </div>
 
           <div class="form-group">
-            <label>No. Dokumen <span style="color:#94a3b8">(BA/SK, opsional)</span></label>
+            <label>No. Dokumen <span class="text-muted-light">(BA/SK, opsional)</span></label>
             <input type="text" id="pt-no-dokumen" placeholder="contoh: 800/123/Kec.Tnj/2026">
           </div>
 
           <div class="form-group form-col-full">
-            <label>Keterangan <span style="color:#94a3b8">(opsional)</span></label>
+            <label>Keterangan <span class="text-muted-light">(opsional)</span></label>
             <textarea id="pt-keterangan" rows="2" placeholder="Alasan pemindahtanganan, dasar hukum, dll..."></textarea>
           </div>
 
           <div class="form-group form-col-full">
-            <label>Upload Dokumen <span style="color:#94a3b8">(scan BA/SK, opsional)</span></label>
+            <label>Upload Dokumen <span class="text-muted-light">(scan BA/SK, opsional)</span></label>
             <input type="file" id="pt-dokumen-file" accept=".pdf,.jpg,.jpeg,.png">
-            <p style="font-size:12px;color:#94a3b8;margin-top:4px">Format: PDF/JPG/PNG · Maks. 5 MB</p>
+            <p class="field-hint">Format: PDF/JPG/PNG · Maks. 5 MB</p>
           </div>
 
         </div>
-        <div style="display:flex;gap:10px;margin-top:8px">
+        <div class="transfer-actions">
           <button class="btn btn-primary" id="btn-simpan-pt"><span class="material-symbols-rounded" aria-hidden="true">save</span>Simpan Pemindahtanganan</button>
-          <button class="btn btn-secondary" id="btn-batal-pt" style="display:none"><span class="material-symbols-rounded" aria-hidden="true">close</span>Batal</button>
+          <button class="btn btn-secondary is-initially-hidden" id="btn-batal-pt"><span class="material-symbols-rounded" aria-hidden="true">close</span>Batal</button>
         </div>
       </div>
     </div>
@@ -82,30 +84,30 @@
       <div class="form-section">
         <div class="form-section-title"><span class="material-symbols-rounded" aria-hidden="true">history</span>Riwayat Pemindahtanganan</div>
 
-        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px">
-          <select id="filter-pt-barang" style="min-width:200px;padding:8px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px">
+        <div class="transfer-filters">
+          <select id="filter-pt-barang" class="transfer-asset-filter">
             <option value="">— Semua Barang —</option>
           </select>
-          <select id="filter-pt-pj" style="min-width:180px;padding:8px 12px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px">
+          <select id="filter-pt-pj" class="transfer-person-filter">
             <option value="">— Semua PJ —</option>
           </select>
         </div>
 
-        <div style="overflow-x:auto">
-          <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <div class="scroll-x">
+          <table class="transfer-table">
             <thead>
               <tr>
-                <th style="padding:10px 12px;text-align:left;font-size:12px;color:#64748b;border-bottom:2px solid #e2e8f0">#</th>
-                <th style="padding:10px 12px;text-align:left;font-size:12px;color:#64748b;border-bottom:2px solid #e2e8f0">Barang</th>
-                <th style="padding:10px 12px;text-align:left;font-size:12px;color:#64748b;border-bottom:2px solid #e2e8f0">PJ Lama</th>
-                <th style="padding:10px 12px;text-align:left;font-size:12px;color:#64748b;border-bottom:2px solid #e2e8f0">PJ Baru</th>
-                <th style="padding:10px 12px;text-align:left;font-size:12px;color:#64748b;border-bottom:2px solid #e2e8f0">Tanggal</th>
-                <th style="padding:10px 12px;text-align:left;font-size:12px;color:#64748b;border-bottom:2px solid #e2e8f0">No. Dok</th>
-                <th style="padding:10px 12px;text-align:left;font-size:12px;color:#64748b;border-bottom:2px solid #e2e8f0">Aksi</th>
+                <th class="transfer-table-heading">#</th>
+                <th class="transfer-table-heading">Barang</th>
+                <th class="transfer-table-heading">PJ Lama</th>
+                <th class="transfer-table-heading">PJ Baru</th>
+                <th class="transfer-table-heading">Tanggal</th>
+                <th class="transfer-table-heading">No. Dok</th>
+                <th class="transfer-table-heading">Aksi</th>
               </tr>
             </thead>
             <tbody id="pt-tbody">
-              <tr><td colspan="7" style="text-align:center;padding:40px;color:#94a3b8">Memuat data...</td></tr>
+              <tr><td colspan="7" class="table-loading">Memuat data...</td></tr>
             </tbody>
           </table>
         </div>
