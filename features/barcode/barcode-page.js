@@ -16,6 +16,7 @@ window.initBarcodePage = async function () {
   const PAGE_MARGIN = 10;
   const LABEL_GAP = 6;
   const BPKAD_LABEL = { width: 92, height: 24 };
+  const PRINT_LABEL_HEIGHTS = { qrcode: 52, barcode: 42, bpkad: BPKAD_LABEL.height };
   let semuaAset = [];
   let selectedIds = new Set();
 
@@ -23,13 +24,30 @@ window.initBarcodePage = async function () {
     return PAPER_SIZES[document.getElementById('opt-kertas').value] || PAPER_SIZES.a4;
   }
 
-  function applyPaperSize() {
+  function getPrintLayout(jenisKode = document.getElementById('opt-jenis-kode').value) {
     const paper = getPaperSize();
-    const isBpkad = document.getElementById('opt-jenis-kode').value === 'bpkad';
     const printableWidth = paper.width - (PAGE_MARGIN * 2);
-    const columns = isBpkad
+    const printableHeight = paper.height - (PAGE_MARGIN * 2);
+    const columns = jenisKode === 'bpkad'
       ? Math.max(1, Math.floor((printableWidth + LABEL_GAP) / (BPKAD_LABEL.width + LABEL_GAP)))
       : paper.columns;
+    const labelHeight = PRINT_LABEL_HEIGHTS[jenisKode] || PRINT_LABEL_HEIGHTS.qrcode;
+    const rows = Math.max(1, Math.floor((printableHeight + LABEL_GAP) / (labelHeight + LABEL_GAP)));
+    return { paper, printableWidth, columns, labelHeight, rows, perPage: columns * rows };
+  }
+
+  function applyPrintPagination() {
+    const grid = document.getElementById('label-grid');
+    const jenisKode = grid.dataset.labelType;
+    if (!jenisKode) return;
+    const { perPage } = getPrintLayout(jenisKode);
+    grid.querySelectorAll('.label-card').forEach((label, index) => {
+      label.classList.toggle('print-page-start', index > 0 && index % perPage === 0);
+    });
+  }
+
+  function applyPaperSize() {
+    const { paper, columns } = getPrintLayout();
     let printStyle = document.getElementById('barcode-print-page-style');
     if (!printStyle) {
       printStyle = document.createElement('style');
@@ -43,6 +61,7 @@ window.initBarcodePage = async function () {
       .label-grid.bpkad-grid { grid-template-columns: repeat(${columns}, ${BPKAD_LABEL.width}mm); }
     }`;
     document.getElementById('label-grid').style.setProperty('--barcode-columns', columns);
+    applyPrintPagination();
   }
 
   // Set tahun default = tahun berjalan
@@ -209,7 +228,7 @@ window.initBarcodePage = async function () {
     if (jenisKode === 'bpkad') return buildBpkadLabel(aset, tahun);
 
     const wrap = document.createElement('div');
-    wrap.className = 'label-card';
+    wrap.className = `label-card ${jenisKode}-label-card`;
     wrap.innerHTML = `
       <div class="label-inner">
         <div class="label-col1">
@@ -241,7 +260,9 @@ window.initBarcodePage = async function () {
     const tahun = document.getElementById('opt-tahun').value || new Date().getFullYear();
     const grid = document.getElementById('label-grid');
     grid.innerHTML = '';
-    grid.classList.toggle('bpkad-grid', jenisKode === 'bpkad');
+    grid.dataset.labelType = jenisKode;
+    grid.classList.remove('qrcode-grid', 'barcode-grid', 'bpkad-grid');
+    grid.classList.add(`${jenisKode}-grid`);
     applyPaperSize();
 
     const dipilih = semuaAset.filter(a => selectedIds.has(a.id));
@@ -261,7 +282,9 @@ window.initBarcodePage = async function () {
       codeWrap.appendChild(codeText);
     });
 
-    showAlert(`${dipilih.length} label berhasil dibuat!`);
+    applyPrintPagination();
+    const { paper, perPage } = getPrintLayout(jenisKode);
+    showAlert(`${dipilih.length} label berhasil dibuat. Kapasitas ${perPage} label per lembar ${paper.label}.`);
     document.getElementById('label-grid').scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 
