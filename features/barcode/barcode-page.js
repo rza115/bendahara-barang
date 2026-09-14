@@ -15,6 +15,7 @@ window.initBarcodePage = async function () {
   };
   const PAGE_MARGIN = 10;
   const LABEL_GAP = 6;
+  const BPKAD_LABEL = { width: 160, height: 40 };
   let semuaAset = [];
   let selectedIds = new Set();
 
@@ -24,6 +25,11 @@ window.initBarcodePage = async function () {
 
   function applyPaperSize() {
     const paper = getPaperSize();
+    const isBpkad = document.getElementById('opt-jenis-kode').value === 'bpkad';
+    const printableWidth = paper.width - (PAGE_MARGIN * 2);
+    const columns = isBpkad
+      ? Math.max(1, Math.floor((printableWidth + LABEL_GAP) / (BPKAD_LABEL.width + LABEL_GAP)))
+      : paper.columns;
     let printStyle = document.getElementById('barcode-print-page-style');
     if (!printStyle) {
       printStyle = document.createElement('style');
@@ -33,9 +39,10 @@ window.initBarcodePage = async function () {
     printStyle.textContent = `@media print {
       @page { size: ${paper.width}mm ${paper.height}mm; margin: ${PAGE_MARGIN}mm; }
       #print-area { width: ${paper.width - (PAGE_MARGIN * 2)}mm; }
-      .label-grid { grid-template-columns: repeat(${paper.columns}, 1fr); }
+      .label-grid { grid-template-columns: repeat(${columns}, 1fr); }
+      .label-grid.bpkad-grid { grid-template-columns: repeat(${columns}, ${BPKAD_LABEL.width}mm); }
     }`;
-    document.getElementById('label-grid').style.setProperty('--barcode-columns', paper.columns);
+    document.getElementById('label-grid').style.setProperty('--barcode-columns', columns);
   }
 
   // Set tahun default = tahun berjalan
@@ -47,7 +54,10 @@ window.initBarcodePage = async function () {
     document.getElementById('sep-data-kode').hidden = isBpkad;
   }
 
-  document.getElementById('opt-jenis-kode').addEventListener('change', syncKodeOptions);
+  document.getElementById('opt-jenis-kode').addEventListener('change', () => {
+    syncKodeOptions();
+    applyPaperSize();
+  });
   document.getElementById('opt-kertas').addEventListener('change', applyPaperSize);
   syncKodeOptions();
   applyPaperSize();
@@ -231,6 +241,8 @@ window.initBarcodePage = async function () {
     const tahun = document.getElementById('opt-tahun').value || new Date().getFullYear();
     const grid = document.getElementById('label-grid');
     grid.innerHTML = '';
+    grid.classList.toggle('bpkad-grid', jenisKode === 'bpkad');
+    applyPaperSize();
 
     const dipilih = semuaAset.filter(a => selectedIds.has(a.id));
     dipilih.forEach(aset => {
@@ -275,7 +287,14 @@ window.initBarcodePage = async function () {
       const paper = getPaperSize();
       const pdf = new jsPDF({ orientation: paper.orientation, unit: 'mm', format: paper.pdfFormat });
       const labels = grid.querySelectorAll('.label-card');
-      const colW = (paper.width - (PAGE_MARGIN * 2) - (LABEL_GAP * (paper.columns - 1))) / paper.columns;
+      const jenisKode = document.getElementById('opt-jenis-kode').value;
+      const printableWidth = paper.width - (PAGE_MARGIN * 2);
+      const columns = jenisKode === 'bpkad'
+        ? Math.max(1, Math.floor((printableWidth + LABEL_GAP) / (BPKAD_LABEL.width + LABEL_GAP)))
+        : paper.columns;
+      const colW = jenisKode === 'bpkad'
+        ? BPKAD_LABEL.width
+        : (printableWidth - (LABEL_GAP * (columns - 1))) / columns;
       let x = PAGE_MARGIN;
       let y = PAGE_MARGIN;
       let rowHeight = 0;
@@ -283,8 +302,8 @@ window.initBarcodePage = async function () {
         const canvas = await html2canvas(labels[i], { scale: 2, useCORS: true, backgroundColor: '#fff' });
         const imgData = canvas.toDataURL('image/png');
         const ratio = canvas.height / canvas.width;
-        const h = colW * ratio;
-        const column = i % paper.columns;
+        const h = jenisKode === 'bpkad' ? BPKAD_LABEL.height : colW * ratio;
+        const column = i % columns;
         if (column === 0 && y + h > paper.height - PAGE_MARGIN) {
           pdf.addPage();
           y = PAGE_MARGIN;
@@ -293,13 +312,12 @@ window.initBarcodePage = async function () {
         x = PAGE_MARGIN + (column * (colW + LABEL_GAP));
         pdf.addImage(imgData, 'PNG', x, y, colW, h);
         rowHeight = Math.max(rowHeight, h);
-        if (column === paper.columns - 1 || i === labels.length - 1) {
+        if (column === columns - 1 || i === labels.length - 1) {
           y += rowHeight + LABEL_GAP;
           rowHeight = 0;
         }
       }
       const tahun = document.getElementById('opt-tahun').value || new Date().getFullYear();
-      const jenisKode = document.getElementById('opt-jenis-kode').value;
       const namaFile = jenisKode === 'bpkad' ? 'Label_Identitas_BPKAD' : 'Label_BMD';
       pdf.save(`${namaFile}_${SKPD.replace(/\s+/g, '_')}_${tahun}_${paper.label.replace('/', '-')}.pdf`);
       showAlert('PDF berhasil diunduh!');

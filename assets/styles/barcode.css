@@ -196,16 +196,21 @@
       border: 2px solid #111827;
       border-radius: 0;
       color: #111;
+      box-sizing: border-box;
+      width: 160mm;
+      height: 40mm;
     }
     .bpkad-label-inner {
       display: flex;
-      min-height: 132px;
+      width: 100%;
+      height: 100%;
     }
     .bpkad-brand {
-      width: 105px;
-      min-width: 105px;
+      width: 32mm;
+      min-width: 32mm;
       border-right: 2px solid #111827;
-      padding: 8px 7px 7px;
+      padding: 2mm 1.5mm 1mm;
+      box-sizing: border-box;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -213,12 +218,12 @@
       gap: 5px;
     }
     .bpkad-logo {
-      width: 66px;
-      height: 78px;
+      width: 23mm;
+      height: 25mm;
       object-fit: contain;
     }
     .bpkad-inventory {
-      font-size: 10px;
+      font-size: 9pt;
       font-weight: 800;
       line-height: 1.2;
       text-align: center;
@@ -226,16 +231,17 @@
     }
     .bpkad-details {
       flex: 1;
-      padding: 10px 12px;
+      min-width: 0;
+      padding: 2.5mm 3mm;
       display: flex;
       flex-direction: column;
       justify-content: flex-start;
     }
     .bpkad-row {
       display: grid;
-      grid-template-columns: 122px 10px minmax(0, 1fr);
-      font-size: 12px;
-      line-height: 1.45;
+      grid-template-columns: 42mm 4mm minmax(0, 1fr);
+      font-size: 11pt;
+      line-height: 1.25;
       color: #111;
     }
     .bpkad-key,
@@ -243,6 +249,10 @@
       font-weight: 800;
     }
     .bpkad-value { overflow-wrap: anywhere; }
+    .label-grid.bpkad-grid {
+      grid-template-columns: repeat(var(--barcode-columns, 1), 160mm);
+      justify-content: start;
+    }
     @media print {
       @page { size: A4 portrait; margin: 10mm; }
       body * { visibility: hidden; }
