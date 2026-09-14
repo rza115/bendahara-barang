@@ -11,10 +11,10 @@
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <link rel="stylesheet" href="../assets/styles/barcode.css">
   <link rel="stylesheet" href="../assets/styles/material.css">
   <link rel="stylesheet" href="../assets/styles/presentation.css">
   <link rel="stylesheet" href="../assets/styles/theme.css">
+  <link rel="stylesheet" href="../assets/styles/barcode.css">
 </head>
 <body data-page="barcode">
 
@@ -105,6 +105,7 @@
           <button class="btn btn-primary barcode-export-button"   id="btn-pdf"><span class="material-symbols-rounded" aria-hidden="true">picture_as_pdf</span>Download PDF</button>
         </div>
       </div>
+      <p class="label-size-note">Label tetap 90 × 45 mm. Cetak pada skala 100% / Actual size, tanpa header dan footer.</p>
       <div id="print-area">
         <div class="label-grid" id="label-grid">
           <div class="label-empty">Pilih aset di atas lalu klik <strong>Generate Label</strong></div>
@@ -122,6 +123,7 @@
   <script src="../shared/utils/formatters.js"></script>
   <script src="../shared/ui/feedback.js"></script>
   <script src="../features/barcode/barcode-service.js"></script>
+  <script src="../features/barcode/barcode-layout.js"></script>
   <script src="../features/barcode/barcode-page.js"></script>
   <script src="../main.js"></script>
 </body>
