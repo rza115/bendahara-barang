@@ -15,7 +15,7 @@ window.initBarcodePage = async function () {
   };
   const PAGE_MARGIN = 10;
   const LABEL_GAP = 6;
-  const BPKAD_LABEL = { width: 160, height: 40 };
+  const BPKAD_LABEL = { width: 92, height: 24 };
   let semuaAset = [];
   let selectedIds = new Set();
 

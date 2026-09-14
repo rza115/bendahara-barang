@@ -197,8 +197,8 @@
       border-radius: 0;
       color: #111;
       box-sizing: border-box;
-      width: 160mm;
-      height: 40mm;
+      width: 92mm;
+      height: 24mm;
     }
     .bpkad-label-inner {
       display: flex;
@@ -206,24 +206,24 @@
       height: 100%;
     }
     .bpkad-brand {
-      width: 32mm;
-      min-width: 32mm;
+      width: 20mm;
+      min-width: 20mm;
       border-right: 2px solid #111827;
-      padding: 2mm 1.5mm 1mm;
+      padding: 1mm 1mm 0.7mm;
       box-sizing: border-box;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: space-between;
-      gap: 5px;
+      gap: 1mm;
     }
     .bpkad-logo {
-      width: 23mm;
-      height: 25mm;
+      width: 14mm;
+      height: 15mm;
       object-fit: contain;
     }
     .bpkad-inventory {
-      font-size: 9pt;
+      font-size: 5.5pt;
       font-weight: 800;
       line-height: 1.2;
       text-align: center;
@@ -232,16 +232,16 @@
     .bpkad-details {
       flex: 1;
       min-width: 0;
-      padding: 2.5mm 3mm;
+      padding: 1.5mm 2mm;
       display: flex;
       flex-direction: column;
       justify-content: flex-start;
     }
     .bpkad-row {
       display: grid;
-      grid-template-columns: 42mm 4mm minmax(0, 1fr);
-      font-size: 11pt;
-      line-height: 1.25;
+      grid-template-columns: 29mm 3mm minmax(0, 1fr);
+      font-size: 7.5pt;
+      line-height: 1.2;
       color: #111;
     }
     .bpkad-key,
@@ -250,7 +250,7 @@
     }
     .bpkad-value { overflow-wrap: anywhere; }
     .label-grid.bpkad-grid {
-      grid-template-columns: repeat(var(--barcode-columns, 1), 160mm);
+      grid-template-columns: repeat(var(--barcode-columns, 2), 92mm);
       justify-content: start;
     }
     @media print {
