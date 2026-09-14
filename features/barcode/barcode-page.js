@@ -15,6 +15,8 @@ window.initBarcodePage = async function () {
   };
   const PAGE_MARGIN = 10;
   const LABEL_GAP = 6;
+  const LABEL_WIDTH = 90;
+  const LABEL_HEIGHT = 45;
   let semuaAset = [];
   let selectedIds = new Set();
 
@@ -33,7 +35,7 @@ window.initBarcodePage = async function () {
     printStyle.textContent = `@media print {
       @page { size: ${paper.width}mm ${paper.height}mm; margin: ${PAGE_MARGIN}mm; }
       #print-area { width: ${paper.width - (PAGE_MARGIN * 2)}mm; }
-      .label-grid { grid-template-columns: repeat(${paper.columns}, 1fr); }
+      .label-grid { grid-template-columns: repeat(${paper.columns}, ${LABEL_WIDTH}mm); }
     }`;
     document.getElementById('label-grid').style.setProperty('--barcode-columns', paper.columns);
   }
@@ -275,27 +277,20 @@ window.initBarcodePage = async function () {
       const paper = getPaperSize();
       const pdf = new jsPDF({ orientation: paper.orientation, unit: 'mm', format: paper.pdfFormat });
       const labels = grid.querySelectorAll('.label-card');
-      const colW = (paper.width - (PAGE_MARGIN * 2) - (LABEL_GAP * (paper.columns - 1))) / paper.columns;
       let x = PAGE_MARGIN;
       let y = PAGE_MARGIN;
-      let rowHeight = 0;
       for (let i = 0; i < labels.length; i++) {
         const canvas = await html2canvas(labels[i], { scale: 2, useCORS: true, backgroundColor: '#fff' });
         const imgData = canvas.toDataURL('image/png');
-        const ratio = canvas.height / canvas.width;
-        const h = colW * ratio;
         const column = i % paper.columns;
-        if (column === 0 && y + h > paper.height - PAGE_MARGIN) {
+        if (column === 0 && y + LABEL_HEIGHT > paper.height - PAGE_MARGIN) {
           pdf.addPage();
           y = PAGE_MARGIN;
-          rowHeight = 0;
         }
-        x = PAGE_MARGIN + (column * (colW + LABEL_GAP));
-        pdf.addImage(imgData, 'PNG', x, y, colW, h);
-        rowHeight = Math.max(rowHeight, h);
+        x = PAGE_MARGIN + (column * (LABEL_WIDTH + LABEL_GAP));
+        pdf.addImage(imgData, 'PNG', x, y, LABEL_WIDTH, LABEL_HEIGHT);
         if (column === paper.columns - 1 || i === labels.length - 1) {
-          y += rowHeight + LABEL_GAP;
-          rowHeight = 0;
+          y += LABEL_HEIGHT + LABEL_GAP;
         }
       }
       const tahun = document.getElementById('opt-tahun').value || new Date().getFullYear();
