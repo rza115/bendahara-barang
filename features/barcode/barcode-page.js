@@ -8,13 +8,18 @@ window.initBarcodePage = async function () {
   db = window._authClient;
 
   const SKPD = 'Dinas Kebudayaan';
-  const layout = window.BarcodeLayout;
-  const PAGE_MARGIN = layout.margin;
+  const PAPER_SIZES = {
+    a4:    { label: 'A4',       width: 210, height: 297, columns: 2, orientation: 'portrait',  pdfFormat: 'a4' },
+    folio: { label: 'Folio/F4', width: 210, height: 330, columns: 2, orientation: 'portrait',  pdfFormat: [210, 330] },
+    a3:    { label: 'A3',       width: 420, height: 297, columns: 4, orientation: 'landscape', pdfFormat: 'a3' },
+  };
+  const PAGE_MARGIN = 10;
+  const LABEL_GAP = 6;
   let semuaAset = [];
   let selectedIds = new Set();
 
   function getPaperSize() {
-    return layout.layout(document.getElementById('opt-kertas').value);
+    return PAPER_SIZES[document.getElementById('opt-kertas').value] || PAPER_SIZES.a4;
   }
 
   function applyPaperSize() {
@@ -28,31 +33,9 @@ window.initBarcodePage = async function () {
     printStyle.textContent = `@media print {
       @page { size: ${paper.width}mm ${paper.height}mm; margin: ${PAGE_MARGIN}mm; }
       #print-area { width: ${paper.width - (PAGE_MARGIN * 2)}mm; }
+      .label-grid { grid-template-columns: repeat(${paper.columns}, 1fr); }
     }`;
-    const root = document.documentElement.style;
-    root.setProperty('--label-width', `${layout.label.width}mm`);
-    root.setProperty('--label-height', `${layout.label.height}mm`);
-    root.setProperty('--label-qr', `${layout.label.qr}mm`);
-    root.setProperty('--label-gap', `${layout.gap}mm`);
-    root.setProperty('--barcode-columns', paper.columns);
-    paginateLabels();
-  }
-
-  function paginateLabels() {
-    const grid = document.getElementById('label-grid');
-    const labels = [...grid.querySelectorAll('.label-card')];
-    if (!labels.length) return;
-    const paper = getPaperSize();
-    grid.replaceChildren();
-    let sheet;
-    labels.forEach((label, i) => {
-      if (i % paper.capacity === 0) {
-        sheet = document.createElement('div');
-        sheet.className = 'label-sheet';
-        grid.appendChild(sheet);
-      }
-      sheet.appendChild(label);
-    });
+    document.getElementById('label-grid').style.setProperty('--barcode-columns', paper.columns);
   }
 
   // Set tahun default = tahun berjalan
@@ -161,17 +144,14 @@ window.initBarcodePage = async function () {
 
   function buatQR(container, value) {
     container.innerHTML = '';
-    const qr = new QRCode(container, {
+    new QRCode(container, {
       text: value,
-      width: 336,
-      height: 336,
+      width: 72,
+      height: 72,
       colorDark: '#1e293b',
       colorLight: '#ffffff',
       correctLevel: QRCode.CorrectLevel.M,
     });
-    // qrcodejs omits the quiet zone; reserve four modules on every side.
-    const modules = qr._oQRCode.getModuleCount();
-    container.style.setProperty('--qr-padding', `${layout.label.qr * 4 / (modules + 8)}mm`);
   }
 
   function buatBarcode(container, value) {
@@ -219,7 +199,7 @@ window.initBarcodePage = async function () {
     if (jenisKode === 'bpkad') return buildBpkadLabel(aset, tahun);
 
     const wrap = document.createElement('div');
-    wrap.className = `label-card ${jenisKode === 'qrcode' ? 'qr-label-card' : 'barcode-label-card'}`;
+    wrap.className = 'label-card';
     wrap.innerHTML = `
       <div class="label-inner">
         <div class="label-col1">
@@ -238,9 +218,6 @@ window.initBarcodePage = async function () {
         </div>
       </div>
     `;
-    if (jenisKode === 'qrcode') {
-      wrap.querySelector('.label-col1').appendChild(wrap.querySelector('.label-code-wrap'));
-    }
     return wrap;
   }
 
@@ -266,52 +243,23 @@ window.initBarcodePage = async function () {
       const kodeVal = getKodeValue(aset);
       if (jenisKode === 'qrcode') buatQR(codeWrap, kodeVal);
       else buatBarcode(codeWrap, kodeVal);
-      if (jenisKode === 'qrcode') return;
       const codeText = document.createElement('div');
       codeText.className = 'label-code-text';
       codeText.textContent = kodeVal.length > 30 ? kodeVal.substring(0, 30) + '...' : kodeVal;
       codeWrap.appendChild(codeText);
     });
 
-    paginateLabels();
-
     showAlert(`${dipilih.length} label berhasil dibuat!`);
     document.getElementById('label-grid').scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 
   // ── CETAK ──────────────────────────────────────────
-  async function prepareLabels() {
-    await document.fonts.ready;
-    const grid = document.getElementById('label-grid');
-    await Promise.all([...grid.querySelectorAll('img')].map(img => {
-      if (img.complete) {
-        if (!img.naturalWidth) throw new Error('Gambar label gagal dimuat. Coba generate ulang.');
-        return Promise.resolve();
-      }
-      return new Promise((resolve, reject) => {
-        const timer = setTimeout(() => reject(new Error('Waktu muat gambar habis. Coba lagi.')), 10000);
-        img.addEventListener('load', () => { clearTimeout(timer); resolve(); }, { once: true });
-        img.addEventListener('error', () => { clearTimeout(timer); reject(new Error('Gambar label gagal dimuat.')); }, { once: true });
-      });
-    }));
-    for (const el of grid.querySelectorAll('.label-card, .label-col2, .label-data, .bpkad-details, .label-val, .bpkad-value')) {
-      if (el.scrollHeight > el.clientHeight + 1 || el.scrollWidth > el.clientWidth + 1) {
-        throw new Error('Teks melebihi label 90 × 45 mm. Periksa nama/kode barang yang terlalu panjang sebelum mencetak.');
-      }
-    }
-  }
-
-  document.getElementById('btn-print').addEventListener('click', async () => {
+  document.getElementById('btn-print').addEventListener('click', () => {
     if (!document.getElementById('label-grid').querySelector('.label-card')) {
       showAlert('Generate label terlebih dahulu!', 'error');
       return;
     }
-    try {
-      await prepareLabels();
-      window.print();
-    } catch (err) {
-      showAlert(err.message, 'error');
-    }
+    window.print();
   });
 
   // ── DOWNLOAD PDF ───────────────────────────────────
@@ -323,27 +271,32 @@ window.initBarcodePage = async function () {
     }
     showLoading(true);
     try {
-      await prepareLabels();
       const { jsPDF } = window.jspdf;
       const paper = getPaperSize();
-      const pdf = new jsPDF({ orientation: paper.orientation, unit: 'mm', format: paper.pdfFormat, compress: true });
+      const pdf = new jsPDF({ orientation: paper.orientation, unit: 'mm', format: paper.pdfFormat });
       const labels = grid.querySelectorAll('.label-card');
+      const colW = (paper.width - (PAGE_MARGIN * 2) - (LABEL_GAP * (paper.columns - 1))) / paper.columns;
+      let x = PAGE_MARGIN;
+      let y = PAGE_MARGIN;
+      let rowHeight = 0;
       for (let i = 0; i < labels.length; i++) {
-        const canvas = await html2canvas(labels[i], {
-          scale: 4, useCORS: true, backgroundColor: '#fff',
-          windowWidth: 1600, windowHeight: 1000,
-          onclone: (doc) => {
-            // Isolate the export target from scroll containers and responsive UI.
-            const target = doc.querySelectorAll('#label-grid .label-card')[i];
-            doc.body.replaceChildren(target);
-            doc.body.style.cssText = 'margin:0;padding:0;display:block;';
-            target.style.cssText = 'position:absolute;left:0;top:0;margin:0;';
-          },
-        });
+        const canvas = await html2canvas(labels[i], { scale: 2, useCORS: true, backgroundColor: '#fff' });
         const imgData = canvas.toDataURL('image/png');
-        const pos = layout.position(i, paper);
-        if (i > 0 && i % paper.capacity === 0) pdf.addPage();
-        pdf.addImage(imgData, 'PNG', pos.x, pos.y, layout.label.width, layout.label.height, undefined, 'FAST');
+        const ratio = canvas.height / canvas.width;
+        const h = colW * ratio;
+        const column = i % paper.columns;
+        if (column === 0 && y + h > paper.height - PAGE_MARGIN) {
+          pdf.addPage();
+          y = PAGE_MARGIN;
+          rowHeight = 0;
+        }
+        x = PAGE_MARGIN + (column * (colW + LABEL_GAP));
+        pdf.addImage(imgData, 'PNG', x, y, colW, h);
+        rowHeight = Math.max(rowHeight, h);
+        if (column === paper.columns - 1 || i === labels.length - 1) {
+          y += rowHeight + LABEL_GAP;
+          rowHeight = 0;
+        }
       }
       const tahun = document.getElementById('opt-tahun').value || new Date().getFullYear();
       const jenisKode = document.getElementById('opt-jenis-kode').value;
