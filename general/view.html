@@ -89,11 +89,16 @@
       /* Fetch data */
       const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
       let list, fetchError;
+      let isLoggedIn = false;
 
       try {
-        const res = await db.rpc('get_aset_public_aktif');
+        const [res, sessionResult] = await Promise.all([
+          db.rpc('get_aset_public_aktif'),
+          db.auth.getSession().catch(() => ({ data: { session: null } })),
+        ]);
         list       = (res.data || []).filter(aset => !aset.deleted_at);
         fetchError = res.error;
+        isLoggedIn = Boolean(sessionResult?.data?.session);
       } catch (e) {
         renderError('cloud_off', 'Gagal terhubung ke server', e.message);
         return;
@@ -144,6 +149,14 @@
              </div>
            </div>`;
 
+      const editActionHTML = isLoggedIn
+        ? `<div class="public-actions">
+             <a class="public-edit-button" href="../pages/edit.html?id=${encodeURIComponent(data.id)}">
+               ${symbol('edit')}<span>Edit Barang</span>
+             </a>
+           </div>`
+        : '';
+
       /* Render */
       app.innerHTML = `
         <div class="card">
@@ -164,6 +177,8 @@
             ${infoRow('location_on', 'Lokasi', data.lokasi ?? '—')}
             ${infoRow('person', 'Penanggung Jawab', data.penanggung_jawab_nama ?? '—')}
           </div>
+
+          ${editActionHTML}
 
           <div class="card-footer">
             <div class="dot"></div>

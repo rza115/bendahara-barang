@@ -202,6 +202,33 @@
     .badge-sedang { background: rgba(251,191,36,.15); color: #fbbf24; }
     .badge-other  { background: rgba(139,148,158,.15); color: #8b949e; }
 
+    /* Aksi admin hanya dirender ketika sesi login aktif. */
+    .public-actions {
+      padding: 16px 28px;
+      border-top: 1px solid var(--border);
+    }
+
+    .public-edit-button {
+      width: 100%;
+      min-height: 44px;
+      padding: 10px 16px;
+      border-radius: 10px;
+      background: var(--accent);
+      color: #111827;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: filter .15s, transform .15s;
+    }
+
+    .public-edit-button:hover { filter: brightness(1.08); transform: translateY(-1px); }
+    .public-edit-button:focus-visible { outline: 3px solid rgba(240,165,0,.35); outline-offset: 2px; }
+    .public-edit-button .material-symbols-rounded { font-size: 20px; }
+
     /* ── Footer ── */
     .card-footer {
       padding: 16px 28px;
