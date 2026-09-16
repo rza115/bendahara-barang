@@ -6,7 +6,14 @@
     .detail-value{font-size:13px;color:var(--text-primary);font-weight:500;word-break:break-word}
     .detail-value.mono{font-family:var(--font-mono)}
     .detail-value.empty{color:var(--text-muted);font-weight:400;font-style:italic}
+    .foto-download-wrap{position:relative;width:100%;max-width:280px}
     .foto-box{width:100%;max-width:280px;aspect-ratio:4/3;border-radius:var(--radius);border:1px solid var(--border);object-fit:cover;background:var(--bg);display:block}
+    .foto-download-wrap .foto-box{max-width:none}
+    .foto-download-button{position:absolute;top:10px;right:10px;z-index:1;width:40px;height:40px;padding:0;border:1px solid rgba(255,255,255,.45);border-radius:50%;background:rgba(15,23,42,.78);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 3px 12px rgba(0,0,0,.3);backdrop-filter:blur(4px);transition:transform .15s,background .15s}
+    .foto-download-button:hover{background:rgba(15,23,42,.95);transform:translateY(-1px)}
+    .foto-download-button:focus-visible{outline:3px solid color-mix(in srgb,var(--accent) 40%,transparent);outline-offset:2px}
+    .foto-download-button:disabled{cursor:wait;opacity:.65}
+    .foto-download-button .material-symbols-rounded{font-size:22px}
     .foto-placeholder{width:100%;max-width:280px;aspect-ratio:4/3;border-radius:var(--radius);border:1px dashed var(--border);background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;color:var(--text-muted);font-size:12px}
     .foto-placeholder span{font-size:32px}
     .section-kib{display:none}
@@ -16,4 +23,4 @@
     .dok-link{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);text-decoration:none;color:var(--accent);font-size:13px;font-weight:500;transition:all .15s}
     .dok-link:hover{background:#eff6ff;border-color:var(--accent)}
     .dok-img{max-width:160px;max-height:120px;border-radius:6px;border:1px solid var(--border);object-fit:cover}
-    @media(max-width:768px){.detail-grid,.detail-grid.cols-3{grid-template-columns:1fr}}
+    @media(max-width:768px){.detail-grid,.detail-grid.cols-3{grid-template-columns:1fr}.foto-download-wrap{max-width:none}}

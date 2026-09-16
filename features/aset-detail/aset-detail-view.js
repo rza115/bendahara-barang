@@ -2,6 +2,55 @@
 // Kolom DB: snake_case sesuai schema (kode_barang, merk_type, dll)
 // Tabel PJ: penanggung_jawab  |  FK: penanggung_jawab_id
 
+async function downloadFotoAset(url, namaBarang, button) {
+  if (!url) return;
+  if (button) {
+    button.disabled = true;
+    button.setAttribute('aria-busy', 'true');
+  }
+
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const blob = await response.blob();
+    const extensions = {
+      'image/jpeg': 'jpg',
+      'image/png': 'png',
+      'image/webp': 'webp',
+      'image/gif': 'gif',
+    };
+    const extension = extensions[blob.type] || 'jpg';
+    const safeName = String(namaBarang || 'aset')
+      .trim()
+      .replace(/[<>:"/\\|?*\x00-\x1F]+/g, '-')
+      .replace(/\s+/g, '_')
+      .slice(0, 80) || 'aset';
+    const objectUrl = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = objectUrl;
+    link.download = `foto_${safeName}.${extension}`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+  } catch (_) {
+    // Fallback untuk storage/browser yang memblokir unduhan blob lintas origin.
+    const link = document.createElement('a');
+    link.href = url;
+    link.target = '_blank';
+    link.rel = 'noopener';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    showAlert('Foto dibuka di tab baru karena unduhan langsung tidak tersedia.', 'error');
+  } finally {
+    if (button) {
+      button.disabled = false;
+      button.removeAttribute('aria-busy');
+    }
+  }
+}
+
 function renderDetail(data) {
 
   // Header
@@ -18,8 +67,16 @@ function renderDetail(data) {
   const fotoWrap = document.getElementById('foto-wrap');
   if (fotoWrap) {
     fotoWrap.innerHTML = data.foto_url
-      ? `<img src="${escapeHtml(data.foto_url)}" alt="Foto Barang" class="foto-box">`
+      ? `<div class="foto-download-wrap">
+           <img src="${escapeHtml(data.foto_url)}" alt="Foto Barang" class="foto-box">
+           <button type="button" class="foto-download-button" title="Unduh foto" aria-label="Unduh foto barang">
+             <span class="material-symbols-rounded" aria-hidden="true">download</span>
+           </button>
+         </div>`
       : `<div class="foto-placeholder"><span class="material-symbols-rounded" aria-hidden="true">no_photography</span>Tidak ada foto</div>`;
+    fotoWrap.querySelector('.foto-download-button')?.addEventListener('click', event => {
+      downloadFotoAset(data.foto_url, data.nama_barang, event.currentTarget);
+    });
   }
 
   // Helper — langsung set textContent ke <span id="d-xxx"> yang ada di HTML
