@@ -22,8 +22,13 @@ function initFotoUpload(existingUrl = null) {
   fileInput?.addEventListener('change', function () {
     const file = this.files[0];
     if (!file) return;
-    if (file.size > 2 * 1024 * 1024) {
-      showAlert('Ukuran foto melebihi 2 MB!', 'error');
+    if (!file.type.startsWith('image/') || file.type === 'image/svg+xml') {
+      showAlert('Pilih foto berformat JPG, PNG, atau WEBP.', 'error');
+      this.value = '';
+      return;
+    }
+    if (file.size > FOTO_MAX_INPUT_BYTES) {
+      showAlert('Ukuran foto asli melebihi 20 MB!', 'error');
       this.value = '';
       return;
     }
