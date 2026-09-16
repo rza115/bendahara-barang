@@ -61,6 +61,26 @@ body .photo-preview-wrap {
   display: none;
 }
 
+body .photo-source-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 8px;
+}
+
+body .photo-source-option label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 12px;
+  color: var(--text-muted, #64748b);
+}
+
+body .photo-source-option input { width: 100%; }
+
+@media (max-width: 640px) {
+  body .photo-source-options { grid-template-columns: 1fr; }
+}
+
 body .photo-preview-image {
   max-width: 200px;
   max-height: 200px;

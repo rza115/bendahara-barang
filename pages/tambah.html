@@ -318,7 +318,16 @@
         <div class="form-grid">
           <div class="form-group form-col-full">
             <label>Upload Foto Barang</label>
-            <input type="file" id="foto_file" accept="image/*" capture="environment">
+            <div class="photo-source-options">
+              <div class="photo-source-option">
+                <label for="foto_file">Pilih dari Galeri</label>
+                <input type="file" id="foto_file" accept="image/*">
+              </div>
+              <div class="photo-source-option">
+                <label for="foto_camera_file">Ambil dengan Kamera</label>
+                <input type="file" id="foto_camera_file" accept="image/*" capture="environment">
+              </div>
+            </div>
             <div id="foto-preview-wrap" class="photo-preview-wrap">
               <img id="foto-preview" src="" alt="Preview" class="photo-preview-image">
               <button type="button" id="btn-hapus-foto" class="photo-remove-button"><span class="material-symbols-rounded" aria-hidden="true">delete</span>Hapus foto</button>
@@ -328,7 +337,7 @@
                   <p class="existing-photo-caption">Foto saat ini:</p>
                   <img id="foto-existing" src="" alt="Foto Saat Ini" class="photo-preview-image">
                 </div>
-            <p class="photo-format-hint">Di HP, kamera belakang dapat digunakan langsung. Foto maks. 20 MB dan otomatis dikompres hingga 2 MB saat diunggah.</p>
+            <p class="photo-format-hint">Pilih foto dari galeri atau gunakan kamera belakang. Foto maks. 20 MB dan otomatis dikompres hingga 2 MB saat diunggah.</p>
           </div>
         </div>
       </div>

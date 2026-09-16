@@ -16,7 +16,7 @@ async function simpanAset(isEdit = false, id = null) {
   showLoading(true);
   try {
     // ── Foto ──────────────────────────────────────────────
-    const fotoFile = document.getElementById('foto_file')?.files?.[0];
+    const fotoFile = getFotoFile();
     if (fotoFile) {
       try { data.foto_url = await uploadFoto(fotoFile); }
       catch (err) { showAlert('Gagal upload foto: ' + err.message, 'error'); return; }

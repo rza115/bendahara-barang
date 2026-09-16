@@ -79,10 +79,12 @@ test('foto di-resize, dikompres ke JPEG di bawah 2 MB, lalu di-upload', async ()
   assert.match(url, /barang_\d+\.jpg$/);
 });
 
-test('form tambah dan edit mengaktifkan kamera belakang di perangkat mobile', () => {
+test('form tambah dan edit menyediakan pilihan galeri serta kamera belakang', () => {
   for (const page of ['tambah.html', 'edit.html']) {
     const html = fs.readFileSync(path.join(__dirname, '..', 'pages', page), 'utf8');
-    assert.match(html, /id="foto_file"[^>]*accept="image\/\*"[^>]*capture="environment"/);
+    assert.match(html, /id="foto_file"[^>]*accept="image\/\*"/);
+    assert.doesNotMatch(html, /id="foto_file"[^>]*capture=/);
+    assert.match(html, /id="foto_camera_file"[^>]*accept="image\/\*"[^>]*capture="environment"/);
     assert.match(html, /otomatis dikompres hingga 2 MB/);
   }
 });
